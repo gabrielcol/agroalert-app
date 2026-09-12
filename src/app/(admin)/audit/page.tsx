@@ -15,7 +15,7 @@ export default async function AuditPage() {
   const role = (session.user as { role?: string | null }).role;
   if (!hasPermission(role, { "audit-log": ["read"] })) redirect("/dashboard");
 
-  prefetch(trpc.audit.list.queryOptions({ limit: 50 }));
+  await prefetch(trpc.audit.list.queryOptions({ limit: 50 }));
 
   return (
     <HydrateClient>

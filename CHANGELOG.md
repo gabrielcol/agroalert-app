@@ -3,6 +3,33 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 02:10 (EEST)** — `fix/dashboard-hydration-mismatch` — Fixed a hydration
+  mismatch on `/dashboard` with real data
+  ([`docs/issues/0012-dashboard-hydration-mismatch.md`](docs/issues/0012-dashboard-hydration-mismatch.md)):
+  the server rendered `PostList`'s "Loading…" branch while the client rendered the
+  resolved `<ul>`. Root cause: `prefetch` in `src/trpc/server.ts` did
+  `void queryClient.prefetchQuery(...)` and returned nothing, so `DashboardPage` never
+  awaited it; `src/trpc/query-client.ts` dehydrates pending queries
+  (`shouldDehydrateQuery: default || status === "pending"`), so `HydrateClient` shipped
+  the query to the client still pending, and `PostList`'s plain `useQuery` (not
+  `useSuspenseQuery`) rendered a different branch on the server than on the client once
+  the streamed promise resolved. `prefetch` now returns the prefetch promise
+  (`Promise<void>`) instead of voiding it, with its JSDoc spelling out that any caller
+  SSRing a non-suspense `useQuery` consumer must `await` it. The dashboard page now awaits
+  `prefetch(trpc.post.list.queryOptions())`. Checked every other
+  `prefetch(` call site (`grep -rn "prefetch(" src`): `src/app/(admin)/audit/page.tsx`
+  (`AuditLogTable`) and `src/app/(admin)/users/page.tsx` (`UserRoleTable`) both feed a
+  plain `useQuery` with an `isLoading` branch too, so the same latent mismatch applied —
+  both now `await prefetch(...)` as well. `post-list.tsx` and `query-client.ts` are
+  unchanged, as scoped. Tests: `src/trpc/server.test.ts` asserts `prefetch` returns a
+  promise that resolves once the query is in the `QueryClient` cache with data (mocks
+  `@/server/trpc/init` / `@/server/trpc/root` to avoid pulling in the full app router, and
+  `react`'s `cache()` as a lazy singleton since it only memoizes inside an active render).
+  `e2e/dashboard.spec.ts`'s "member adds a post" test gained a `page.on("pageerror")`
+  collector and asserts no collected error mentions "Hydration" after a reload with a post
+  present — **not run**, the suite runs pre-deploy only (AGENTS.md rule 3). Gate green:
+  typecheck, lint, prettier, 290 Vitest tests.
+
 - **2026-09-13 01:05 (EEST)** — `fix/e2e-wizard-weather-mocks` — The pre-deploy Playwright
   run failed one spec: the full-wizard test in `e2e/agro.spec.ts` never answered the new
   `weather.climate` / `weather.forecast` queries, so the loader waited forever on

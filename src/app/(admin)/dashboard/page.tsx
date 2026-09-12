@@ -10,7 +10,7 @@ import { DashboardIntro } from "@/components/admin/dashboard-intro";
 export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  prefetch(trpc.post.list.queryOptions());
+  await prefetch(trpc.post.list.queryOptions());
 
   return (
     <HydrateClient>
