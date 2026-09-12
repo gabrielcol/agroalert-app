@@ -72,6 +72,9 @@ function fakeDb(options: {
         ...data,
       })),
     },
+    aiCall: {
+      update: vi.fn().mockResolvedValue({ id: "call_1" }),
+    },
   };
 }
 
@@ -81,10 +84,12 @@ function fakeService(overrides: Partial<RecommendationService> = {}) {
       brief,
       result: cropRecommendationFixture,
       modelId: "claude-sonnet-5",
+      aiCallId: "call_1",
     }),
     varieties: vi.fn().mockResolvedValue({
       result: varietyRecommendationFixture,
       modelId: "claude-sonnet-5",
+      aiCallId: "call_1",
     }),
     ...overrides,
   };
@@ -117,6 +122,24 @@ describe("recommendation.crops", () => {
         result: cropRecommendationFixture,
       }),
     });
+    // The ai_call row now points at what the call produced (issue 0013).
+    expect(db.aiCall.update).toHaveBeenCalledWith({
+      where: { id: "call_1" },
+      data: { cropRecommendationId: "rec_new" },
+    });
+  });
+
+  it("still answers when the ai_call link write fails", async () => {
+    const db = fakeDb({ profile: profileRow });
+    db.aiCall.update.mockRejectedValue(new Error("db gone"));
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    fakeService();
+    const caller = createCaller(makeCtx(db, null));
+
+    const record = await caller.recommendation.crops({ fieldProfileId: "fp1" });
+    expect(record.id).toBe("rec_new");
+    expect(errors).toHaveBeenCalled();
+    errors.mockRestore();
   });
 
   it("returns the stored recommendation without calling the model again", async () => {
@@ -208,6 +231,10 @@ describe("recommendation.varieties", () => {
         cropRecommendationId: "rec1",
         cropId: "grau_toamna",
       }),
+    });
+    expect(db.aiCall.update).toHaveBeenCalledWith({
+      where: { id: "call_1" },
+      data: { varietyRecommendationId: "var_new" },
     });
   });
 

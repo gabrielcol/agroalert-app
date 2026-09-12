@@ -11,6 +11,7 @@ import {
   WeatherUnavailableError as OpenMeteoUnavailableError,
 } from "@/lib/weather";
 import { TIMEZONE, type WeatherBrief } from "@/lib/weather/schema";
+import { createPrismaAiCallLogger, type AiCallLogger } from "./call-log";
 import { createAnthropicClient } from "./client";
 import { WeatherUnavailableError } from "./errors";
 import {
@@ -34,12 +35,18 @@ export type RecommendationService = {
     brief: WeatherBrief;
     result: CropRecommendation;
     modelId: string;
+    /** The `ai_call` row this answer came from, for the router to link. */
+    aiCallId: string | null;
   }>;
   varieties(input: {
     profile: FieldProfile;
     brief: WeatherBrief;
     cropId: CropId;
-  }): Promise<{ result: VarietyRecommendation; modelId: string }>;
+  }): Promise<{
+    result: VarietyRecommendation;
+    modelId: string;
+    aiCallId: string | null;
+  }>;
 };
 
 export type RecommendationDeps = {
@@ -47,6 +54,8 @@ export type RecommendationDeps = {
   weatherBriefSource: WeatherBriefSource;
   model: string;
   today: () => string;
+  /** Records one `ai_call` row per Anthropic call (issue 0013). */
+  logAiCall: AiCallLogger;
 };
 
 /** Today's date in the product timezone, ISO `YYYY-MM-DD`. */
@@ -81,7 +90,7 @@ export function createRecommendationService(
         throw new WeatherUnavailableError(cause);
       }
       const client = deps.createClient();
-      const result = await recommendCrops({
+      const { result, aiCallId } = await recommendCrops({
         client,
         model: deps.model,
         profile,
@@ -89,13 +98,14 @@ export function createRecommendationService(
         // Anchor on the brief's own day so the candidate rule, the forecast
         // and the stored snapshot agree even when the call spans midnight.
         today: brief.today,
+        log: deps.logAiCall,
       });
-      return { brief, result, modelId: deps.model };
+      return { brief, result, modelId: deps.model, aiCallId };
     },
 
     async varieties({ profile, brief, cropId }) {
       const client = deps.createClient();
-      const result = await rankVarieties({
+      const { result, aiCallId } = await rankVarieties({
         client,
         model: deps.model,
         profile,
@@ -104,8 +114,9 @@ export function createRecommendationService(
         // Recommendation, so both read the same Weather Brief.
         today: brief.today,
         cropId,
+        log: deps.logAiCall,
       });
-      return { result, modelId: deps.model };
+      return { result, modelId: deps.model, aiCallId };
     },
   };
 }
@@ -118,6 +129,7 @@ export function getRecommendationService(): RecommendationService {
     weatherBriefSource: createOpenMeteoWeatherBriefSource({ db }),
     model: env.AI_MODEL,
     today: todayInBucharest,
+    logAiCall: createPrismaAiCallLogger(db),
   }));
 }
 

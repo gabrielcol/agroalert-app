@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: feat/ai-call-log
 created: 2026-09-13
 ---
@@ -29,19 +29,19 @@ Decisions (asked 2026-09-13):
 
 ## Acceptance criteria
 
-- [ ] `prisma/schema.prisma` has `model AiCall` with: `id`, `createdAt`, `kind`,
+- [x] `prisma/schema.prisma` has `model AiCall` with: `id`, `createdAt`, `kind`,
       `fieldProfileId`, `model` (requested), `responseModel` (from the response, nullable),
       `inputTokens`, `outputTokens`, `cacheReadInputTokens`, `cacheCreationInputTokens`
       (all nullable Int), `durationMs`, `status`, `errorName`, `errorMessage`,
       `rawResponse` (nullable Json), `cropRecommendationId`, `varietyRecommendationId`
       (nullable, indexed). A migration is committed.
-- [ ] Every `messages.create` call in `src/lib/ai/recommend.ts` produces exactly one
+- [x] Every `messages.create` call in `src/lib/ai/recommend.ts` produces exactly one
       `ai_call` row, whether it succeeds, the API throws, or the output fails validation.
-- [ ] A successful `recommendation.crops` / `recommendation.varieties` procedure ends with
+- [x] A successful `recommendation.crops` / `recommendation.varieties` procedure ends with
       the row's `cropRecommendationId` / `varietyRecommendationId` pointing at the created
       recommendation.
-- [ ] The `ai_call` write never breaks the recommendation: a failing log write is caught and
+- [x] The `ai_call` write never breaks the recommendation: a failing log write is caught and
       reported with `console.error`, the recommendation still returns.
-- [ ] Unit tests (Vitest) cover: the row shape on success, on API error, on invalid output;
+- [x] Unit tests (Vitest) cover: the row shape on success, on API error, on invalid output;
       the router linking the row. An e2e spec is written (not run, pre-deploy only).
-- [ ] Gate green: typecheck, lint, prettier, Vitest.
+- [x] Gate green: typecheck, lint, prettier, Vitest.

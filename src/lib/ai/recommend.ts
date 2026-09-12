@@ -10,6 +10,7 @@ import {
 } from "@/lib/agro/recommendation-schema";
 import type { WeatherBrief } from "@/lib/weather/schema";
 import { candidateCropIds } from "./candidates";
+import { usageOf, type AiCallLogger } from "./call-log";
 import { AiOutputError } from "./errors";
 import {
   buildCropUserMessage,
@@ -43,10 +44,74 @@ export type RecommendInput = {
   profile: FieldProfile;
   brief: WeatherBrief;
   today: string;
+  /** Records one `ai_call` row per API call; omitted, nothing is written. */
+  log?: AiCallLogger;
 };
+
+/** What a call answers: the validated result plus its `ai_call` row id. */
+export type Logged<T> = { result: T; aiCallId: string | null };
 
 /** Room for 3 crops with reasons plus ~20 exclusions; well under the cap. */
 const MAX_TOKENS = 8000;
+
+/**
+ * One `messages.create` call, timed, with exactly one `ai_call` row written
+ * for it whatever happens (issue 0013). `parse` runs inside the same try, so
+ * an `AiOutputError` raised on a message the API did return is logged as an
+ * error *with* that message's tokens and raw response; an API throw is logged
+ * with null tokens and no raw response.
+ */
+async function loggedCreate<T>(args: {
+  client: MessagesClient;
+  log: AiCallLogger | undefined;
+  kind: "crops" | "varieties";
+  fieldProfileId: string;
+  model: string;
+  params: Anthropic.MessageCreateParamsNonStreaming;
+  parse: (message: Anthropic.Message) => T;
+}): Promise<Logged<T>> {
+  const startedAt = performance.now();
+  let message: Anthropic.Message | null = null;
+  try {
+    message = await args.client.messages.create(args.params);
+    const value = args.parse(message);
+    const logged = await args.log?.({
+      kind: args.kind,
+      fieldProfileId: args.fieldProfileId,
+      model: args.model,
+      responseModel: message.model ?? null,
+      ...usageOf(message),
+      durationMs: Math.round(performance.now() - startedAt),
+      status: "ok",
+      errorName: null,
+      errorMessage: null,
+      rawResponse: message,
+    });
+    return { result: value, aiCallId: logged?.id ?? null };
+  } catch (error) {
+    const usage = message
+      ? usageOf(message)
+      : {
+          inputTokens: null,
+          outputTokens: null,
+          cacheReadInputTokens: null,
+          cacheCreationInputTokens: null,
+        };
+    await args.log?.({
+      kind: args.kind,
+      fieldProfileId: args.fieldProfileId,
+      model: args.model,
+      responseModel: message?.model ?? null,
+      ...usage,
+      durationMs: Math.round(performance.now() - startedAt),
+      status: "error",
+      errorName: error instanceof Error ? error.name : typeof error,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      rawResponse: message,
+    });
+    throw error;
+  }
+}
 
 function toolError(
   result: { ok: false; reason: "no_tool_use" | "invalid"; issues?: unknown },
@@ -91,28 +156,37 @@ export function enforceCandidateRule(
 
 export async function recommendCrops(
   input: RecommendInput,
-): Promise<CropRecommendation> {
-  const message = await input.client.messages.create({
+): Promise<Logged<CropRecommendation>> {
+  return loggedCreate({
+    client: input.client,
+    log: input.log,
+    kind: "crops",
+    fieldProfileId: input.profile.id,
     model: input.model,
-    max_tokens: MAX_TOKENS,
-    system: buildSystem(),
-    tools: RECOMMENDATION_TOOLS,
-    tool_choice: { type: "tool", name: CROP_TOOL_NAME },
-    messages: [
-      buildCropUserMessage({
-        profile: input.profile,
-        brief: input.brief,
-        today: input.today,
-      }),
-    ],
+    params: {
+      model: input.model,
+      max_tokens: MAX_TOKENS,
+      system: buildSystem(),
+      tools: RECOMMENDATION_TOOLS,
+      tool_choice: { type: "tool", name: CROP_TOOL_NAME },
+      messages: [
+        buildCropUserMessage({
+          profile: input.profile,
+          brief: input.brief,
+          today: input.today,
+        }),
+      ],
+    },
+    parse: (message) => {
+      const parsed = parseToolInput(
+        message,
+        CROP_TOOL_NAME,
+        cropRecommendationSchema,
+      );
+      if (!parsed.ok) throw toolError(parsed, CROP_TOOL_NAME);
+      return enforceCandidateRule(parsed.value, input.today);
+    },
   });
-  const parsed = parseToolInput(
-    message,
-    CROP_TOOL_NAME,
-    cropRecommendationSchema,
-  );
-  if (!parsed.ok) throw toolError(parsed, CROP_TOOL_NAME);
-  return enforceCandidateRule(parsed.value, input.today);
 }
 
 /**
@@ -138,30 +212,40 @@ export function enforceVarietyCoverage(
 
 export async function rankVarieties(
   input: RecommendInput & { cropId: CropId },
-): Promise<VarietyRecommendation> {
+): Promise<Logged<VarietyRecommendation>> {
   if (varietyNames(input.cropId).length === 0) {
-    return { cropId: input.cropId, ranked: [] };
+    // No API call, so no `ai_call` row: the rule is one row per call.
+    return { result: { cropId: input.cropId, ranked: [] }, aiCallId: null };
   }
-  const message = await input.client.messages.create({
+  return loggedCreate({
+    client: input.client,
+    log: input.log,
+    kind: "varieties",
+    fieldProfileId: input.profile.id,
     model: input.model,
-    max_tokens: MAX_TOKENS,
-    system: buildSystem(),
-    tools: RECOMMENDATION_TOOLS,
-    tool_choice: { type: "tool", name: VARIETY_TOOL_NAME },
-    messages: [
-      buildVarietyUserMessage({
-        profile: input.profile,
-        brief: input.brief,
-        today: input.today,
-        cropId: input.cropId,
-      }),
-    ],
+    params: {
+      model: input.model,
+      max_tokens: MAX_TOKENS,
+      system: buildSystem(),
+      tools: RECOMMENDATION_TOOLS,
+      tool_choice: { type: "tool", name: VARIETY_TOOL_NAME },
+      messages: [
+        buildVarietyUserMessage({
+          profile: input.profile,
+          brief: input.brief,
+          today: input.today,
+          cropId: input.cropId,
+        }),
+      ],
+    },
+    parse: (message) => {
+      const parsed = parseToolInput(
+        message,
+        VARIETY_TOOL_NAME,
+        varietyRecommendationSchema,
+      );
+      if (!parsed.ok) throw toolError(parsed, VARIETY_TOOL_NAME);
+      return enforceVarietyCoverage(parsed.value, input.cropId);
+    },
   });
-  const parsed = parseToolInput(
-    message,
-    VARIETY_TOOL_NAME,
-    varietyRecommendationSchema,
-  );
-  if (!parsed.ok) throw toolError(parsed, VARIETY_TOOL_NAME);
-  return enforceVarietyCoverage(parsed.value, input.cropId);
 }

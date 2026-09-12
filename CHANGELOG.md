@@ -3,6 +3,49 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 01:10 (EEST)** — `feat/ai-call-log` — Every call to the Anthropic API now
+  leaves one persisted row
+  ([`docs/issues/0013-ai-call-log.md`](docs/issues/0013-ai-call-log.md)). The two Claude
+  calls (`recommendCrops`, `rankVarieties`) left no trace beyond the validated `result`, so
+  there was nothing to cost-track or debug against. New Prisma model `AiCall` (table
+  `ai_call`, migration `20260912215822_ai_call_log`) holds `kind` (`crops` | `varieties`),
+  `fieldProfileId`, the requested `model`, the `responseModel` that answered, the four token
+  counts as separate nullable columns (`inputTokens`, `outputTokens`,
+  `cacheReadInputTokens`, `cacheCreationInputTokens` — the SDK reports the cache ones
+  separately), `durationMs`, `status` (`ok` | `error`), `errorName` / `errorMessage` and the
+  raw SDK `Message` in `rawResponse` (Json?); it links to what it produced through nullable
+  `cropRecommendationId` / `varietyRecommendationId` (`onDelete: SetNull`), with indexes on
+  all three foreign keys and on `createdAt`. Only the response is stored, not the request:
+  the prompt is reproducible from the stored Weather Brief, the Field Profile and the prompt
+  code. New `src/lib/ai/call-log.ts` owns the seam — the `AiCallRecord` shape, the
+  `AiCallLogger` function type, `usageOf(message)` and `createPrismaAiCallLogger(db)`, whose
+  write failure is caught, `console.error`-ed and answered with `null` so a broken log can
+  never fail a recommendation. `src/lib/ai/recommend.ts` routes both calls through one
+  internal `loggedCreate` helper that times the call with `performance.now()` and runs the
+  `parseToolInput` / `enforce*` step **inside the same try**, so exactly one row is written
+  per `messages.create` in all three outcomes: success (tokens + raw response, `status: ok`),
+  an API throw (`status: error`, null tokens, no raw response, the error's name and message)
+  and an `AiOutputError` on a message the API _did_ return (`status: error` **with** that
+  message's tokens and raw response — the expensive case worth keeping). A crop with no
+  listed varieties still short-circuits before the API, so it writes no row. Contract change:
+  `recommendCrops` / `rankVarieties` now answer `{ result, aiCallId }` instead of the bare
+  result, `RecommendationDeps` gains `logAiCall`, and the service returns `aiCallId` next to
+  `modelId`; `getRecommendationService()` wires `createPrismaAiCallLogger(db)`. The router
+  links the row after it has persisted the recommendation
+  (`aiCall.update({ where: { id: aiCallId }, data: { cropRecommendationId } })`, and the
+  variety equivalent) through a `linkAiCall` helper that swallows and reports a failing link —
+  the recommendation is already stored and must still be returned. No UI surface. Tests:
+  `src/lib/ai/call-log.test.ts` (usage defaults, the row write, the swallowed failure),
+  four new cases in `src/lib/ai/recommend.test.ts` (success row shape incl. cache tokens and
+  `rawResponse === message`, API throw, invalid output, no logger → null id) and two in
+  `src/server/trpc/routers/recommendation.test.ts` (both procedures link the row; a failing
+  link still answers). `e2e/ai-call-log.spec.ts` was **written but not run** (AGENTS.md
+  rule 3, pre-deploy only); it asserts the wizard's two recommendation steps still render
+  with the new code path, and its header explains why the `ai_call` row itself cannot be
+  asserted there — the recommendation leg is mocked at the tRPC network edge, so no server
+  procedure and no Anthropic call ever runs. Gate green: typecheck, lint, prettier,
+  298 Vitest tests.
+
 - **2026-09-13 02:10 (EEST)** — `fix/dashboard-hydration-mismatch` — Fixed a hydration
   mismatch on `/dashboard` with real data
   ([`docs/issues/0012-dashboard-hydration-mismatch.md`](docs/issues/0012-dashboard-hydration-mismatch.md)):

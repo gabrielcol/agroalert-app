@@ -2,7 +2,11 @@ import Anthropic from "@anthropic-ai/sdk";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "@/server/trpc/init";
+import {
+  createTRPCRouter,
+  publicProcedure,
+  type TRPCContext,
+} from "@/server/trpc/init";
 import type { Prisma } from "@/generated/prisma/client";
 import {
   AiOutputError,
@@ -69,6 +73,22 @@ function asJson(value: unknown): Prisma.InputJsonValue {
 }
 
 /**
+ * Point the call's `ai_call` row at what it produced (issue 0013). Best
+ * effort: a failing link is reported, never raised — the recommendation is
+ * already persisted and must still be returned.
+ */
+async function linkAiCall(
+  db: TRPCContext["db"],
+  aiCallId: string | null,
+  data: { cropRecommendationId: string } | { varietyRecommendationId: string },
+): Promise<void> {
+  if (!aiCallId) return;
+  await db.aiCall
+    .update({ where: { id: aiCallId }, data })
+    .catch((error: unknown) => console.error("ai_call link failed", error));
+}
+
+/**
  * Crop Recommendation and Variety Recommendation for a Field Profile. Both
  * procedures are idempotent: a stored row is returned as-is, so a refresh
  * never re-runs the model. Errors map to a retry screen; no partial output.
@@ -91,7 +111,7 @@ export const recommendationRouter = createTRPCRouter({
       const profile = fieldProfileSchema.parse(row);
 
       try {
-        const { brief, result, modelId } =
+        const { brief, result, modelId, aiCallId } =
           await getRecommendationService().crops(profile);
         const created = await ctx.db.cropRecommendation.create({
           data: {
@@ -100,6 +120,9 @@ export const recommendationRouter = createTRPCRouter({
             result: asJson(result),
             modelId,
           },
+        });
+        await linkAiCall(ctx.db, aiCallId, {
+          cropRecommendationId: created.id,
         });
         return cropRecommendationRecordSchema.parse(created);
       } catch (error) {
@@ -129,11 +152,12 @@ export const recommendationRouter = createTRPCRouter({
       const brief = weatherBriefSchema.parse(recommendation.weatherBrief);
 
       try {
-        const { result, modelId } = await getRecommendationService().varieties({
-          profile,
-          brief,
-          cropId: input.cropId,
-        });
+        const { result, modelId, aiCallId } =
+          await getRecommendationService().varieties({
+            profile,
+            brief,
+            cropId: input.cropId,
+          });
         const created = await ctx.db.varietyRecommendation.create({
           data: {
             cropRecommendationId: recommendation.id,
@@ -141,6 +165,9 @@ export const recommendationRouter = createTRPCRouter({
             result: asJson(result),
             modelId,
           },
+        });
+        await linkAiCall(ctx.db, aiCallId, {
+          varietyRecommendationId: created.id,
         });
         return varietyRecommendationRecordSchema.parse(created);
       } catch (error) {
