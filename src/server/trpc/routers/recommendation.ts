@@ -16,6 +16,7 @@ import {
   cropRecommendationRecordSchema,
   varietyRecommendationRecordSchema,
 } from "@/lib/agro/recommendation-schema";
+import { FieldProfileNotFoundError } from "@/lib/weather";
 import { weatherBriefSchema } from "@/lib/weather/schema";
 
 export const cropsInput = z.object({ fieldProfileId: z.string().min(1) });
@@ -33,6 +34,9 @@ export const RECOMMENDATION_ERRORS = {
 
 function toTRPCError(error: unknown): TRPCError {
   if (error instanceof TRPCError) return error;
+  if (error instanceof FieldProfileNotFoundError) {
+    return new TRPCError({ code: "NOT_FOUND", cause: error });
+  }
   if (error instanceof WeatherUnavailableError) {
     return new TRPCError({
       code: "SERVICE_UNAVAILABLE",

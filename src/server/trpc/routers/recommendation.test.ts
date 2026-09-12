@@ -15,6 +15,7 @@ import {
   cropRecommendationRecordSchema,
   varietyRecommendationRecordSchema,
 } from "@/lib/agro/recommendation-schema";
+import { FieldProfileNotFoundError } from "@/lib/weather";
 import { weatherBriefFixture } from "@/lib/weather/fixture";
 import { makeCtx } from "../../../../test/trpc";
 
@@ -136,6 +137,18 @@ describe("recommendation.crops", () => {
     await expect(
       caller.recommendation.crops({ fieldProfileId: "ghost" }),
     ).rejects.toMatchObject({ code: "NOT_FOUND" });
+  });
+
+  it("maps the weather module's FieldProfileNotFoundError to NOT_FOUND", async () => {
+    const db = fakeDb({ profile: profileRow });
+    fakeService({
+      crops: vi.fn().mockRejectedValue(new FieldProfileNotFoundError("fp1")),
+    });
+    const caller = createCaller(makeCtx(db, null));
+    await expect(
+      caller.recommendation.crops({ fieldProfileId: "fp1" }),
+    ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    expect(db.cropRecommendation.create).not.toHaveBeenCalled();
   });
 
   it("maps a missing Weather Brief to SERVICE_UNAVAILABLE and stores nothing", async () => {
