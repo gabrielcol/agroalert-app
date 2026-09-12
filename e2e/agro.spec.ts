@@ -37,6 +37,14 @@ async function mockWizard(page: Page) {
       meta: null,
     },
     "fieldProfile.create": { ok: true, data: PROFILE },
+    "weather.climate": {
+      ok: true,
+      data: { cellId: "44.6,27.1", refreshed: true },
+    },
+    "weather.forecast": {
+      ok: true,
+      data: { cellId: "44.6,27.1", refreshed: true },
+    },
     "recommendation.crops": { ok: true, data: CROP_RECOMMENDATION },
     "recommendation.varieties": { ok: true, data: VARIETY_RECOMMENDATION },
     // No Sowing Plan yet; confirming "Ai semănat azi?" creates one.
