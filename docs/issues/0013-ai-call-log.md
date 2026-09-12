@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: feat/ai-call-log
 created: 2026-09-13
 ---

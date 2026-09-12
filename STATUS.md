@@ -14,11 +14,10 @@ _Updated: 2026-09-13_
   still Todo. Merge with `git merge --no-ff feat/start-screen-logos`.
 - Issue 0013 (log every AI call: raw response, model, input/output/cache tokens as
   separate columns, failures included, rows linked to the recommendation they produced)
-  is **In Review** on `feat/ai-call-log` (83acd94, pushed; not merged). New Prisma model
+  is **Done**: merged into local `main` (c6e0ea5, **not pushed**). New Prisma model
   `AiCall` (`ai_call`), migration `20260912215822_ai_call_log`, `src/lib/ai/call-log.ts`.
   Gate green: typecheck, lint, prettier, Vitest (46 files / 298 tests). Playwright spec
-  written, not run. Merge with `git merge --no-ff feat/ai-call-log`, then run
-  `bun run db:migrate` on any other local DB. The migration was applied to `dev.db` via
+  written, not run. Run `bun run db:migrate` on any other local DB. The migration was applied to `dev.db` via
   `sqlite3` because a DB IDE held the file locked; `prisma migrate status` is clean.
 - Issue 0012 (dashboard hydration mismatch: `prefetch` was not awaited, so the server
   rendered the "Loading…" branch while the client hydrated with data) is **Done**: merged
