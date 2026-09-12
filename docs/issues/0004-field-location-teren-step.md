@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: feat/field-location-teren
 created: 2026-09-12
 ---
@@ -49,21 +49,21 @@ only.
 
 ## Acceptance criteria
 
-- [ ] Typing a village name and submitting resolves a Field Location via
+- [x] Typing a village name and submitting resolves a Field Location via
       `geocode.search` (Open-Meteo, `countryCode=RO`), taking the first result.
-- [ ] Tapping the locate button requests browser geolocation, reverse-resolves a display
+- [x] Tapping the locate button requests browser geolocation, reverse-resolves a display
       name, and fills the same Field Location state as a typed search.
-- [ ] The Soil Class control offers exactly the 5 options above, defaulting to `unknown`
+- [x] The Soil Class control offers exactly the 5 options above, defaulting to `unknown`
       when untouched.
-- [ ] The land-size input maps to `small` / `medium` / `large` at the under-5 / 5-10 /
+- [x] The land-size input maps to `small` / `medium` / `large` at the under-5 / 5-10 /
       over-10 ha boundaries.
-- [ ] Submitting the teren step creates a `FieldProfile` row via `fieldProfile.create`
+- [x] Submitting the teren step creates a `FieldProfile` row via `fieldProfile.create`
       and navigates to `/plan/cultura?profile=<id>` with the real created id.
-- [ ] The loading screen plays six stages in order, "Găsim terenul" first, matching the
+- [x] The loading screen plays six stages in order, "Găsim terenul" first, matching the
       five stages already committed in issue 0001; the new stage's duration reflects real
       resolution progress rather than a fixed `STEP_MS`.
-- [ ] No Alert Channel, no removed-in-0001 code path, is reintroduced.
-- [ ] RO/EN parity on every new i18n key this issue adds.
+- [x] No Alert Channel, no removed-in-0001 code path, is reintroduced.
+- [x] RO/EN parity on every new i18n key this issue adds.
 
 ## Tests required
 
