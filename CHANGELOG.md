@@ -3,6 +3,32 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 22:00 (EEST)** — `feat/wizard-content-refinements` — Wizard content
+  refinements ([`docs/issues/0001-wizard-content-refinements.md`](docs/issues/0001-wizard-content-refinements.md)).
+  Three changes to the wizard prototype. (1) **Alert subscription replaces the alert
+  channel:** the summary screen's "Cum vrei să primești alertele?" radio card and the
+  full-screen confirmation are gone; in their place a single "Primește alerte pentru acest
+  plan" card whose CTA raises a sonner toast, then locks into a disabled "Abonat" state
+  with a check icon and a link back to the dashboard. How alerts are delivered is not a
+  property of a Sowing Plan, so `CHANNELS` / `ChannelId` / `DEFAULT_CHANNEL`,
+  `SAMPLE_PLANS[].channel`, `agro.rezumat.channel`, `agro.rezumat.activate`, `agro.done`
+  and `src/components/agro/channel-options.tsx` were all removed (the shadcn
+  `ui/radio-group` primitive stays). (2) **Reasons on every choice card:** new
+  `ReasonList` component renders three always-visible icon bullets — soil fit, sowing
+  window, weather fit — plus a muted caution line on the risky options only (orz, rapiță,
+  Pitar, Ursita), on both the crop and variety screens. It emits `span`/`svg` only,
+  because it lives inside `ChoiceCard`'s `<button>`. Crop and variety descriptions were
+  rewritten so they no longer restate the bullets. (3) **Loading screen:** the four steps
+  about a 7-day forecast became five steps naming what the recommendation actually rests
+  on (past years' weather, the forecast ahead, crops, sowing windows, the list itself),
+  ~4 s total; `STEP_MS` unchanged. `CONTEXT.md` swaps the Alert Channel row for an Alert
+  Subscription row. Tests: new `src/lib/agro/mock-data.test.ts` (step ids and order,
+  RO/EN copy parity including which ids carry a caution, channel-free `SAMPLE_PLANS`) and
+  `src/components/agro/reason-list.test.tsx` (order, optional caution, `aria-hidden`
+  icons, phrasing-content-only markup); Vitest is green (72 tests). The Playwright spec
+  `e2e/agro.spec.ts` was updated for all three changes but **not run** — per the amended
+  AGENTS.md rule 3 the e2e suite runs before each deploy, not per PR.
+
 - **2026-09-12 21:56 (EEST)** — `main` — Markdown issue tracker + e2e gate moved to
   pre-deploy. Added `docs/issues/` as the project's issue tracker (one markdown file per
   issue, `NNNN-kebab-slug.md`, frontmatter `status` / `branch` / `created`) with
