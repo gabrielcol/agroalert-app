@@ -134,3 +134,85 @@ model SystemConfig {
 
   @@map("system_config")
 }
+
+// ---------------------------------------------------------------------------
+// AgroAlert domain — Field Profile, weather cache, recommendations
+// (issue 0003; terms in CONTEXT.md, decisions in docs/adr/0003)
+// ---------------------------------------------------------------------------
+
+/// What the farmer told us about their land (CONTEXT.md "Field Profile").
+/// Anonymous: no user relation, cuid ids travel in the wizard URL, kept
+/// indefinitely for the hackathon.
+model FieldProfile {
+  id          String   @id @default(cuid())
+  villageName String
+  lat         Float
+  lng         Float
+  /// "small" | "medium" | "large" (under 5 / 5-10 / over 10 ha)
+  landBucket  String
+  irrigation  Boolean
+  /// "cernoziom" | "lutos" | "argilos" | "nisipos" | "unknown"
+  soilClass   String
+  createdAt   DateTime @default(now())
+
+  cropRecommendations CropRecommendation[]
+
+  @@map("field_profile")
+}
+
+/// Open-Meteo cache keyed by the Field Location rounded to a 0.1° cell
+/// (about one ERA5-Land grid cell). Holds only aggregated JSON — the Climate
+/// Profile (refreshed monthly), Forecast and Seasonal Outlook (6-hour TTL) —
+/// never raw daily series.
+model WeatherCell {
+  id                String    @id @default(cuid())
+  latCell           Float
+  lngCell           Float
+  climateProfile    Json?
+  climateFetchedAt  DateTime?
+  forecast          Json?
+  forecastFetchedAt DateTime?
+  outlook           Json?
+  outlookFetchedAt  DateTime?
+  /// e.g. "ERA5-Land", "EC46"
+  sourceDataset     String?
+  /// e.g. "2016-01-01..2025-12-31"
+  sourceSpan        String?
+
+  @@unique([latCell, lngCell])
+  @@map("weather_cell")
+}
+
+/// The AI's ranked Crop Recommendation for one Field Profile, stored with the
+/// exact Weather Brief it was given so the answer can be replayed.
+model CropRecommendation {
+  id             String       @id @default(cuid())
+  fieldProfileId String
+  fieldProfile   FieldProfile @relation(fields: [fieldProfileId], references: [id], onDelete: Cascade)
+  /// Weather Brief snapshot (Zod `weatherBriefSchema`)
+  weatherBrief   Json
+  /// Crop Recommendation output (Zod `cropRecommendationSchema`, validated on write)
+  result         Json
+  modelId        String
+  createdAt      DateTime     @default(now())
+
+  varietyRecommendations VarietyRecommendation[]
+
+  @@index([fieldProfileId])
+  @@map("crop_recommendation")
+}
+
+/// Variety Recommendation for the Crop the farmer chose from a Crop Recommendation.
+model VarietyRecommendation {
+  id                   String             @id @default(cuid())
+  cropRecommendationId String
+  cropRecommendation   CropRecommendation @relation(fields: [cropRecommendationId], references: [id], onDelete: Cascade)
+  cropId               String
+  /// Variety Recommendation output (Zod `varietyRecommendationSchema`, validated on write)
+  result               Json
+  modelId              String
+  createdAt            DateTime           @default(now())
+
+  @@index([cropRecommendationId])
+  @@map("variety_recommendation")
+}
