@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: fix/docker-sqlite-path-and-openssl
 created: 2026-09-13
 ---
@@ -29,15 +29,15 @@ Two causes:
 
 ## Acceptance criteria
 
-- [ ] The runner stage installs `openssl` and `ca-certificates`.
-- [ ] `/app` is owned by `node` in the runner so a relative `file:` path is writable.
-- [ ] `docker-entrypoint.sh` resolves the SQLite path out of `DATABASE_URL` (`file:` URLs
+- [x] The runner stage installs `openssl` and `ca-certificates`.
+- [x] `/app` is owned by `node` in the runner so a relative `file:` path is writable.
+- [x] `docker-entrypoint.sh` resolves the SQLite path out of `DATABASE_URL` (`file:` URLs
       only; relative paths resolve against `/app`), creates its parent directory, and fails
       with a clear message naming the path and the `file:/data/app.db` fix when the
       directory is not writable, before `prisma migrate deploy` runs.
-- [ ] The README and the Dockerfile header no longer suggest `--env-file .env` without a
+- [x] The README and the Dockerfile header no longer suggest `--env-file .env` without a
       warning that it overrides `DATABASE_URL`; the documented run command keeps the data
       on the `/data` volume.
-- [ ] `sh -n docker-entrypoint.sh` passes; prettier is clean. No Vitest/Playwright surface
+- [x] `sh -n docker-entrypoint.sh` passes; prettier is clean. No Vitest/Playwright surface
       (config/shell only; Docker is not installed on the dev machine, so the image was not
       rebuilt here).
