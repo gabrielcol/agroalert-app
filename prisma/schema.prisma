@@ -156,6 +156,7 @@ model FieldProfile {
   createdAt   DateTime @default(now())
 
   cropRecommendations CropRecommendation[]
+  sowingPlans         SowingPlan[]
 
   @@map("field_profile")
 }
@@ -215,4 +216,21 @@ model VarietyRecommendation {
 
   @@index([cropRecommendationId])
   @@map("variety_recommendation")
+}
+
+/// A Sowing Plan (CONTEXT.md): one Crop + one Variety for a Field Profile,
+/// created only when the farmer confirms the Sowing Date (issue 0008).
+model SowingPlan {
+  id             String       @id @default(cuid())
+  fieldProfileId String
+  fieldProfile   FieldProfile @relation(fields: [fieldProfileId], references: [id], onDelete: Cascade)
+  /// Crop Dictionary id (Zod `cropIdSchema`, validated on write)
+  cropId         String
+  varietyName    String?
+  /// The Sowing Date, set by the server at confirmation time
+  sownAt         DateTime
+  createdAt      DateTime     @default(now())
+
+  @@index([fieldProfileId])
+  @@map("sowing_plan")
 }

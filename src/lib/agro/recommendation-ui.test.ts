@@ -4,6 +4,7 @@ import {
   cropDisplayName,
   cropIdFromParam,
   fill,
+  formatLongDate,
   formatShortDate,
   wizardPath,
 } from "./recommendation-ui";
@@ -46,6 +47,12 @@ describe("display helpers", () => {
     expect(formatShortDate("2026-10-01", "en")).toMatch(/Oct\b.*1|1\b.*Oct/);
     expect(formatShortDate("2026-10-01", "ro")).toMatch(/^1 oct/);
     expect(formatShortDate("not-a-date", "ro")).toBe("not-a-date");
+  });
+
+  it("formats a Date as a full long date in the viewer's locale", () => {
+    const date = new Date(2026, 8, 12, 15, 30);
+    expect(formatLongDate(date, "ro")).toBe("12 septembrie 2026");
+    expect(formatLongDate(date, "en")).toBe("September 12, 2026");
   });
 
   it("fills placeholders", () => {

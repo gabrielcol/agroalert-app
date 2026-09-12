@@ -50,8 +50,10 @@ export const ro: Dictionary = {
       emptyTitle: "Nicio cultură adăugată încă",
       emptyBody: "Adaugă prima ta cultură ca să primești recomandări și alerte",
       active: "Activ",
-      alertsActive: "Alerte active",
-      sample: { crop: "Porumb", variety: "P0216" },
+      sownOn: "Semănat {date}",
+      nextStage: "Urmează: {stage} în {n} zile",
+      nextToday: "Urmează: {stage} azi",
+      finished: "Recoltat",
     },
     wizard: {
       stepOf: "Pasul {n} din {total}",
@@ -155,36 +157,37 @@ export const ro: Dictionary = {
       },
       calendar: {
         title: "Calendarul culturii",
+        dayZero: "Ziua 0",
+        dayOffset: "+{n} zile",
+        hint: "Apasă „Marchează semănat” mai jos și datele se completează",
+        sownOn: "Semănat pe {date}",
         rows: {
           sowing: {
-            when: "Sept–Oct",
             title: "Semănat",
             sub: "În fereastra de mai sus",
           },
           emergence: {
-            when: "Noiembrie",
             title: "Răsărire și fertilizare de bază",
             sub: "Verifici răsărirea uniformă",
           },
           spring: {
-            when: "Martie",
             title: "Fertilizare de primăvară",
             sub: "La reluarea vegetației",
           },
           treatments: {
-            when: "Mai–Iun",
             title: "Tratamente și monitorizare boli",
             sub: "Pe baza umidității din sol",
           },
           harvest: {
-            when: "Iulie",
             title: "Recoltare",
             sub: "Estimativ, în funcție de an",
           },
         },
       },
       alerts: {
-        title: "Alerte pentru zona ta",
+        title: "Alertele sunt active",
+        intro:
+          "Pentru acest plan te anunțăm despre secetă, ploi potrivite și coduri ANM.",
         drought: {
           title: "Te anunțăm dacă vine o secetă în fereastra de semănat",
           sub: "Pe baza prognozei pe 7 zile",
@@ -198,16 +201,13 @@ export const ro: Dictionary = {
           sub: "Verificat azi",
         },
       },
-      subscribe: {
-        title: "Primește alerte pentru acest plan",
-        body: "Te anunțăm despre secetă, ploi potrivite și avertizări ANM în perioada de semănat.",
-        cta: "Abonează-mă la alerte",
-        done: "Abonat",
+      sown: {
+        cta: "Marchează semănat",
+        question: "Ai semănat azi?",
+        toastTitle: "Semănat pe {date}",
+        toastBody: "Alertele sunt active pentru această cultură.",
+        error: "Nu am putut salva. Încearcă din nou.",
         back: "Înapoi la culturile tale",
-        toast: {
-          title: "Te-ai abonat la alerte",
-          body: "Te anunțăm când apar schimbări pentru zona ta.",
-        },
       },
     },
   },

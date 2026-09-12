@@ -1,8 +1,8 @@
 /**
  * Static content for the design shell. Labels live in the i18n dictionaries
  * (`t.agro.*`, keyed by these ids); this module only fixes the ids, their
- * order and which option the design shows pre-selected. No persistence, no
- * API — the wizard is a browsable prototype until the domain lands.
+ * order and which option the design shows pre-selected. Sowing Plans and the
+ * recommendations are persisted through the API; the rest is static copy.
  */
 
 export const LAND_SIZES = ["small", "medium", "large"] as const;
@@ -35,6 +35,18 @@ export const CALENDAR_ROWS = [
 ] as const;
 export type CalendarRowId = (typeof CALENDAR_ROWS)[number];
 
+/**
+ * Days after the previous Stage (CONTEXT.md "Stage"); the first is day 0.
+ * Static for the prototype: the same offsets for every crop.
+ */
+export const CALENDAR_STAGE_DAYS: Record<CalendarRowId, number> = {
+  sowing: 0,
+  emergence: 10,
+  spring: 150,
+  treatments: 60,
+  harvest: 50,
+};
+
 export const ALERTS = ["drought", "rain", "anm"] as const;
 export type AlertId = (typeof ALERTS)[number];
 /** The ANM row is an "all clear"; the other two are pending warnings. */
@@ -43,12 +55,3 @@ export const ALERT_TONE: Record<AlertId, "warning" | "ok"> = {
   rain: "warning",
   anm: "ok",
 };
-
-/**
- * Sowing plans shown on the dashboard. Empty → the empty state renders.
- * A plan carries no alert channel: the farmer subscribes to a plan's alerts,
- * and how those alerts are delivered is not modelled in the prototype.
- */
-export const SAMPLE_PLANS: ReadonlyArray<{ id: string }> = [
-  { id: "porumb-p0216" },
-];

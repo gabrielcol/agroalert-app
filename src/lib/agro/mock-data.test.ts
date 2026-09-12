@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LOADING_STEPS, SAMPLE_PLANS } from "./mock-data";
+import { CALENDAR_ROWS, CALENDAR_STAGE_DAYS, LOADING_STEPS } from "./mock-data";
 import { en } from "@/lib/i18n/dictionaries/en";
 import { ro } from "@/lib/i18n/dictionaries/ro";
 
@@ -60,8 +60,22 @@ describe("recommendation copy", () => {
   });
 });
 
-describe("SAMPLE_PLANS", () => {
-  it("carries no alert channel: a plan is just an id in the prototype", () => {
-    expect(Object.keys(SAMPLE_PLANS[0])).toEqual(["id"]);
+describe("CALENDAR_ROWS", () => {
+  it("has a day offset for every stage, starting at day 0", () => {
+    expect(CALENDAR_STAGE_DAYS.sowing).toBe(0);
+    for (const id of CALENDAR_ROWS) {
+      expect(CALENDAR_STAGE_DAYS[id]).toBeGreaterThanOrEqual(0);
+    }
   });
+
+  it.each(LOCALES)(
+    "has a title and a sub line for every stage in %s",
+    (locale) => {
+      const rows = DICTIONARIES[locale].agro.rezumat.calendar.rows;
+      for (const id of CALENDAR_ROWS) {
+        expect(rows[id].title.length).toBeGreaterThan(0);
+        expect(rows[id].sub.length).toBeGreaterThan(0);
+      }
+    },
+  );
 });
