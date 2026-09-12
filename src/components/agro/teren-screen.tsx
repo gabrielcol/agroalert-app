@@ -28,6 +28,7 @@ import {
   type Irrigation,
   type LandSize,
 } from "@/lib/agro/mock-data";
+import { stepsThrough } from "@/lib/agro/loading-stages";
 import { previousStepPath } from "@/lib/agro/plan-steps";
 import { useT } from "@/lib/i18n/provider";
 import { useTRPC } from "@/trpc/client";
@@ -49,9 +50,10 @@ export function culturaPath(profileId: string) {
 /**
  * Step 1: village, land size, irrigation, Soil Class. "Continuă" resolves
  * the Field Location (typed name → Open-Meteo geocoding, first match; or the
- * phone's position), creates the Field Profile, then asks for the Crop
- * Recommendation while the staged loader plays, and lands on the cultura
- * step with the profile id in the URL.
+ * phone's position), creates the Field Profile, warms the Weather Brief one
+ * slice at a time and asks for the Crop Recommendation — one call per step
+ * of the loader — then lands on the cultura step with the profile id in the
+ * URL.
  */
 export function TerenScreen() {
   const t = useT();
@@ -68,8 +70,10 @@ export function TerenScreen() {
   const [soil, setSoil] = useState<SoilClass>(DEFAULT_SOIL);
 
   const [loading, setLoading] = useState(false);
-  const [locationDone, setLocationDone] = useState(false);
-  const [settled, setSettled] = useState(false);
+  // How many of the loader's four calls have come back. A retry replays the
+  // sequence from the start, so this can drop back; the loader's own step
+  // never rewinds, it just goes from "done" to "active" again.
+  const [completed, setCompleted] = useState(0);
   const [failed, setFailed] = useState(false);
   // The created Field Profile survives a retry so we never create it twice.
   const profileIdRef = useRef<string | null>(null);
@@ -81,7 +85,6 @@ export function TerenScreen() {
   const run = useCallback(async () => {
     setLoading(true);
     setFailed(false);
-    setSettled(false);
     try {
       let point = location;
       if (!point) {
@@ -97,7 +100,7 @@ export function TerenScreen() {
         point = { lat: first.lat, lng: first.lng };
         setLocation(point);
       }
-      setLocationDone(true);
+      setCompleted(stepsThrough("location"));
 
       let profileId = profileIdRef.current;
       if (!profileId) {
@@ -112,10 +115,23 @@ export function TerenScreen() {
         profileIdRef.current = profileId;
       }
 
+      // One call per displayed step: the ten-year archive, then the
+      // forecast / current season / outlook, then the model — which now
+      // finds the Weather Brief warm in the per-cell cache.
+      await queryClient.fetchQuery(
+        trpc.weather.climate.queryOptions({ fieldProfileId: profileId }),
+      );
+      setCompleted(stepsThrough("history"));
+
+      await queryClient.fetchQuery(
+        trpc.weather.forecast.queryOptions({ fieldProfileId: profileId }),
+      );
+      setCompleted(stepsThrough("forecast"));
+
       await queryClient.fetchQuery(
         trpc.recommendation.crops.queryOptions({ fieldProfileId: profileId }),
       );
-      setSettled(true);
+      setCompleted(stepsThrough("recommendation"));
     } catch {
       setFailed(true);
     }
@@ -158,8 +174,7 @@ export function TerenScreen() {
       <>
         <PhoneHeader />
         <LoadingScreen
-          locationDone={locationDone}
-          settled={settled}
+          completed={completed}
           error={failed}
           onRetry={() => void run()}
           onDone={goNext}

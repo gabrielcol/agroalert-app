@@ -1,30 +1,54 @@
+import { LOADING_STEPS, type LoadingStep } from "./mock-data";
+
 /**
- * Progress model for the staged loading screen. `started` counts stages that
- * have begun (1-based): stage i (0-based) is active when started === i + 1
- * and done once started > i + 1. `total + 1` means every stage is done.
+ * Progress model for the loading screen. Nothing here is on a timer: the
+ * screen advances only when a call has actually resolved (issue 0011).
  *
- * Stage 1 ("Găsim terenul") is real: it stays active until the Field
- * Location resolves. The remaining stages tick forward on a timer while the
- * recommendation call is pending, but never past the last stage; when the
- * call settles every stage completes at once.
+ * - `completed` — how many of the four calls have come back (0…total). The
+ *   screen owner raises it as `geocode.search`, `weather.climate`,
+ *   `weather.forecast` and `recommendation.crops` resolve, in that order.
+ * - `shown` — the index of the step currently on screen. It follows
+ *   `completed` one step at a time, after a short dwell, so a warm cache
+ *   does not flash three steps past in one frame. It never runs ahead of
+ *   `completed`, so a step is never shown as finished before it is.
  */
-export function nextStarted(
-  started: number,
-  {
-    locationDone,
-    settled,
-    total,
-  }: { locationDone: boolean; settled: boolean; total: number },
-): number {
-  if (settled) return total + 1;
-  if (!locationDone) return Math.max(started, 1);
-  return Math.min(Math.max(started + 1, 2), total);
+
+/** How many steps have been completed once `step`'s call has resolved. */
+export function stepsThrough(step: LoadingStep): number {
+  return LOADING_STEPS.indexOf(step) + 1;
 }
 
-export type StageState = "pending" | "active" | "done";
+/**
+ * The next displayed step: one forward when its call has already resolved,
+ * otherwise stay put. Stops on the last step.
+ */
+export function nextShown(
+  shown: number,
+  completed: number,
+  total: number,
+): number {
+  const last = Math.max(total - 1, 0);
+  if (shown >= last) return last;
+  return completed > shown ? shown + 1 : shown;
+}
 
-export function stageState(started: number, index: number): StageState {
-  if (started > index + 1) return "done";
-  if (started === index + 1) return "active";
-  return "pending";
+export type StepState = "active" | "done";
+
+/** The step on screen: which one, and whether its call has come back. */
+export function stepProgress(
+  shown: number,
+  completed: number,
+  total: number,
+): { index: number; state: StepState } {
+  const index = Math.min(Math.max(shown, 0), Math.max(total - 1, 0));
+  return { index, state: completed > index ? "done" : "active" };
+}
+
+/** Every call has resolved and the last step has been shown as finished. */
+export function allDone(
+  shown: number,
+  completed: number,
+  total: number,
+): boolean {
+  return total > 0 && completed >= total && shown >= total - 1;
 }

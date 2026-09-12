@@ -93,13 +93,13 @@ export const en = {
       subtitle: "A few seconds",
       error: "We couldn't prepare your recommendation.",
       retry: "Try again",
+      // One step per real call (issue 0011): geocoding, the ten-year
+      // archive, the forecast, then the model.
       steps: {
         location: "Finding your land",
         history: "Pulling weather data from past years",
         forecast: "Pulling the forecast for the period ahead",
-        crops: "Checking which crops suit you",
-        windows: "Comparing with the sowing windows",
-        list: "Building your list",
+        recommendation: "Choosing the crops that suit you",
       },
     },
     cultura: {

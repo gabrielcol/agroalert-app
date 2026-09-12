@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: feat/loading-screen-real-steps
 created: 2026-09-13
 ---
@@ -102,3 +102,7 @@ title, the animated dots and the retry button are unchanged.
 ## Note
 
 Numbered 0011, not 0010: `0010-agroplan-branding.md` already holds that number.
+
+In Review without a PR: `gh` is unauthenticated in this environment, so the branch
+`feat/loading-screen-real-steps` is ready locally and has not been pushed. Playwright was
+not run (pre-deploy only, AGENTS.md rule 3).

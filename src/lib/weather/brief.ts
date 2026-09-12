@@ -27,6 +27,7 @@ import {
   type ClimateProfile,
   type CurrentSeason,
   type Forecast,
+  type MonthlyNormal,
   type SeasonalOutlook,
   type WeatherBrief,
 } from "./schema";
@@ -43,6 +44,13 @@ import {
  *
  * Any Open-Meteo failure propagates as `WeatherUnavailableError`; nothing
  * partial is written or returned (ADR 0003).
+ *
+ * The work is split into one `ensure*` function per cache slice so the
+ * wizard's loading screen can drive a step from each phase
+ * (`refreshClimateProfile` / `refreshForecast`, behind `weather.climate` and
+ * `weather.forecast`). `getWeatherBrief` is composed from the same functions
+ * and keeps writing the cell exactly once, at the end — a failed piece still
+ * leaves the row untouched.
  */
 
 export const CLIMATE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -63,7 +71,32 @@ export type WeatherBriefDeps = {
   now?: () => Date;
 };
 
-type ShortRange = { forecast: Forecast; currentSeason: CurrentSeason };
+export type ShortRange = { forecast: Forecast; currentSeason: CurrentSeason };
+
+type Point = { lat: number; lng: number };
+type CellKey = { latCell: number; lngCell: number };
+
+/** Only the columns the phases read; keeps the fakes in tests small. */
+type CachedCell = {
+  climateProfile?: unknown;
+  climateFetchedAt?: Date | null;
+  forecast?: unknown;
+  forecastFetchedAt?: Date | null;
+  outlook?: unknown;
+  outlookFetchedAt?: Date | null;
+} | null;
+
+/** Everything a phase needs besides the cache: the clock and the client. */
+export type PhaseContext = {
+  /** Wall clock for TTLs and "built at" stamps. */
+  at: Date;
+  /** `at` as an ISO day in the product timezone. */
+  today: string;
+  client: OpenMeteoClient;
+};
+
+/** One resolved cache slice: its value, its stamp, and whether it was refetched. */
+export type Phase<T> = { value: T; fetchedAt: Date; refreshed: boolean };
 
 function fresh(fetchedAt: Date | null | undefined, ttlMs: number, now: Date) {
   return !!fetchedAt && now.getTime() - fetchedAt.getTime() < ttlMs;
@@ -77,134 +110,278 @@ function parseCached<T>(
   return parse(value);
 }
 
-export async function getWeatherBrief(
-  fieldProfileId: string,
-  deps: WeatherBriefDeps,
-): Promise<WeatherBrief> {
-  const now = deps.now ?? (() => new Date());
-  const client = deps.client ?? createOpenMeteoClient();
-  const at = now();
-  const today = todayIn(at);
+export function phaseContext(deps: WeatherBriefDeps): PhaseContext {
+  const at = (deps.now ?? (() => new Date()))();
+  return {
+    at,
+    today: todayIn(at),
+    client: deps.client ?? createOpenMeteoClient(),
+  };
+}
 
+/** The Field Profile's point and the cached row of the cell it falls in. */
+async function loadCell(fieldProfileId: string, deps: WeatherBriefDeps) {
   const profile = await deps.db.fieldProfile.findUnique({
     where: { id: fieldProfileId },
     select: { lat: true, lng: true },
   });
   if (!profile) throw new FieldProfileNotFoundError(fieldProfileId);
-  const point = { lat: profile.lat, lng: profile.lng };
+  const point: Point = { lat: profile.lat, lng: profile.lng };
   const cell = weatherCellFor(point);
-  const cached = await deps.db.weatherCell.findUnique({
+  const cached = (await deps.db.weatherCell.findUnique({
     where: { latCell_lngCell: cell },
-  });
+  })) as CachedCell;
+  return { point, cell, cached };
+}
 
-  // Climate Profile (long TTL). Must exist before the short-range pieces,
-  // which are anomalies against its normals.
-  let climateProfile = fresh(cached?.climateFetchedAt, CLIMATE_TTL_MS, at)
+/** Stable id of a 0.1° cell, e.g. `44.6,27.1`. */
+export function cellId(cell: CellKey): string {
+  return `${cell.latCell},${cell.lngCell}`;
+}
+
+/**
+ * Climate Profile slice (long TTL). Must be resolved before the short-range
+ * pieces, which are anomalies against its normals. A new calendar year moves
+ * the ten-year window, which invalidates a cached profile regardless of TTL.
+ */
+export async function ensureClimateProfile(
+  point: Point,
+  cached: CachedCell,
+  ctx: PhaseContext,
+): Promise<Phase<ClimateProfile>> {
+  let climateProfile = fresh(cached?.climateFetchedAt, CLIMATE_TTL_MS, ctx.at)
     ? parseCached(cached?.climateProfile, (v) => {
         const r = climateProfileSchema.safeParse(v);
         return r.success ? r.data : null;
       })
     : null;
-  const span = climateSpan(today);
+  const span = climateSpan(ctx.today);
   if (climateProfile && climateProfile.span.toYear !== span.toYear) {
     climateProfile = null; // a new calendar year moved the ten-year window
   }
-  let climateFetchedAt = cached?.climateFetchedAt ?? null;
-  if (!climateProfile) {
-    const res = await client.archive(
-      point,
-      `${span.fromYear}-01-01`,
-      `${span.toYear}-12-31`,
-    );
-    climateProfile = buildClimateProfile(archiveRows(res), span);
-    climateFetchedAt = at;
+  if (climateProfile) {
+    return {
+      value: climateProfile,
+      fetchedAt: cached?.climateFetchedAt as Date,
+      refreshed: false,
+    };
   }
+  const res = await ctx.client.archive(
+    point,
+    `${span.fromYear}-01-01`,
+    `${span.toYear}-12-31`,
+  );
+  return {
+    value: buildClimateProfile(archiveRows(res), span),
+    fetchedAt: ctx.at,
+    refreshed: true,
+  };
+}
 
-  // Forecast + Current Season (short TTL, keyed to today).
-  let shortRange = fresh(cached?.forecastFetchedAt, SHORT_TTL_MS, at)
+/**
+ * Forecast + Current Season slice (short TTL, stored together in the
+ * `forecast` column and keyed to today: a cached pair built yesterday is a
+ * miss even inside the TTL).
+ */
+export async function ensureShortRange(
+  point: Point,
+  cached: CachedCell,
+  ctx: PhaseContext,
+  normals: MonthlyNormal[],
+): Promise<Phase<ShortRange>> {
+  const shortRange = fresh(cached?.forecastFetchedAt, SHORT_TTL_MS, ctx.at)
     ? parseCached(cached?.forecast, (v): ShortRange | null => {
         const o = v as Partial<ShortRange>;
         const f = forecastSchema.safeParse(o?.forecast);
         const c = currentSeasonSchema.safeParse(o?.currentSeason);
-        return f.success && c.success && f.data.days[0]?.date === today
+        return f.success && c.success && f.data.days[0]?.date === ctx.today
           ? { forecast: f.data, currentSeason: c.data }
           : null;
       })
     : null;
-  let forecastFetchedAt = cached?.forecastFetchedAt ?? null;
-  if (!shortRange) {
-    const range = currentSeasonRange(today);
-    const [ytd, forecastRes] = await Promise.all([
-      client.archive(point, range.start, range.end),
-      client.forecast(point),
-    ]);
-    shortRange = {
-      forecast: buildForecast(forecastRes, today, at),
+  if (shortRange) {
+    return {
+      value: shortRange,
+      fetchedAt: cached?.forecastFetchedAt as Date,
+      refreshed: false,
+    };
+  }
+  const range = currentSeasonRange(ctx.today);
+  const [ytd, forecastRes] = await Promise.all([
+    ctx.client.archive(point, range.start, range.end),
+    ctx.client.forecast(point),
+  ]);
+  return {
+    value: {
+      forecast: buildForecast(forecastRes, ctx.today, ctx.at),
       currentSeason: buildCurrentSeason(
         archiveRows(ytd),
-        climateProfile.monthlyNormals,
-        yearOf(today),
+        normals,
+        yearOf(ctx.today),
       ),
-    };
-    forecastFetchedAt = at;
-  }
+    },
+    fetchedAt: ctx.at,
+    refreshed: true,
+  };
+}
 
-  // Seasonal Outlook (short TTL).
-  let outlook: SeasonalOutlook | null = fresh(
+/** Seasonal Outlook slice (short TTL, keyed to the week it starts on). */
+export async function ensureOutlook(
+  point: Point,
+  cached: CachedCell,
+  ctx: PhaseContext,
+  normals: MonthlyNormal[],
+): Promise<Phase<SeasonalOutlook>> {
+  const outlook: SeasonalOutlook | null = fresh(
     cached?.outlookFetchedAt,
     SHORT_TTL_MS,
-    at,
+    ctx.at,
   )
     ? parseCached(cached?.outlook, (v) => {
         const r = seasonalOutlookSchema.safeParse(v);
-        return r.success && r.data.weeks[0]?.from === weekFrom(today, 3)
+        return r.success && r.data.weeks[0]?.from === weekFrom(ctx.today, 3)
           ? r.data
           : null;
       })
     : null;
-  let outlookFetchedAt = cached?.outlookFetchedAt ?? null;
-  if (!outlook) {
-    const res = await client.seasonal(point);
-    outlook = buildSeasonalOutlook(
-      res,
-      climateProfile.monthlyNormals,
-      today,
-      at,
-    );
-    outlookFetchedAt = at;
+  if (outlook) {
+    return {
+      value: outlook,
+      fetchedAt: cached?.outlookFetchedAt as Date,
+      refreshed: false,
+    };
   }
+  const res = await ctx.client.seasonal(point);
+  return {
+    value: buildSeasonalOutlook(res, normals, ctx.today, ctx.at),
+    fetchedAt: ctx.at,
+    refreshed: true,
+  };
+}
+
+type CellSlices = {
+  climate?: Phase<ClimateProfile>;
+  short?: Phase<ShortRange>;
+  outlook?: Phase<SeasonalOutlook>;
+};
+
+/** The columns a write owns: only the slices it was given. */
+function cellData(slices: CellSlices, today: string) {
+  const span = climateSpan(today);
+  const datasets = [
+    slices.climate?.value.dataset,
+    slices.outlook?.value.dataset,
+  ]
+    .filter(Boolean)
+    .join("; ");
+  return {
+    ...(slices.climate && {
+      climateProfile: slices.climate.value as ClimateProfile,
+      climateFetchedAt: slices.climate.fetchedAt,
+    }),
+    ...(slices.short && {
+      forecast: slices.short.value,
+      forecastFetchedAt: slices.short.fetchedAt,
+    }),
+    ...(slices.outlook && {
+      outlook: slices.outlook.value,
+      outlookFetchedAt: slices.outlook.fetchedAt,
+    }),
+    ...(datasets && { sourceDataset: datasets }),
+    ...(slices.climate && {
+      sourceSpan: `${span.fromYear}-01-01..${span.toYear}-12-31`,
+    }),
+  };
+}
+
+async function writeCell(
+  deps: WeatherBriefDeps,
+  cell: CellKey,
+  slices: CellSlices,
+  today: string,
+) {
+  const data = cellData(slices, today);
+  await deps.db.weatherCell.upsert({
+    where: { latCell_lngCell: cell },
+    create: { ...cell, ...data },
+    update: data,
+  });
+}
+
+/** What the two cache-warming procedures answer with: small on purpose. */
+export type WeatherCacheStatus = { cellId: string; refreshed: boolean };
+
+/**
+ * Freshen the Climate Profile slice of the cell a Field Profile falls in
+ * (the ten-year archive pull) and report whether it was actually refetched.
+ * Behind `weather.climate`; the wizard shows it as the "history" step.
+ */
+export async function refreshClimateProfile(
+  fieldProfileId: string,
+  deps: WeatherBriefDeps,
+): Promise<WeatherCacheStatus> {
+  const ctx = phaseContext(deps);
+  const { point, cell, cached } = await loadCell(fieldProfileId, deps);
+  const climate = await ensureClimateProfile(point, cached, ctx);
+  if (climate.refreshed) {
+    await writeCell(deps, cell, { climate }, ctx.today);
+  }
+  return { cellId: cellId(cell), refreshed: climate.refreshed };
+}
+
+/**
+ * Freshen the short-range slices — Forecast, Current Season and Seasonal
+ * Outlook — of the cell a Field Profile falls in. The Climate Profile is
+ * resolved first because both are anomalies against its normals; after
+ * `refreshClimateProfile` that is a cache hit and nothing is refetched.
+ * Behind `weather.forecast`; the wizard shows it as the "forecast" step.
+ */
+export async function refreshForecast(
+  fieldProfileId: string,
+  deps: WeatherBriefDeps,
+): Promise<WeatherCacheStatus> {
+  const ctx = phaseContext(deps);
+  const { point, cell, cached } = await loadCell(fieldProfileId, deps);
+  const climate = await ensureClimateProfile(point, cached, ctx);
+  const normals = climate.value.monthlyNormals;
+  const short = await ensureShortRange(point, cached, ctx, normals);
+  const outlook = await ensureOutlook(point, cached, ctx, normals);
+  const refreshed = climate.refreshed || short.refreshed || outlook.refreshed;
+  if (refreshed) {
+    await writeCell(deps, cell, { climate, short, outlook }, ctx.today);
+  }
+  return {
+    cellId: cellId(cell),
+    refreshed: short.refreshed || outlook.refreshed,
+  };
+}
+
+export async function getWeatherBrief(
+  fieldProfileId: string,
+  deps: WeatherBriefDeps,
+): Promise<WeatherBrief> {
+  const ctx = phaseContext(deps);
+  const { point, cell, cached } = await loadCell(fieldProfileId, deps);
+
+  const climate = await ensureClimateProfile(point, cached, ctx);
+  const normals = climate.value.monthlyNormals;
+  const short = await ensureShortRange(point, cached, ctx, normals);
+  const outlook = await ensureOutlook(point, cached, ctx, normals);
 
   const brief: WeatherBrief = weatherBriefSchema.parse({
-    today,
+    today: ctx.today,
     timezone: TIMEZONE,
     units: UNITS,
     location: point,
-    climateProfile,
-    currentSeason: shortRange.currentSeason,
-    forecast: shortRange.forecast,
-    seasonalOutlook: outlook,
+    climateProfile: climate.value,
+    currentSeason: short.value.currentSeason,
+    forecast: short.value.forecast,
+    seasonalOutlook: outlook.value,
   });
 
-  const changed =
-    climateFetchedAt !== cached?.climateFetchedAt ||
-    forecastFetchedAt !== cached?.forecastFetchedAt ||
-    outlookFetchedAt !== cached?.outlookFetchedAt;
-  if (changed) {
-    const data = {
-      climateProfile: climateProfile as ClimateProfile,
-      climateFetchedAt,
-      forecast: shortRange,
-      forecastFetchedAt,
-      outlook,
-      outlookFetchedAt,
-      sourceDataset: `${climateProfile.dataset}; ${outlook.dataset}`,
-      sourceSpan: `${span.fromYear}-01-01..${span.toYear}-12-31`,
-    };
-    await deps.db.weatherCell.upsert({
-      where: { latCell_lngCell: cell },
-      create: { ...cell, ...data },
-      update: data,
-    });
+  // One write for the whole brief, only once every piece succeeded (ADR 0003).
+  if (climate.refreshed || short.refreshed || outlook.refreshed) {
+    await writeCell(deps, cell, { climate, short, outlook }, ctx.today);
   }
 
   return brief;

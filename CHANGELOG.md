@@ -3,6 +3,45 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 00:40 (EEST)** — `feat/loading-screen-real-steps` — Every loading step is
+  driven by a real call, and only one is on screen
+  ([`docs/issues/0011-loading-screen-real-steps.md`](docs/issues/0011-loading-screen-real-steps.md)).
+  The wizard's loading screen showed six steps of which four were fiction: one blocking
+  `recommendation.crops` call did the whole job (ten years of archive, the forecast, the
+  current season, the seasonal outlook, then Claude) while the list ticked forward on a
+  650 ms timer. There are now four steps and one call behind each: `location`
+  (`geocode.search`, completed at once when the phone already gave a point), `history`
+  (new `weather.climate`), `forecast` (new `weather.forecast`) and `recommendation`
+  (`recommendation.crops`, which now finds the Weather Brief warm in the per-cell cache).
+  `fieldProfile.create` still runs between the first two and is still not a step. A step
+  never advances before its call has resolved; a 350 ms minimum dwell keeps a warm cache
+  from flashing three steps past in one frame. Server: `src/lib/weather/brief.ts` is split
+  into `ensureClimateProfile` / `ensureShortRange` / `ensureOutlook` (one cache slice each)
+  plus `refreshClimateProfile` / `refreshForecast`, which the two new procedures call;
+  `getWeatherBrief` is composed from the same functions and is unchanged in behaviour and
+  output — it still writes the `weather_cell` row exactly once, at the end, and writes
+  nothing when a piece fails (ADR 0003). Both new procedures take `{ fieldProfileId }` and
+  answer `{ cellId, refreshed }`, mapping `FieldProfileNotFoundError` to `NOT_FOUND` and
+  the weather module's `WeatherUnavailableError` to `SERVICE_UNAVAILABLE` exactly as
+  `weather.brief` does; the `recommendation.crops` contract is untouched. UI: the `<ol>` of
+  six lines is a single centred step (icon + label) in a fixed-height box that crossfades
+  vertically with `motion/react` (`AnimatePresence mode="wait"`, outgoing slides up,
+  incoming rises from below, `useReducedMotion` drops the travel and keeps the fade);
+  `data-stage` / `data-state` and the polite live regions stay, and so do the spinner,
+  the dots, the error title and the retry button. A failure freezes on the step that was in
+  flight — snapping the display forward if the dwell had not caught up — and the retry
+  replays the sequence without recreating the Field Profile. `LOADING_STEPS` is now
+  `location, history, forecast, recommendation`; both dictionaries lose `crops`/`windows`/
+  `list` and gain `recommendation` ("Choosing the crops that suit you" / "Alegem culturile
+  potrivite pentru tine"). Tests: `loading-stages.test.ts` rewritten for the new pure model
+  (`stepsThrough`, `nextShown`, `stepProgress`, `allDone`); four new Vitest cases pinning
+  that each phase touches only its own slice and reports `refreshed` honestly; four router
+  cases for `weather.climate` / `weather.forecast`; the `TerenScreen` test now asserts the
+  four calls in order and the single frozen step. Playwright `e2e/teren.spec.ts` gained the
+  two mocks and asserts one `[data-stage]` progressing to `recommendation` — **not run**,
+  the suite runs pre-deploy only (AGENTS.md rule 3). Gate green: typecheck, lint, prettier,
+  289 Vitest tests. Filed as issue **0011**, not 0010: `0010-agroplan-branding.md` already
+  holds that number.
 - **2026-09-13 00:18 (EEST)** — `fix/forecast-trailing-null-days` — Forecast tolerates
   trailing null days past the Open-Meteo horizon
   ([`docs/issues/0009-forecast-trailing-null-days.md`](docs/issues/0009-forecast-trailing-null-days.md)).

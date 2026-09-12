@@ -8,14 +8,12 @@ const DICTIONARIES = { ro, en } as const;
 const LOCALES = ["ro", "en"] as const;
 
 describe("LOADING_STEPS", () => {
-  it("finds the field first, then names the five inputs the recommendation rests on", () => {
+  it("names the four calls the wizard makes, in the order it makes them", () => {
     expect(LOADING_STEPS).toEqual([
       "location",
       "history",
       "forecast",
-      "crops",
-      "windows",
-      "list",
+      "recommendation",
     ]);
   });
 

@@ -1,56 +1,58 @@
 import { describe, expect, it } from "vitest";
 
 import { LOADING_STEPS } from "./mock-data";
-import { nextStarted, stageState } from "./loading-stages";
+import {
+  allDone,
+  nextShown,
+  stepProgress,
+  stepsThrough,
+} from "./loading-stages";
 
 const TOTAL = LOADING_STEPS.length;
 
-describe("nextStarted", () => {
-  it("holds on the location stage until the Field Location resolves", () => {
-    expect(
-      nextStarted(0, { locationDone: false, settled: false, total: TOTAL }),
-    ).toBe(1);
-    expect(
-      nextStarted(1, { locationDone: false, settled: false, total: TOTAL }),
-    ).toBe(1);
-  });
-
-  it("moves past the location stage as soon as it resolves", () => {
-    expect(
-      nextStarted(1, { locationDone: true, settled: false, total: TOTAL }),
-    ).toBe(2);
-  });
-
-  it("advances one stage per tick while the recommendation is pending", () => {
-    expect(
-      nextStarted(2, { locationDone: true, settled: false, total: TOTAL }),
-    ).toBe(3);
-    expect(
-      nextStarted(5, { locationDone: true, settled: false, total: TOTAL }),
-    ).toBe(6);
-  });
-
-  it("never runs past the last stage while still pending", () => {
-    expect(
-      nextStarted(6, { locationDone: true, settled: false, total: TOTAL }),
-    ).toBe(6);
-  });
-
-  it("completes every stage once the recommendation settles", () => {
-    expect(
-      nextStarted(3, { locationDone: true, settled: true, total: TOTAL }),
-    ).toBe(TOTAL + 1);
-    expect(
-      nextStarted(6, { locationDone: true, settled: true, total: TOTAL }),
-    ).toBe(TOTAL + 1);
+describe("stepsThrough", () => {
+  it("counts the steps finished once a call has resolved", () => {
+    expect(stepsThrough("location")).toBe(1);
+    expect(stepsThrough("history")).toBe(2);
+    expect(stepsThrough("forecast")).toBe(3);
+    expect(stepsThrough("recommendation")).toBe(TOTAL);
   });
 });
 
-describe("stageState", () => {
-  it("marks stages before the started one as done and the started one active", () => {
-    expect(stageState(3, 0)).toBe("done");
-    expect(stageState(3, 1)).toBe("done");
-    expect(stageState(3, 2)).toBe("active");
-    expect(stageState(3, 3)).toBe("pending");
+describe("nextShown", () => {
+  it("holds on a step until its own call has resolved", () => {
+    expect(nextShown(0, 0, TOTAL)).toBe(0);
+    expect(nextShown(1, 1, TOTAL)).toBe(1);
+  });
+
+  it("moves one step forward per resolved call, never more", () => {
+    expect(nextShown(0, 1, TOTAL)).toBe(1);
+    expect(nextShown(0, TOTAL, TOTAL)).toBe(1);
+  });
+
+  it("stops on the last step even when everything has resolved", () => {
+    expect(nextShown(TOTAL - 1, TOTAL, TOTAL)).toBe(TOTAL - 1);
+  });
+});
+
+describe("stepProgress", () => {
+  it("shows the step as active while its call is in flight", () => {
+    expect(stepProgress(2, 2, TOTAL)).toEqual({ index: 2, state: "active" });
+  });
+
+  it("shows it as done once its call has come back", () => {
+    expect(stepProgress(2, 3, TOTAL)).toEqual({ index: 2, state: "done" });
+  });
+
+  it("never points past the last step", () => {
+    expect(stepProgress(9, TOTAL, TOTAL).index).toBe(TOTAL - 1);
+  });
+});
+
+describe("allDone", () => {
+  it("is true only after the last call resolved and its step was shown", () => {
+    expect(allDone(TOTAL - 1, TOTAL, TOTAL)).toBe(true);
+    expect(allDone(TOTAL - 2, TOTAL, TOTAL)).toBe(false);
+    expect(allDone(TOTAL - 1, TOTAL - 1, TOTAL)).toBe(false);
   });
 });

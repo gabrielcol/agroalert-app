@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
-  CalendarRange,
   Check,
   CloudSun,
   History,
-  ListChecks,
   LoaderCircle,
   MapPin,
   Sprout,
@@ -15,7 +14,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { nextStarted, stageState } from "@/lib/agro/loading-stages";
+import { allDone, stepProgress } from "@/lib/agro/loading-stages";
 import { LOADING_STEPS, type LoadingStep } from "@/lib/agro/mock-data";
 import { useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
@@ -24,65 +23,83 @@ const ICONS: Record<LoadingStep, LucideIcon> = {
   location: MapPin,
   history: History,
   forecast: CloudSun,
-  crops: Sprout,
-  windows: CalendarRange,
-  list: ListChecks,
+  recommendation: Sprout,
 };
 
-const START_DELAY_MS = 300;
-const STEP_MS = 650;
+/** Minimum time a step stays on screen, so a warm cache does not flash past. */
+const DWELL_MS = 350;
 const DONE_DELAY_MS = 400;
+const FADE_S = 0.22;
+const RISE_PX = 10;
 
 export type LoadingScreenProps = {
-  /** The Field Location has resolved: stage 1 is done. */
-  locationDone: boolean;
-  /** The recommendation call has settled successfully: every stage completes. */
-  settled: boolean;
-  /** Something failed; the stages freeze and a retry is offered. */
+  /**
+   * How many of the four calls have resolved (0…4), raised by the caller in
+   * order: geocoding, the climate pull, the forecast pull, the model.
+   */
+  completed: number;
+  /** Something failed; the step freezes and a retry is offered. */
   error?: boolean;
   onRetry?: () => void;
-  /** Called once, shortly after the last stage completes. */
+  /** Called once, shortly after the last step completes. */
   onDone: () => void;
 };
 
 /**
- * Staged "preparing your recommendation" screen. The first stage is real
- * (it waits for the Field Location); the others tick on a timer while the
- * recommendation is pending, stop on the last one, and all complete once
- * the call settles. See `loading-stages.ts` for the progression rules.
+ * "Preparing your recommendation": one step on screen at a time, each one
+ * waiting on its own call. The step advances only once that call has come
+ * back (after a short dwell) and crossfades vertically into the next one.
+ * See `loading-stages.ts` for the model.
  */
 export function LoadingScreen({
-  locationDone,
-  settled,
+  completed,
   error = false,
   onRetry,
   onDone,
 }: LoadingScreenProps) {
   const t = useT();
-  const [started, setStarted] = useState(0);
+  const reduceMotion = useReducedMotion();
+  const [shown, setShown] = useState(0);
   const [dots, setDots] = useState(1);
   const total = LOADING_STEPS.length;
-  const allDone = started > total;
+  const { index, state } = stepProgress(shown, completed, total);
+  const finished = allDone(shown, completed, total);
+  // True for as long as the step on screen is waiting on the next one; the
+  // dwell timer is keyed on this rather than on `completed` so a burst of
+  // cache hits does not keep restarting it.
+  const canAdvance = !error && completed > shown && shown < total - 1;
+  // The step that was in flight when it failed: what a failure freezes on,
+  // even if the dwell had not caught up with it yet.
+  const frozenAt = Math.min(completed, total - 1);
 
   useEffect(() => {
-    if (error || allDone) return;
-    const delay = started === 0 ? START_DELAY_MS : STEP_MS;
-    const timer = setTimeout(() => {
-      setStarted((s) => nextStarted(s, { locationDone, settled, total }));
-    }, delay);
+    if (!canAdvance) return;
+    const timer = setTimeout(() => setShown((s) => s + 1), DWELL_MS);
     return () => clearTimeout(timer);
-  }, [started, locationDone, settled, error, allDone, total]);
+  }, [canAdvance, shown]);
 
   useEffect(() => {
-    if (!allDone) return;
+    if (!error || shown >= frozenAt) return;
+    const timer = setTimeout(() => setShown(frozenAt), 0);
+    return () => clearTimeout(timer);
+  }, [error, shown, frozenAt]);
+
+  useEffect(() => {
+    if (!finished || error) return;
     const timer = setTimeout(onDone, DONE_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [allDone, onDone]);
+  }, [finished, error, onDone]);
 
   useEffect(() => {
     const dotTimer = setInterval(() => setDots((n) => (n % 3) + 1), 450);
     return () => clearInterval(dotTimer);
   }, []);
+
+  const id = LOADING_STEPS[index];
+  const Icon = ICONS[id];
+  const done = state === "done";
+  // Reduced motion keeps the crossfade but drops the vertical travel.
+  const rise = reduceMotion ? 0 : RISE_PX;
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-7 px-5 text-center">
@@ -97,7 +114,7 @@ export function LoadingScreen({
           aria-hidden="true"
         />
       )}
-      {/* Only the title is announced; the dots and step ticks are cosmetic. */}
+      {/* Only the title is announced here; the dots are cosmetic. */}
       <div role="status" aria-live="polite">
         <h1 className="text-[19px] leading-[1.25] font-semibold tracking-[-0.03em]">
           {error ? t.agro.loading.error : t.agro.loading.title}
@@ -114,44 +131,44 @@ export function LoadingScreen({
           </p>
         )}
       </div>
-      <ol
-        className="flex w-full max-w-[300px] flex-col gap-3.5 text-left"
-        aria-hidden="true"
+      {/* Fixed height: the step swaps inside it, the layout never jumps. */}
+      <div
+        className="flex h-[34px] w-full max-w-[300px] items-center justify-center"
+        role="status"
+        aria-live="polite"
       >
-        {LOADING_STEPS.map((id, i) => {
-          const Icon = ICONS[id];
-          const state = stageState(started, i);
-          const done = state === "done";
-          const active = state === "active";
-          return (
-            <li
-              key={id}
-              data-stage={id}
-              data-state={state}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={id}
+            data-stage={id}
+            data-state={state}
+            initial={{ opacity: 0, y: rise }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -rise }}
+            transition={{ duration: FADE_S, ease: "easeOut" }}
+            className={cn(
+              "flex items-center gap-3 text-[16.5px]",
+              done ? "text-muted-foreground" : "text-foreground",
+            )}
+          >
+            <span
               className={cn(
-                "text-faint flex items-center gap-3 text-[16.5px] transition-colors",
-                active && "text-foreground",
-                done && "text-muted-foreground",
+                "grid size-[26px] shrink-0 place-items-center rounded-full transition-colors",
+                done
+                  ? "bg-success-subtle text-success"
+                  : "bg-accent text-brand",
               )}
             >
-              <span
-                className={cn(
-                  "bg-secondary text-faint grid size-[26px] shrink-0 place-items-center rounded-full transition-colors",
-                  active && "bg-accent text-brand",
-                  done && "bg-success-subtle text-success",
-                )}
-              >
-                {done ? (
-                  <Check className="size-[13px]" />
-                ) : (
-                  <Icon className="size-[13px]" />
-                )}
-              </span>
-              <span>{t.agro.loading.steps[id]}</span>
-            </li>
-          );
-        })}
-      </ol>
+              {done ? (
+                <Check className="size-[13px]" />
+              ) : (
+                <Icon className="size-[13px]" />
+              )}
+            </span>
+            <span>{t.agro.loading.steps[id]}</span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
       {error && onRetry && (
         <Button
           type="button"

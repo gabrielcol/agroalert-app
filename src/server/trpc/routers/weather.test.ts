@@ -7,10 +7,12 @@ import { weatherBriefSchema } from "@/lib/weather/schema";
 import { makeCtx } from "../../../../test/trpc";
 
 const getWeatherBrief = vi.hoisted(() => vi.fn());
+const refreshClimateProfile = vi.hoisted(() => vi.fn());
+const refreshForecast = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/weather", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/weather")>();
-  return { ...actual, getWeatherBrief };
+  return { ...actual, getWeatherBrief, refreshClimateProfile, refreshForecast };
 });
 
 const { FieldProfileNotFoundError, WeatherUnavailableError } =
@@ -73,5 +75,57 @@ describe("weather router", () => {
     if (r.ok) return;
     expect(r.error.code).toBe("INTERNAL_SERVER_ERROR");
     expect(r.error.message).toBe("boom");
+  });
+});
+
+// The loading screen shows one step per cache slice (issue 0011).
+describe("weather cache-warming procedures", () => {
+  it("weather.climate warms the Climate Profile slice and answers small", async () => {
+    refreshClimateProfile.mockImplementationOnce(async () => ({
+      cellId: "44.6,27.1",
+      refreshed: true,
+    }));
+    const caller = createCaller(makeCtx({ tag: "db" }, null));
+    await expect(
+      caller.weather.climate({ fieldProfileId: "fp1" }),
+    ).resolves.toEqual({ cellId: "44.6,27.1", refreshed: true });
+    expect(refreshClimateProfile).toHaveBeenLastCalledWith("fp1", {
+      db: { tag: "db" },
+    });
+    expect(refreshForecast).not.toHaveBeenCalled();
+  });
+
+  it("weather.forecast warms the short-range slices", async () => {
+    refreshForecast.mockImplementationOnce(async () => ({
+      cellId: "44.6,27.1",
+      refreshed: false,
+    }));
+    const caller = createCaller(makeCtx({ tag: "db" }, null));
+    await expect(
+      caller.weather.forecast({ fieldProfileId: "fp1" }),
+    ).resolves.toEqual({ cellId: "44.6,27.1", refreshed: false });
+    expect(refreshForecast).toHaveBeenLastCalledWith("fp1", {
+      db: { tag: "db" },
+    });
+  });
+
+  it("maps an Open-Meteo failure the same way the brief does", async () => {
+    refreshForecast.mockImplementationOnce(async () => {
+      throw new WeatherUnavailableError("forecast", 503, "HTTP 503");
+    });
+    const caller = createCaller(makeCtx({ tag: "db" }, null));
+    await expect(
+      caller.weather.forecast({ fieldProfileId: "fp1" }),
+    ).rejects.toMatchObject({ code: "SERVICE_UNAVAILABLE" });
+  });
+
+  it("maps an unknown profile to NOT_FOUND", async () => {
+    refreshClimateProfile.mockImplementationOnce(async () => {
+      throw new FieldProfileNotFoundError("ghost");
+    });
+    const caller = createCaller(makeCtx({ tag: "db" }, null));
+    await expect(
+      caller.weather.climate({ fieldProfileId: "ghost" }),
+    ).rejects.toMatchObject({ code: "NOT_FOUND" });
   });
 });
