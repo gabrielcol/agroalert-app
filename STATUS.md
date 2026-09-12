@@ -4,59 +4,47 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- `main` is **pushed to origin** (1359d02) and holds everything through issue 0014.
+  Another session is on `fix/admin-topbar-hydration-mismatch` (issue 0015, not merged);
+  merges from this machine run in a temporary worktree so that checkout is not moved.
 - Issue 0014 (start screen with mock loading on `/`; PNG logos from `public/logos/` in
   `Brand`, the phone header, sidebar and auth screens; cropped `src/app/icon.png` replaces
-  `favicon.ico`; `app.name` = "AgroPlan") is **In Review** on `feat/start-screen-logos`
-  (8933d4a, pushed; not merged). Gate green: typecheck, lint, prettier, Vitest (47 files /
-  295 tests). Playwright `e2e/start-screen.spec.ts` written, not run. Known limitation:
-  the header/sidebar keep the green lockup in dark theme (mediocre contrast); only the auth
-  panel swaps to `logo-dark`. Issue 0010 (full AgroAlert → AgroPlan rename, theme tokens)
-  still Todo. Merge with `git merge --no-ff feat/start-screen-logos`.
+  `favicon.ico`; `app.name` = "AgroPlan") is **Done**: merged as 00b90e0. Gate green on the
+  branch: typecheck, lint, prettier, Vitest (47 files / 295 tests). Playwright
+  `e2e/start-screen.spec.ts` written, not run. Known limitation: the header/sidebar keep
+  the green lockup in dark theme (mediocre contrast); only the auth panel swaps to
+  `logo-dark`. Issue 0010 (full AgroAlert → AgroPlan rename, theme tokens) still Todo.
 - Issue 0013 (log every AI call: raw response, model, input/output/cache tokens as
   separate columns, failures included, rows linked to the recommendation they produced)
-  is **Done**: merged into local `main` (c6e0ea5, pushed). New Prisma model
-  `AiCall` (`ai_call`), migration `20260912215822_ai_call_log`, `src/lib/ai/call-log.ts`.
-  Gate green: typecheck, lint, prettier, Vitest (46 files / 298 tests). Playwright spec
-  written, not run. Run `bun run db:migrate` on any other local DB. The migration was applied to `dev.db` via
-  `sqlite3` because a DB IDE held the file locked; `prisma migrate status` is clean.
-- Issue 0012 (dashboard hydration mismatch: `prefetch` was not awaited, so the server
-  rendered the "Loading…" branch while the client hydrated with data) is **Done**: merged
-  into local `main` (c3c74fe, **not pushed**) from `fix/dashboard-hydration-mismatch`.
-  `prefetch()` now returns its promise and the dashboard, audit and users pages await it.
-  Gate green: typecheck, lint, prettier, Vitest (290 tests). `e2e/dashboard.spec.ts` now
-  fails on any "Hydration" page error but Playwright has not been run since.
+  is **Done**: merged as c6e0ea5. New Prisma model `AiCall` (`ai_call`), migration
+  `20260912215822_ai_call_log`, `src/lib/ai/call-log.ts`. Gate green on the branch:
+  typecheck, lint, prettier, Vitest (46 files / 298 tests). Playwright spec written, not
+  run. Run `bun run db:migrate` on any local DB other than `dev.db`; there the migration
+  was applied via `sqlite3` because a DB IDE held the file locked (`prisma migrate status`
+  is clean). The gate has not been re-run on the merged `main`.
+- Issue 0012 (dashboard hydration mismatch: `prefetch` was not awaited) is **Done**:
+  merged as c3c74fe. `prefetch()` now returns its promise and the dashboard, audit and
+  users pages await it. `e2e/dashboard.spec.ts` fails on any "Hydration" page error; an
+  uncommitted local edit to that spec also collects console errors (not committed).
+- Eight untracked `e2e/zz*.spec.ts` files of unknown origin sit in the checkout; they
+  will run with the pre-deploy Playwright suite unless removed.
 - Known e2e noise: `e2e/teren.spec.ts` stubs `recommendation.crops` with `{ id,
-fieldProfileId }` and no `result`, so the cultura step throws `Cannot read properties of
-undefined (reading 'top')` in the browser after the redirect. The spec still passes;
+  fieldProfileId }` and no `result`, so the cultura step throws `Cannot read properties of
+  undefined (reading 'top')` in the browser after the redirect. The spec still passes;
   fix by reusing `CROP_RECOMMENDATION` from `e2e/recommendation-mocks.ts`.
-- Issue 0011 (loading screen: every step driven by a real call, single fading step) is
-  **Done**: merged into local `main` (34df534, **not pushed**) from
-  `feat/loading-screen-real-steps`. Gate green: typecheck, lint, prettier, Vitest
-  (44 files / 289 tests). New `weather.climate` / `weather.forecast` tRPC queries refresh
-  one cache slice each. Playwright ran after the merge: 25 passed once the wizard spec's
-  missing `weather.*` mocks were added (`fix/e2e-wizard-weather-mocks`, merged as 6ffcd88).
-  `main` is pushed to origin.
-- Issue 0009 (forecast trailing-null days past the Open-Meteo horizon) is **Done**: merged
-  into local `main` (1759157, **not pushed**). Gate green: typecheck, lint, prettier, Vitest
-  (44 files / 279 tests). Playwright not extended. The tRPC route now logs the error cause
-  chain, and `weather_cell` finally has rows.
-- Issue 0008 (Crop Calendar timeline + Sowing Date) is **Done**: merged into local `main`
-  (a7424bf, **not pushed**) from `feat/crop-calendar-timeline`. Gate green on the branch:
-  typecheck, lint, prettier, Vitest (44 files / 274 tests). Playwright specs were written
-  but not run (pre-deploy only).
+- Issues 0008, 0009 and 0011 are **Done** and on `main`. Last Playwright run: 25 passed
+  after issue 0011 (`fix/e2e-wizard-weather-mocks`, 6ffcd88); not run since.
 - The AI leg has never run for real: no `ANTHROPIC_API_KEY` in any local `.env`. Add one,
-  walk `/plan/teren` → cultura → soi once, and record the result in
-  `docs/issues/0007-weather-brief-integration.md` (it says "pending a key").
-- `main` (5cb257a, local only, **not pushed**) holds issues 0003–0007 merged. Verified on
-  merged `main` after 0006: typecheck, lint, Vitest green. After 0007: the integration
-  worktree ran typecheck, lint, prettier, Vitest (38 files / 233 tests) and Playwright
-  (24 passed) on its branch; not re-run on the final merge commit.
-- Worktrees under `.claude/worktrees/` (four, one per supervisor) still exist; their
-  branches are pushed. Remove with `git worktree remove <path>` when convenient.
+  walk `/plan/teren` → cultura → soi once, record the result in
+  `docs/issues/0007-weather-brief-integration.md` (it says "pending a key"), and check
+  the `ai_call` rows it leaves.
+- Worktrees under `.claude/worktrees/` (five supervisor ones plus `agroplan-branding`)
+  still exist; their branches are pushed. Remove with `git worktree remove <path>` when
+  convenient.
 
 ## Next
 
-1. Push `main`; open PRs for `feat/field-location-teren`, `feat/weather-brief-client`,
+1. Open PRs for `feat/field-location-teren`, `feat/weather-brief-client`,
    `feat/crop-variety-recommendation`, `feat/weather-brief-integration` (issues 0004–0007
    are In Review) once `gh auth login` is done, then mark them Done.
 2. Foundation follow-up: `WeatherCell` has no Current Season column; it rides inside the
