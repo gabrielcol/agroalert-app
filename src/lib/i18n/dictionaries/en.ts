@@ -64,6 +64,10 @@ export const en = {
         label: "Village / commune",
         placeholder: "e.g. Reviga, Ialomița",
         detect: "Detect location automatically",
+        located: "Current location",
+        notFound: "We couldn't find that place. Check the name and try again.",
+        denied:
+          "We couldn't read your phone's location. Type the village or commune.",
       },
       land: {
         label: "How many hectares do you have?",
@@ -85,6 +89,8 @@ export const en = {
     loading: {
       title: "Preparing your recommendation",
       subtitle: "A few seconds",
+      error: "We couldn't prepare your recommendation.",
+      retry: "Try again",
       steps: {
         location: "Finding your land",
         history: "Pulling weather data from past years",
