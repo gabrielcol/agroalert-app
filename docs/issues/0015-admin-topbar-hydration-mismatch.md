@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: Done
 branch: fix/admin-topbar-hydration-mismatch
 created: 2026-09-13
 ---
@@ -37,12 +37,12 @@ first client render then produce identical text — no more mismatch.
 
 ## Acceptance criteria
 
-- [ ] The server-rendered HTML for an admin page (e.g. `/dashboard`) contains the
+- [x] The server-rendered HTML for an admin page (e.g. `/dashboard`) contains the
       signed-in user's real initials in the topbar avatar fallback, not `"?"`.
-- [ ] `AdminTopbar` accepts a server-provided `initialUser` and falls back to it only
+- [x] `AdminTopbar` accepts a server-provided `initialUser` and falls back to it only
       until `authClient.useSession()` has data, so it keeps updating live afterward
       (sign-out, a name change).
-- [ ] No other SSR-rendered `authClient.useSession()` call site in `src` has the same
+- [x] No other SSR-rendered `authClient.useSession()` call site in `src` has the same
       pattern (grepped and confirmed `AdminTopbar` is the only one).
-- [ ] `e2e/dashboard.spec.ts`'s hydration check is deterministic (checks the raw SSR
+- [x] `e2e/dashboard.spec.ts`'s hydration check is deterministic (checks the raw SSR
       HTML directly) rather than depending on the timing race described above.

@@ -14,9 +14,11 @@ _Updated: 2026-09-13_
   (`ENTRYPOINT_DRY_RUN=1` exercises it). Docker is not installed on this machine: the
   image has **not** been rebuilt; verify on the next deploy that the log shows
   `> Database: /data/app.db`.
-- `main` is **pushed to origin** and holds everything through issue 0016.
-  Another session is on `fix/admin-topbar-hydration-mismatch` (issue 0015, not merged);
-  merges from this machine run in a temporary worktree so that checkout is not moved.
+- `main` is **pushed to origin** and holds everything through issue 0016, including
+  issue 0015 (`fix/admin-topbar-hydration-mismatch`, admin topbar hydration mismatch,
+  merged 2026-09-13; its gate was run by another session, not re-run on the merge). The
+  main checkout is still on that branch; merges from this machine run in a temporary
+  worktree so that checkout is not moved.
 - Issue 0014 (start screen with mock loading on `/`; PNG logos from `public/logos/` in
   `Brand`, the phone header, sidebar and auth screens; cropped `src/app/icon.png` replaces
   `favicon.ico`; `app.name` = "AgroPlan") is **Done**: merged as 00b90e0. Gate green on the

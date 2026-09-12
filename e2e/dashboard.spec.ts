@@ -12,11 +12,34 @@ test.describe("dashboard", () => {
   // The demo vertical slice: a signed-in member adds a post from the dashboard
   // (auth → protected tRPC mutation → Prisma → UI) and it appears in the list.
   test("member adds a post from the dashboard", async ({ page }) => {
+    // React hydration mismatches ARE thrown as an "Uncaught Error" in this
+    // app (confirmed by reproducing issue 0013 against `AdminTopbar`), so
+    // `pageerror` is the right event — but whether the mismatch actually
+    // fires is a genuine timing race (does `authClient.useSession()`'s fetch
+    // resolve before or after hydration commits?) that depends on how much
+    // JS the route has to parse, and empirically does *not* reproduce
+    // reliably on the comparatively light `/dashboard` bundle even though
+    // the same `AdminTopbar` bug does on `/users` (see e2e/users.spec.ts).
+    // Kept as a opportunistic net, but the deterministic check below is what
+    // actually pins this bug regardless of timing.
     const pageErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
 
     const email = `e2e+post+${Date.now()}@example.com`;
     await createUserAndSignIn(page, email, "member", "Post Author");
+
+    // Deterministic check for issue 0013: fetch the raw server-rendered HTML
+    // (bypassing the client entirely) and assert the topbar's avatar
+    // fallback already contains the signed-in user's real initials. Before
+    // the fix, `AdminTopbar` only reads `authClient.useSession()` (client-only,
+    // no data during SSR), so the server always renders "?" regardless of who
+    // is signed in — this fails pre-fix and passes once the server session is
+    // threaded through as a prop.
+    const ssrHtml = await (await page.request.get("/dashboard")).text();
+    const fallbackMatch = ssrHtml.match(
+      /data-slot="avatar-fallback"[^>]*>([^<]*)</,
+    );
+    expect(fallbackMatch?.[1]?.trim()).toBe("PA");
 
     await expect(
       page.getByRole("heading", { name: "Welcome, Post Author" }),

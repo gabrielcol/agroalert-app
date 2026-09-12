@@ -3,6 +3,37 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 03:20 (EEST)** — `fix/admin-topbar-hydration-mismatch` — Fixed a hydration
+  mismatch on every `/(admin)` page
+  ([`docs/issues/0015-admin-topbar-hydration-mismatch.md`](docs/issues/0015-admin-topbar-hydration-mismatch.md)):
+  `AdminTopbar` read the signed-in user only from `authClient.useSession()` (client-only,
+  no data during SSR), so the server always rendered the `"?"` avatar fallback and `"…"`
+  dropdown label regardless of who was signed in, while the client rendered the real
+  values once its own session fetch resolved — `+ AC` / `- ?` in React's mismatch diff.
+  `src/app/(admin)/layout.tsx` already awaits `auth.api.getSession(...)`; it now passes
+  that as a plain `initialUser` prop to `AdminTopbar`, which derives
+  `user = session?.user ?? initialUser` — `authClient.useSession()` still drives live
+  updates (sign-out, a name change) after mount, but server and first client render now
+  agree. Grepped every `authClient.useSession` call site in `src`: `AdminTopbar` is the
+  only one that renders session-dependent text, so no other component needed the same
+  fix. `e2e/dashboard.spec.ts`'s existing `page.on("pageerror")` / "Hydration" assertion
+  passed even with the bug present — investigated why: whether the mismatch actually
+  throws is a genuine timing race (does the session fetch resolve before or after
+  hydration commits?) that depends on route weight, and reproduces reliably on the
+  heavier `/users` route (confirmed via `e2e/users.spec.ts`, which timed out losing the
+  "Add user" click to the tree regeneration — a live demonstration of the bug, 2/2 runs)
+  but not reliably on the lighter `/dashboard` bundle even with CPU throttling, network
+  delay, or a first-visit fresh browser context all failing to force it deterministically.
+  Replaced the timing-dependent assertion with a deterministic one: `dashboard.spec.ts`
+  now fetches the raw SSR HTML for `/dashboard` via `page.request.get` and asserts the
+  `data-slot="avatar-fallback"` text is the real initials, not `"?"` — fails before the
+  fix, passes after, regardless of race timing. Kept the `pageerror` listener as an
+  opportunistic net. Tests: exported `initials()` from `admin-topbar.tsx` and added
+  `src/components/admin/admin-topbar.test.ts` (3 Vitest cases). Playwright run (this WAS
+  the pre-deploy e2e run, not skipped): `e2e/dashboard.spec.ts` reproduced red before the
+  fix (`Expected: "PA"`, `Received: "?"`) and green after;
+  `e2e/users.spec.ts e2e/admin.spec.ts e2e/dashboard.spec.ts e2e/auth.spec.ts` — 8 passed;
+  full suite — 25 passed. Gate green: typecheck, lint, prettier, 293 Vitest tests.
 - **2026-09-13 01:45 (EEST)** — `fix/docker-sqlite-path-and-openssl` — The production
   image booted straight into a Prisma schema-engine error
   (`unable to open database file: ./dev.db`)
