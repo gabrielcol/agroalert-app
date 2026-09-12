@@ -1,0 +1,136 @@
+// Prisma schema — SQLite for now. To move to Postgres, see README ("Switching to Postgres").
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------------------------------------------------------------------------
+// better-auth models — keep in sync with `bunx @better-auth/cli generate`
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  // better-auth admin plugin — RBAC + moderation (see src/lib/permissions.ts).
+  // New sign-ups default to the non-privileged "pending" role until an admin
+  // assigns one; the app enforces default-deny for unknown roles.
+  role       String    @default("pending")
+  banned     Boolean   @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  // App relations
+  posts     Post[]
+  auditLogs AuditLog[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // better-auth admin plugin — set while an admin impersonates this user
+  impersonatedBy String?
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+// ---------------------------------------------------------------------------
+// Application models
+// ---------------------------------------------------------------------------
+
+/// Demo vertical slice: a per-user record that exercises auth → tRPC → Prisma
+/// → UI end to end. Replace with your own domain models.
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("post")
+}
+
+/// Append-only audit trail of every privileged action. Never updated or
+/// deleted through the app — writes only. `metadata` holds a JSON diff/payload.
+model AuditLog {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  actorId      String?
+  actorRole    String?
+  action       String
+  resourceType String
+  resourceId   String?
+  ipAddress    String?
+  userAgent    String?
+  metadata     String?
+  actor        User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([resourceType, resourceId])
+  @@index([actorId])
+  @@map("audit_log")
+}
+
+/// Singleton system configuration (id = "singleton"): the default UI locale
+/// and the site name shown in the app masthead. Extend with your own settings.
+model SystemConfig {
+  id            String   @id @default("singleton")
+  defaultLocale String   @default("en")
+  siteName      String   @default("")
+  updatedAt     DateTime @updatedAt
+
+  @@map("system_config")
+}

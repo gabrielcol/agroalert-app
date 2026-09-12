@@ -1,0 +1,47 @@
+# Keep the build context small and avoid clobbering image-built artifacts.
+
+# dependencies (reinstalled inside the image so native modules match the base)
+node_modules
+.pnp
+.pnp.*
+
+# next.js / build output
+.next
+out
+build
+
+# generated Prisma client (regenerated in-image via postinstall)
+src/generated
+
+# local databases (production data lives on a mounted volume)
+*.db
+*.db-journal
+*.db-wal
+prisma/*.db
+prisma/*.db-journal
+
+# env files — real secrets are passed at runtime, never baked into the image
+.env
+.env.*
+!.env.example
+
+# tests / reports / tooling
+coverage
+test-results
+playwright-report
+blob-report
+.playwright
+e2e
+test
+
+# vcs / editor / misc
+.git
+.gitignore
+.husky
+*.md
+!README.md
+.vscode
+.idea
+.DS_Store
+Dockerfile
+.dockerignore
