@@ -14,6 +14,7 @@ export type Irrigation = (typeof IRRIGATION_OPTIONS)[number];
 export const DEFAULT_IRRIGATION: Irrigation = "no";
 
 export const LOADING_STEPS = [
+  "location",
   "history",
   "forecast",
   "crops",
