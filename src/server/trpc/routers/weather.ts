@@ -2,7 +2,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/trpc/init";
-import { weatherBriefFixture } from "@/lib/weather/fixture";
+import {
+  FieldProfileNotFoundError,
+  getWeatherBrief,
+  WeatherUnavailableError,
+} from "@/lib/weather";
 import { weatherBriefSchema } from "@/lib/weather/schema";
 
 export const weatherBriefInput = z.object({
@@ -10,23 +14,29 @@ export const weatherBriefInput = z.object({
 });
 
 /**
- * Weather Brief for a Field Profile. Issue 0005 replaces the body with the
- * Open-Meteo client, aggregation and the WeatherCell cache; the contract
- * (input → `weatherBriefSchema`) stays. Until then a fixture centred on the
- * profile's Field Location.
+ * Weather Brief for a Field Profile: Open-Meteo, aggregated and cached per
+ * 0.1° cell (issue 0005). Open-Meteo failures surface as SERVICE_UNAVAILABLE
+ * so the wizard can show its retry screen; there is no partial brief.
  */
 export const weatherRouter = createTRPCRouter({
   brief: publicProcedure
     .input(weatherBriefInput)
     .output(weatherBriefSchema)
     .query(async ({ ctx, input }) => {
-      const profile = await ctx.db.fieldProfile.findUnique({
-        where: { id: input.fieldProfileId },
-        select: { lat: true, lng: true },
-      });
-      if (!profile) throw new TRPCError({ code: "NOT_FOUND" });
-
-      const brief = weatherBriefFixture();
-      return { ...brief, location: { lat: profile.lat, lng: profile.lng } };
+      try {
+        return await getWeatherBrief(input.fieldProfileId, { db: ctx.db });
+      } catch (err) {
+        if (err instanceof FieldProfileNotFoundError) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+        if (err instanceof WeatherUnavailableError) {
+          throw new TRPCError({
+            code: "SERVICE_UNAVAILABLE",
+            message: err.message,
+            cause: err,
+          });
+        }
+        throw err;
+      }
     }),
 });
