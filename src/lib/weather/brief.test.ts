@@ -9,6 +9,8 @@ import {
   CLIMATE_TTL_MS,
   FieldProfileNotFoundError,
   getWeatherBrief,
+  refreshClimateProfile,
+  refreshForecast,
   SHORT_TTL_MS,
   type WeatherDb,
 } from "./brief";
@@ -244,5 +246,97 @@ describe("getWeatherBrief", () => {
     await getWeatherBrief("fp1", { db: asDb, client, now });
     expect(client.seasonal).toHaveBeenCalledTimes(1);
     expect(client.forecast).not.toHaveBeenCalled();
+  });
+});
+
+// The loading screen drives one step per cache slice (issue 0011): each
+// entry point must touch its own slice and leave the others alone.
+describe("per-phase refresh", () => {
+  it("refreshClimateProfile pulls the archive only and writes the climate slice", async () => {
+    const client = fakeClient();
+    const { db, asDb } = fakeDb(profile);
+    const status = await refreshClimateProfile("fp1", {
+      db: asDb,
+      client,
+      now,
+    });
+
+    expect(status).toEqual({ cellId: "44.6,27.1", refreshed: true });
+    expect(client.archive).toHaveBeenCalledTimes(1);
+    expect(client.archive).toHaveBeenCalledWith(
+      profile,
+      "2016-01-01",
+      "2025-12-31",
+    );
+    expect(client.forecast).not.toHaveBeenCalled();
+    expect(client.seasonal).not.toHaveBeenCalled();
+
+    const create = db.weatherCell.upsert.mock.calls[0][0].create;
+    expect(create.climateFetchedAt).toEqual(NOW);
+    expect(create.forecast).toBeUndefined();
+    expect(create.forecastFetchedAt).toBeUndefined();
+    expect(create.outlook).toBeUndefined();
+    expect(create.outlookFetchedAt).toBeUndefined();
+  });
+
+  it("refreshForecast reuses a warm Climate Profile and fills the short-range slices", async () => {
+    const primer = fakeDb(profile);
+    await refreshClimateProfile("fp1", {
+      db: primer.asDb,
+      client: fakeClient(),
+      now,
+    });
+    const cell = primer.db.weatherCell.upsert.mock.calls[0][0].create;
+
+    const client = fakeClient();
+    const { db, asDb } = fakeDb(profile, cell);
+    const status = await refreshForecast("fp1", { db: asDb, client, now });
+
+    expect(status).toEqual({ cellId: "44.6,27.1", refreshed: true });
+    // the ten-year pull is NOT repeated; only the year-to-date archive is
+    expect(client.archive).toHaveBeenCalledTimes(1);
+    expect(client.archive).toHaveBeenCalledWith(
+      profile,
+      "2026-01-01",
+      "2026-09-07",
+    );
+    expect(client.forecast).toHaveBeenCalledTimes(1);
+    expect(client.seasonal).toHaveBeenCalledTimes(1);
+
+    const update = db.weatherCell.upsert.mock.calls[0][0].update;
+    expect(update.climateFetchedAt).toEqual(NOW);
+    expect(update.forecastFetchedAt).toEqual(NOW);
+    expect(update.outlookFetchedAt).toEqual(NOW);
+  });
+
+  it("reports refreshed: false and writes nothing when the cell is already warm", async () => {
+    const cell = await primedCell();
+    const client = fakeClient();
+    const { db, asDb } = fakeDb(profile, cell);
+
+    expect(
+      await refreshClimateProfile("fp1", { db: asDb, client, now }),
+    ).toEqual({ cellId: "44.6,27.1", refreshed: false });
+    expect(await refreshForecast("fp1", { db: asDb, client, now })).toEqual({
+      cellId: "44.6,27.1",
+      refreshed: false,
+    });
+    expect(client.archive).not.toHaveBeenCalled();
+    expect(client.forecast).not.toHaveBeenCalled();
+    expect(client.seasonal).not.toHaveBeenCalled();
+    expect(db.weatherCell.upsert).not.toHaveBeenCalled();
+  });
+
+  it("propagates an Open-Meteo failure from a phase without writing", async () => {
+    const client = fakeClient({
+      archive: vi.fn(async () => {
+        throw new WeatherUnavailableError("archive", 503, "HTTP 503");
+      }),
+    });
+    const { db, asDb } = fakeDb(profile);
+    await expect(
+      refreshClimateProfile("fp1", { db: asDb, client, now }),
+    ).rejects.toBeInstanceOf(WeatherUnavailableError);
+    expect(db.weatherCell.upsert).not.toHaveBeenCalled();
   });
 });

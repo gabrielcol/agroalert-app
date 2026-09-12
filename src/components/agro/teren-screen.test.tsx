@@ -15,7 +15,11 @@ vi.mock("next/navigation", () => ({
 
 const geocode = vi.fn();
 const createProfile = vi.fn();
+const climate = vi.fn();
+const forecast = vi.fn();
 const crops = vi.fn();
+/** Every call the loading screen shows a step for, in the order it makes them. */
+const order: string[] = [];
 
 vi.mock("@/trpc/client", () => ({
   useTRPC: () => ({
@@ -31,6 +35,20 @@ vi.mock("@/trpc/client", () => ({
       create: {
         mutationOptions: () => ({
           mutationFn: (input: unknown) => createProfile(input),
+        }),
+      },
+    },
+    weather: {
+      climate: {
+        queryOptions: (input: { fieldProfileId: string }) => ({
+          queryKey: ["weather.climate", input],
+          queryFn: () => climate(input),
+        }),
+      },
+      forecast: {
+        queryOptions: (input: { fieldProfileId: string }) => ({
+          queryKey: ["weather.forecast", input],
+          queryFn: () => forecast(input),
         }),
       },
     },
@@ -64,13 +82,30 @@ const MATCH = {
   lng: 27.1,
 };
 
+const CELL = { cellId: "44.6,27.1", refreshed: true };
+
 beforeEach(() => {
+  order.length = 0;
   push.mockReset();
-  geocode.mockReset().mockResolvedValue([MATCH]);
+  geocode.mockReset().mockImplementation(async () => {
+    order.push("geocode.search");
+    return [MATCH];
+  });
   createProfile
     .mockReset()
     .mockImplementation(async (input: object) => ({ id: "fp_1", ...input }));
-  crops.mockReset().mockResolvedValue({ id: "stub_fp_1" });
+  climate.mockReset().mockImplementation(async () => {
+    order.push("weather.climate");
+    return CELL;
+  });
+  forecast.mockReset().mockImplementation(async () => {
+    order.push("weather.forecast");
+    return CELL;
+  });
+  crops.mockReset().mockImplementation(async () => {
+    order.push("recommendation.crops");
+    return { id: "stub_fp_1" };
+  });
 });
 
 describe("TerenScreen", () => {
@@ -113,6 +148,15 @@ describe("TerenScreen", () => {
       },
     );
     expect(push).toHaveBeenCalledWith("/plan/cultura?profile=fp_1");
+    // One real call per displayed step, in the order the steps are shown.
+    expect(order).toEqual([
+      "geocode.search",
+      "weather.climate",
+      "weather.forecast",
+      "recommendation.crops",
+    ]);
+    expect(climate).toHaveBeenCalledWith({ fieldProfileId: "fp_1" });
+    expect(forecast).toHaveBeenCalledWith({ fieldProfileId: "fp_1" });
   }, 10_000);
 
   it("shows the not-found message and stays on the form when nothing matches", async () => {
@@ -161,7 +205,7 @@ describe("TerenScreen", () => {
     vi.unstubAllGlobals();
   });
 
-  it("offers a retry when the recommendation fails, without recreating the profile", async () => {
+  it("freezes on the failing step and offers a retry, without recreating the profile", async () => {
     crops
       .mockRejectedValueOnce(new Error("boom"))
       .mockResolvedValue({ id: "ok" });
@@ -177,6 +221,12 @@ describe("TerenScreen", () => {
     expect(
       screen.getByText("Nu am putut pregăti recomandarea."),
     ).toBeInTheDocument();
+    // A single step is on screen and it is the one that failed.
+    await waitFor(() => {
+      const stages = document.querySelectorAll("[data-stage]");
+      expect(stages).toHaveLength(1);
+      expect(stages[0]!.getAttribute("data-stage")).toBe("recommendation");
+    });
     await user.click(retry);
 
     await waitFor(() => expect(crops).toHaveBeenCalledTimes(2));

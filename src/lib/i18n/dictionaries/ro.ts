@@ -102,9 +102,7 @@ export const ro: Dictionary = {
         location: "Găsim terenul",
         history: "Preluăm datele meteorologice din ultimii ani",
         forecast: "Preluăm datele meteo pentru următoarea perioadă",
-        crops: "Inspectăm culturile potrivite pentru tine",
-        windows: "Comparăm cu perioadele de semănat",
-        list: "Creăm lista pentru tine",
+        recommendation: "Alegem culturile potrivite pentru tine",
       },
     },
     cultura: {

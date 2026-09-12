@@ -13,13 +13,16 @@ export const IRRIGATION_OPTIONS = ["yes", "no"] as const;
 export type Irrigation = (typeof IRRIGATION_OPTIONS)[number];
 export const DEFAULT_IRRIGATION: Irrigation = "no";
 
+/**
+ * The loading screen's steps, in order. Each one is backed by a real call
+ * (issue 0011): `geocode.search`, `weather.climate`, `weather.forecast`,
+ * `recommendation.crops`. Adding a step means adding a call.
+ */
 export const LOADING_STEPS = [
   "location",
   "history",
   "forecast",
-  "crops",
-  "windows",
-  "list",
+  "recommendation",
 ] as const;
 export type LoadingStep = (typeof LOADING_STEPS)[number];
 

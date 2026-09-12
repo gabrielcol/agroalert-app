@@ -1,8 +1,9 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 
-// The teren step against mocked tRPC: geocoding, Field Profile creation and
-// the Crop Recommendation call are answered by page.route so the spec needs
-// neither Open-Meteo nor the AI. Written per issue 0004; run pre-deploy.
+// The teren step against mocked tRPC: geocoding, Field Profile creation, the
+// two Weather Brief cache-warming calls and the Crop Recommendation call are
+// answered by page.route so the spec needs neither Open-Meteo nor the AI.
+// Written per issue 0004, extended per issue 0011; run pre-deploy.
 
 const PROFILE_ID = "e2e_profile_1";
 const MATCH = {
@@ -38,6 +39,11 @@ async function mockTrpc(page: Page, calls: Call[], failCropsTimes = 0) {
           createdAt: new Date().toISOString(),
         };
         return { result: { data: { json: data } } };
+      }
+      if (path === "weather.climate" || path === "weather.forecast") {
+        return {
+          result: { data: { json: { cellId: "44.6,27.1", refreshed: true } } },
+        };
       }
       if (path === "recommendation.crops") {
         if (cropsFailures < failCropsTimes) {
@@ -83,15 +89,17 @@ test.describe("teren step", () => {
     await page.getByRole("radio", { name: "Cernoziom" }).click();
     await page.getByRole("button", { name: "Continuă" }).click();
 
-    // Six stages, "Găsim terenul" first, then the five from issue 0001.
+    // One step on screen at a time, each waiting on its own call; it starts
+    // on "Găsim terenul" and ends on the recommendation step (issue 0011).
     await expect(page.getByText("Pregătim recomandarea")).toBeVisible();
-    const stages = page.locator("li[data-stage]");
-    await expect(stages).toHaveCount(6);
-    await expect(stages.nth(0)).toHaveText("Găsim terenul");
-    await expect(stages.nth(1)).toHaveText(
-      "Preluăm datele meteorologice din ultimii ani",
+    const stage = page.locator("[data-stage]");
+    await expect(stage).toHaveCount(1);
+    await expect(stage).toHaveAttribute("data-stage", "location");
+    await expect(stage).toHaveText("Găsim terenul");
+    await expect(page.locator("[data-stage='recommendation']")).toHaveText(
+      "Alegem culturile potrivite pentru tine",
+      { timeout: 10_000 },
     );
-    await expect(stages.nth(5)).toHaveText("Creăm lista pentru tine");
 
     await expect(page).toHaveURL(`/plan/cultura?profile=${PROFILE_ID}`, {
       timeout: 20_000,
@@ -114,6 +122,24 @@ test.describe("teren step", () => {
         fieldProfileId: PROFILE_ID,
       },
     );
+    // Every displayed step is backed by a real call, in order.
+    expect(
+      calls
+        .map((c) => c.path)
+        .filter((path) =>
+          [
+            "geocode.search",
+            "weather.climate",
+            "weather.forecast",
+            "recommendation.crops",
+          ].includes(path),
+        ),
+    ).toEqual([
+      "geocode.search",
+      "weather.climate",
+      "weather.forecast",
+      "recommendation.crops",
+    ]);
   });
 
   test("the locate button uses the phone's position and skips geocoding", async ({
