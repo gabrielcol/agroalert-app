@@ -39,9 +39,10 @@ test("the add-crop wizard walks all four steps and activates alerts", async ({
   await page.getByLabel("Sat / comună").fill("Reviga, Ialomița");
   await page.getByRole("button", { name: "Continuă" }).click();
 
-  // Loading screen plays, then lands on step 2.
+  // Loading screen plays (~3.3 s), then lands on step 2. Generous timeout:
+  // under `next dev` the first navigation compiles the route on demand.
   await expect(page.getByText("Pregătim recomandarea")).toBeVisible();
-  await expect(page).toHaveURL("/plan/cultura", { timeout: 10_000 });
+  await expect(page).toHaveURL("/plan/cultura", { timeout: 20_000 });
   await expect(page.getByText("Pasul 2 din 4")).toBeVisible();
 
   // Step 2 — crops. Wheat is recommended and pre-selected; pick barley.

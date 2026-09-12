@@ -5,7 +5,7 @@
 - Branch `feat/agroalert-design-shell`: the Claude Design prototype is implemented as public
   routes (`/`, `/plan/teren|cultura|soi|rezumat`) with prototype-level interactivity only.
   Auth is hidden (landing page + sign-in link removed; `(admin)` guard untouched). Theme
-  re-tokenised to the design (Geist, ink primary, green accent); default locale is now RO;
+  re-tokenised to the design (Geist, ink primary, green accent); default locale is now RO (the public screens have no locale toggle, by design);
   app renamed AgroAlert. `CONTEXT.md` glossary started.
 - Verified green on the branch: `bun run typecheck`, `bun run lint`, `bunx prettier --check .`,
   `bun run test` (55 unit), `bun run test:e2e` (14 specs).

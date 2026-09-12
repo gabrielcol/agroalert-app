@@ -72,11 +72,14 @@ export function TerenScreen() {
               placeholder={s.village.placeholder}
               className="h-[60px] rounded-[var(--radius-md)] px-4 text-[19px] md:text-[19px]"
             />
+            {/* Geolocation is not wired yet: disabled for assistive tech, but
+                kept at full opacity so the screen matches the design. */}
             <Button
               type="button"
               variant="outline"
               size="icon-lg"
-              className="border-input size-[52px] self-center rounded-[var(--radius-md)]"
+              disabled
+              className="border-input size-[52px] self-center rounded-[var(--radius-md)] disabled:opacity-100"
               aria-label={s.village.detect}
             >
               <LocateFixed className="size-5" />

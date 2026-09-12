@@ -12,7 +12,7 @@ Every task, bugfix or modification gets an entry here (newest first). Each entry
   gone, the `(admin)` area keeps its session guard and `/sign-in` still resolves. Theme
   re-tokenised to the design (Geist / Geist Mono, warm-neutral ink primary, green signal
   accent, `brand` / `success` / `warning` / `subtle` / `faint` colours). App renamed
-  "AgroAlert"; default locale switched to Romanian (EN remains via the toggle); new `agro`
+  "AgroAlert"; default locale switched to Romanian (EN stays selectable via the admin-area toggle; the public screens follow the design and have none); new `agro`
   i18n namespace in both dictionaries. Added shadcn `toggle` / `toggle-group`. Fixed the
   prototype's duplicated "Alerte pentru zona ta" card (one card, three rows). Tests: unit
   (`plan-steps`), e2e (`e2e/agro.spec.ts`), and the language-toggle / config-default specs

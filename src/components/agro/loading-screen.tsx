@@ -54,24 +54,27 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
   }, [onDone]);
 
   return (
-    <div
-      className="flex flex-1 flex-col items-center justify-center gap-7 px-5 text-center"
-      role="status"
-      aria-live="polite"
-    >
-      <LoaderCircle className="text-brand size-16 animate-spin [animation-duration:2.2s]" />
-      <div>
+    <div className="flex flex-1 flex-col items-center justify-center gap-7 px-5 text-center">
+      <LoaderCircle
+        className="text-brand size-16 animate-spin [animation-duration:2.2s]"
+        aria-hidden="true"
+      />
+      {/* Only the title is announced; the dots and step ticks are cosmetic. */}
+      <div role="status" aria-live="polite">
         <h1 className="text-[19px] leading-[1.25] font-semibold tracking-[-0.03em]">
           {t.agro.loading.title}
         </h1>
         <p className="text-muted-foreground mt-2 text-[17.5px]">
           {t.agro.loading.subtitle}
-          <span className="inline-block w-[1.2em] text-left">
+          <span className="inline-block w-[1.2em] text-left" aria-hidden="true">
             {".".repeat(dots)}
           </span>
         </p>
       </div>
-      <ol className="flex w-full max-w-[300px] flex-col gap-3.5 text-left">
+      <ol
+        className="flex w-full max-w-[300px] flex-col gap-3.5 text-left"
+        aria-hidden="true"
+      >
         {LOADING_STEPS.map((id, i) => {
           const Icon = ICONS[id];
           const done = started > i + 1;
