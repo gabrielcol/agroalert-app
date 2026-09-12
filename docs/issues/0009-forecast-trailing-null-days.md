@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: fix/forecast-trailing-null-days
 created: 2026-09-13
 ---
