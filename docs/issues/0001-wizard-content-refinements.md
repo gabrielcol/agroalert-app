@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: feat/wizard-content-refinements
 created: 2026-09-12
 ---
