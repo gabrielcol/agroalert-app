@@ -45,8 +45,11 @@ _Updated: 2026-09-12_
   (`PhoneShell`), not a fixed overlay: the window scrolls, there is no inner overflow
   container. Wrapping screens in a scroll container or giving the column
   `overflow: hidden` silently breaks both sticky elements.
-- `env(safe-area-inset-bottom)` is 0 unless the root layout's
-  `export const viewport = { viewportFit: "cover" }` is present; it is load-bearing.
+- `env(safe-area-inset-bottom)` is 0 unless `src/app/(agro)/layout.tsx` exports
+  `viewport = { viewportFit: "cover" }`; it is load-bearing and deliberately scoped to the
+  phone screens (root-level would drop side insets on admin/auth too).
+- The root `<Toaster />` is `position="top-center"`: bottom toasts covered the sticky bar
+  and the wizard's only exit link after subscribing.
 - Use `E2E_PORT=3100` for Playwright so `reuseExistingServer` cannot test a stale dev
   server on :3000.
 - `ReasonList` sits inside `ChoiceCard`, which is a `<button>`: output must stay phrasing
