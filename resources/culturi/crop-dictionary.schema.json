@@ -1,0 +1,318 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/productowner-ro/civic-producthon-participation/resources/culturi/crop-dictionary.schema.json",
+  "title": "Dicționar de culturi",
+  "description": "Setul de referință al culturilor de câmp cultivabile în România, cu cerințele agronomice ale fiecăreia. Citit integral de componenta AI. Fiecare valoare-frunză poartă sursa și un indicator de verificare. Un câmp lipsă înseamnă necunoscut. Termenii sunt definiți în CONTEXT.md, secțiunea „Limbaj: dicționarul de culturi”.",
+  "type": "object",
+  "required": [
+    "version",
+    "generated_on",
+    "evidence_class",
+    "conventions",
+    "crops"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string" },
+    "generated_on": { "type": "string", "format": "date" },
+    "evidence_class": { "const": "desk-research finding" },
+    "conventions": {
+      "type": "object",
+      "description": "Regulile pe care modelul trebuie să le aplice când citește dicționarul.",
+      "required": [
+        "units",
+        "irrigation_rule",
+        "missing_field_rule",
+        "verified_rule"
+      ],
+      "properties": {
+        "units": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "irrigation_rule": { "type": "string" },
+        "missing_field_rule": { "type": "string" },
+        "verified_rule": { "type": "string" },
+        "soil_classes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/soilClass" }
+        }
+      }
+    },
+    "crops": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/crop" }
+    }
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "required": ["source", "verified"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 3,
+          "description": "Citare scurtă; URL dacă există."
+        },
+        "verified": {
+          "type": "boolean",
+          "description": "true = o sursă publică românească primară afirmă valoarea (INCDA, ISTIS, MADR, INS, ANM, USAMV, SCDA). false = cunoștințe agronomice generale, sursă străină, presă."
+        }
+      }
+    },
+    "number": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": { "value": { "type": "number" } },
+      "required": ["value"]
+    },
+    "integer": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": { "value": { "type": "integer" } },
+      "required": ["value"]
+    },
+    "boolean": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": { "value": { "type": "boolean" } },
+      "required": ["value"]
+    },
+    "text": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": { "value": { "type": "string", "minLength": 1 } },
+      "required": ["value"]
+    },
+    "stringList": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": {
+        "value": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["value"]
+    },
+    "cropIdList": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": {
+        "value": { "type": "array", "items": { "$ref": "#/$defs/cropId" } }
+      },
+      "required": ["value"]
+    },
+    "range": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": {
+        "value": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "required": ["min", "max"]
+        }
+      },
+      "required": ["value"]
+    },
+    "needRange": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": {
+        "value": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "optimal": { "type": "number" }
+          },
+          "required": ["min"]
+        }
+      },
+      "required": ["value"]
+    },
+    "dateWindow": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": {
+        "value": {
+          "type": "object",
+          "properties": {
+            "from": { "$ref": "#/$defs/monthDay" },
+            "to": { "$ref": "#/$defs/monthDay" }
+          },
+          "required": ["from", "to"]
+        }
+      },
+      "required": ["value"]
+    },
+    "money": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": {
+        "value": {
+          "type": "object",
+          "properties": {
+            "amount": { "type": "number" },
+            "currency": { "enum": ["lei", "EUR"] },
+            "year": { "type": "integer" }
+          },
+          "required": ["amount", "currency", "year"]
+        }
+      },
+      "required": ["value"]
+    },
+    "level": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": { "value": { "enum": ["scazuta", "medie", "ridicata"] } },
+      "required": ["value"]
+    },
+    "soilClass": { "enum": ["cernoziom", "lutos", "argilos", "nisipos"] },
+    "soilClassList": {
+      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "properties": {
+        "value": { "type": "array", "items": { "$ref": "#/$defs/soilClass" } }
+      },
+      "required": ["value"]
+    },
+    "cropId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "monthDay": {
+      "type": "string",
+      "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+    "sowingWindow": {
+      "type": "object",
+      "description": "Fereastră de semănat: interval publicat pentru o zonă agroclimatică, așa cum o numește sursa.",
+      "required": ["zone", "from", "to", "source", "verified"],
+      "properties": {
+        "zone": { "type": "string" },
+        "from": { "$ref": "#/$defs/monthDay" },
+        "to": { "$ref": "#/$defs/monthDay" },
+        "source": { "type": "string" },
+        "verified": { "type": "boolean" },
+        "note": { "type": "string" }
+      }
+    },
+    "variety": {
+      "type": "object",
+      "description": "Soi sau hibrid înregistrat în Catalogul oficial ISTIS sau cultivat demonstrabil în România.",
+      "required": ["name"],
+      "properties": {
+        "name": { "$ref": "#/$defs/text" },
+        "breeder": { "$ref": "#/$defs/text" },
+        "type": {
+          "allOf": [{ "$ref": "#/$defs/provenance" }],
+          "properties": { "value": { "enum": ["soi", "hibrid"] } },
+          "required": ["value"]
+        },
+        "registered_year": { "$ref": "#/$defs/integer" },
+        "maturity_class": { "$ref": "#/$defs/text" },
+        "drought_tolerance": { "$ref": "#/$defs/level" },
+        "recommended_zones": { "$ref": "#/$defs/stringList" },
+        "traits": { "$ref": "#/$defs/text" }
+      }
+    },
+    "crop": {
+      "type": "object",
+      "description": "Cultură: o specie cu un singur regim de semănat.",
+      "required": [
+        "id",
+        "name_ro",
+        "name_en",
+        "scientific_name",
+        "group",
+        "sowing_regime",
+        "requirements",
+        "calendar"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/cropId" },
+        "name_ro": { "type": "string" },
+        "name_en": { "type": "string" },
+        "scientific_name": { "type": "string" },
+        "group": {
+          "enum": ["cereale", "oleaginoase_industriale", "leguminoase_furajere"]
+        },
+        "sowing_regime": { "enum": ["toamna", "primavara"] },
+        "requirements": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "soil": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "suitable_classes": { "$ref": "#/$defs/soilClassList" },
+                "unsuitable_classes": { "$ref": "#/$defs/soilClassList" },
+                "ph_range": { "$ref": "#/$defs/range" }
+              }
+            },
+            "altitude_m": { "$ref": "#/$defs/range" },
+            "drainage": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "waterlogging_tolerance": { "$ref": "#/$defs/level" },
+                "requires_drained_soil": { "$ref": "#/$defs/boolean" }
+              }
+            },
+            "exposure": { "$ref": "#/$defs/text" },
+            "precipitation": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "season_need_mm": { "$ref": "#/$defs/needRange" },
+                "critical_period": { "$ref": "#/$defs/text" },
+                "drought_tolerance": { "$ref": "#/$defs/level" }
+              }
+            },
+            "temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "germination_soil_c_min": { "$ref": "#/$defs/number" },
+                "optimal_growth_c": { "$ref": "#/$defs/range" },
+                "frost_tolerance_c_min": { "$ref": "#/$defs/number" },
+                "heat_critical_c": { "$ref": "#/$defs/number" }
+              }
+            }
+          }
+        },
+        "calendar": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sowing_windows"],
+          "properties": {
+            "sowing_windows": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/sowingWindow" }
+            },
+            "sowing_condition": { "$ref": "#/$defs/text" },
+            "emergence_days": { "$ref": "#/$defs/range" },
+            "flowering_period": { "$ref": "#/$defs/text" },
+            "harvest_window": { "$ref": "#/$defs/dateWindow" },
+            "days_to_maturity": { "$ref": "#/$defs/range" }
+          }
+        },
+        "rotation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "good_preceding": { "$ref": "#/$defs/cropIdList" },
+            "bad_preceding": { "$ref": "#/$defs/cropIdList" },
+            "years_before_repeat": { "$ref": "#/$defs/integer" }
+          }
+        },
+        "economics": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "yield_t_ha_rainfed": { "$ref": "#/$defs/range" },
+            "yield_t_ha_irrigated": { "$ref": "#/$defs/range" },
+            "cost_per_ha": { "$ref": "#/$defs/money" },
+            "min_viable_area_ha": { "$ref": "#/$defs/number" },
+            "coupled_support_eligible": { "$ref": "#/$defs/boolean" }
+          }
+        },
+        "varieties": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/variety" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

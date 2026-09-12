@@ -82,10 +82,11 @@ export const ro: Dictionary = {
       title: "Pregătim recomandarea",
       subtitle: "Câteva secunde",
       steps: {
-        forecast: "Citim prognoza meteo pe 7 zile",
-        soil: "Verificăm umiditatea solului",
-        window: "Comparăm cu fereastra de semănat",
-        anm: "Verificăm avertizările ANM",
+        history: "Preluăm datele meteorologice din ultimii ani",
+        forecast: "Preluăm datele meteo pentru următoarea perioadă",
+        crops: "Inspectăm culturile potrivite pentru tine",
+        windows: "Comparăm cu perioadele de semănat",
+        list: "Creăm lista pentru tine",
       },
     },
     cultura: {
@@ -97,15 +98,33 @@ export const ro: Dictionary = {
       crops: {
         grau: {
           name: "Grâu de toamnă",
-          description: "Cea mai bună potrivire cu solul și ploile din zonă",
+          description: "Cel mai mic risc pentru terenul tău anul acesta.",
+          reasons: {
+            soil: "Sol potrivit — reține bine apa pentru răsărire",
+            window: "Fereastră largă: 25 sept – 15 oct",
+            weather: "Ploile din ultimii ani și prognoza îi priesc",
+          },
         },
         orz: {
           name: "Orz",
-          description: "Rezistă mai bine la secetă, recoltă mai devreme",
+          description: "Se recoltează cu 2–3 săptămâni înaintea grâului.",
+          reasons: {
+            soil: "Se descurcă și pe soluri mai sărace",
+            window: "Fereastră mai scurtă: 20 sept – 5 oct",
+            weather: "Rezistă mai bine la secetă decât grâul",
+            caution: "Iernile aspre îl pot afecta mai mult decât grâul",
+          },
         },
         rapita: {
           name: "Rapiță",
-          description: "Are nevoie de umiditate mai mare la semănat",
+          description: "Preț bun, dar cere lucrări mai atente.",
+          reasons: {
+            soil: "Cere un pat germinativ bine pregătit",
+            window: "Fereastră scurtă: 1 – 15 sept",
+            weather: "Fără irigare, prognoza dă prea puțină ploaie",
+            caution:
+              "Semănatul târziu sau toamna secetoasă îi strică răsărirea",
+          },
         },
       },
     },
@@ -117,21 +136,36 @@ export const ro: Dictionary = {
       varieties: {
         glosa: {
           name: "Glosa",
-          description:
-            "Rezistă bine la secetă. Se potrivește cu fereastra de semănat din zona ta.",
+          description: "Soiul cel mai semănat în zonă, cu producție constantă.",
           tag: "Rezistență secetă: mare",
+          reasons: {
+            soil: "Merge pe sol greu, chiar și fără irigare",
+            window: "Semănat ideal la mijlocul ferestrei: 1 – 10 oct",
+            weather: "A dat recolte bune în anii secetoși de până acum",
+          },
         },
         pitar: {
           name: "Pitar",
-          description:
-            "Producție bună în ani normali, mai sensibil la secetă timpurie.",
+          description: "Boabe de calitate bună pentru panificație.",
           tag: "Rezistență secetă: medie",
+          reasons: {
+            soil: "Cere sol mai bine aprovizionat cu apă",
+            window: "Semănat devreme în fereastră: 25 sept – 5 oct",
+            weather: "În anii cu toamnă ploioasă a dat producții mari",
+            caution: "Rezistență medie la secetă — riscant fără irigare",
+          },
         },
         ursita: {
           name: "Ursita",
           description:
-            "Maturitate timpurie, bun dacă vrei să recoltezi mai devreme vara.",
+            "Eliberează terenul mai devreme, bun înainte de o a doua cultură.",
           tag: "Maturitate: timpurie",
+          reasons: {
+            soil: "Nu are pretenții mari la sol",
+            window: "Se seamănă la sfârșitul ferestrei: 5 – 15 oct",
+            weather: "Se coace devreme și scapă de arșița din iunie",
+            caution: "Semănată prea devreme, riscă înghețul de primăvară",
+          },
         },
       },
     },
@@ -189,26 +223,17 @@ export const ro: Dictionary = {
           sub: "Verificat azi",
         },
       },
-      channel: {
-        title: "Cum vrei să primești alertele?",
-        sms: { title: "SMS", sub: "Un mesaj scurt, direct pe telefon" },
-        call: { title: "Apel telefonic", sub: "Te sunăm dacă e ceva urgent" },
-        app: {
-          title: "Notificare în aplicație",
-          sub: "O vezi când deschizi AgroAlert",
+      subscribe: {
+        title: "Primește alerte pentru acest plan",
+        body: "Te anunțăm despre secetă, ploi potrivite și avertizări ANM în perioada de semănat.",
+        cta: "Abonează-mă la alerte",
+        done: "Abonat",
+        back: "Înapoi la culturile tale",
+        toast: {
+          title: "Te-ai abonat la alerte",
+          body: "Te anunțăm când apar schimbări pentru zona ta.",
         },
       },
-      activate: "Activează alertele",
-    },
-    done: {
-      title: "Alertele sunt active",
-      body: "Te anunțăm prin {channel} când e momentul potrivit pentru semănat, sau dacă apare o secetă.",
-      channel: {
-        sms: "SMS",
-        call: "apel telefonic",
-        app: "notificare în aplicație",
-      },
-      back: "Înapoi la culturile tale",
     },
   },
   admin: {

@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import {
-  CalendarDays,
+  CalendarRange,
   Check,
-  Clock,
-  Eye,
+  CloudSun,
+  History,
+  ListChecks,
   LoaderCircle,
-  TriangleAlert,
+  Sprout,
   type LucideIcon,
 } from "lucide-react";
 
@@ -16,10 +17,11 @@ import { useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<LoadingStep, LucideIcon> = {
-  forecast: Clock,
-  soil: Eye,
-  window: CalendarDays,
-  anm: TriangleAlert,
+  history: History,
+  forecast: CloudSun,
+  crops: Sprout,
+  windows: CalendarRange,
+  list: ListChecks,
 };
 
 const START_DELAY_MS = 300;
@@ -28,7 +30,7 @@ const DONE_DELAY_MS = 400;
 
 /**
  * Staged "preparing your recommendation" screen. Purely cosmetic: it walks
- * the four steps on a timer and calls `onDone` when the last one completes.
+ * the five steps on a timer and calls `onDone` when the last one completes.
  */
 export function LoadingScreen({ onDone }: { onDone: () => void }) {
   const t = useT();

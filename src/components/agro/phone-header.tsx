@@ -29,7 +29,7 @@ export function PhoneHeader({
   const t = useT();
 
   return (
-    <header className="flex items-center gap-3 border-b px-5 pt-[18px] pb-3.5">
+    <header className="bg-background sticky top-0 z-20 flex items-center gap-3 border-b px-5 pt-[18px] pb-3.5">
       {backHref && (
         <Button
           asChild

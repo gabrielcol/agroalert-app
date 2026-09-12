@@ -77,10 +77,11 @@ export const en = {
       title: "Preparing your recommendation",
       subtitle: "A few seconds",
       steps: {
-        forecast: "Reading the 7-day weather forecast",
-        soil: "Checking soil moisture",
-        window: "Comparing with the sowing window",
-        anm: "Checking ANM warnings",
+        history: "Pulling weather data from past years",
+        forecast: "Pulling the forecast for the period ahead",
+        crops: "Checking which crops suit you",
+        windows: "Comparing with the sowing windows",
+        list: "Building your list",
       },
     },
     cultura: {
@@ -92,15 +93,32 @@ export const en = {
       crops: {
         grau: {
           name: "Winter wheat",
-          description: "Best match for the soil and rainfall in your area",
+          description: "The lowest-risk choice for your land this year.",
+          reasons: {
+            soil: "Soil fits — it holds the water needed for emergence",
+            window: "Wide window: 25 Sep – 15 Oct",
+            weather: "Past years' rainfall and the forecast suit it",
+          },
         },
         orz: {
           name: "Barley",
-          description: "Copes better with drought, earlier harvest",
+          description: "Harvested two to three weeks before wheat.",
+          reasons: {
+            soil: "Copes with poorer soils too",
+            window: "Shorter, earlier window: 20 Sep – 5 Oct",
+            weather: "Handles drought better than wheat",
+            caution: "A harsh winter hits it harder than wheat",
+          },
         },
         rapita: {
           name: "Rapeseed",
-          description: "Needs more moisture at sowing",
+          description: "Good price, but it needs more careful work.",
+          reasons: {
+            soil: "Needs a well-prepared seedbed",
+            window: "Short window: 1 – 15 Sep",
+            weather: "Without irrigation the forecast gives too little rain",
+            caution: "Late sowing or a dry autumn ruins its emergence",
+          },
         },
       },
     },
@@ -113,21 +131,35 @@ export const en = {
       varieties: {
         glosa: {
           name: "Glosa",
-          description:
-            "Good drought tolerance. Matches the sowing window in your area.",
+          description: "The most widely sown variety here, with steady yields.",
           tag: "Drought tolerance: high",
+          reasons: {
+            soil: "Works on heavy soil, even without irrigation",
+            window: "Best sown mid-window: 1 – 10 Oct",
+            weather: "Yielded well in the dry years so far",
+          },
         },
         pitar: {
           name: "Pitar",
-          description:
-            "Good yield in normal years, more sensitive to early drought.",
+          description: "Good milling quality grain.",
           tag: "Drought tolerance: medium",
+          reasons: {
+            soil: "Wants soil with a better water supply",
+            window: "Sow early in the window: 25 Sep – 5 Oct",
+            weather: "In rainy autumns it gave big yields",
+            caution: "Medium drought tolerance — risky without irrigation",
+          },
         },
         ursita: {
           name: "Ursita",
-          description:
-            "Early maturity, good if you want to harvest earlier in summer.",
+          description: "Frees the field earlier — good ahead of a second crop.",
           tag: "Maturity: early",
+          reasons: {
+            soil: "Not fussy about soil",
+            window: "Sow at the end of the window: 5 – 15 Oct",
+            weather: "Ripens early, so it escapes the June heat",
+            caution: "Sown too early, it risks a late spring frost",
+          },
         },
       },
     },
@@ -185,25 +217,17 @@ export const en = {
           sub: "Checked today",
         },
       },
-      channel: {
-        title: "How do you want to receive alerts?",
-        sms: { title: "SMS", sub: "A short message, straight to your phone" },
-        call: {
-          title: "Phone call",
-          sub: "We call you if something is urgent",
-        },
-        app: {
-          title: "In-app notification",
-          sub: "You see it when you open AgroAlert",
+      subscribe: {
+        title: "Get alerts for this plan",
+        body: "We warn you about drought, suitable rain and ANM warnings during the sowing period.",
+        cta: "Subscribe to alerts",
+        done: "Subscribed",
+        back: "Back to your crops",
+        toast: {
+          title: "You are subscribed to alerts",
+          body: "We will let you know when things change in your area.",
         },
       },
-      activate: "Activate alerts",
-    },
-    done: {
-      title: "Alerts are active",
-      body: "We notify you by {channel} when it is the right time to sow, or if a drought is coming.",
-      channel: { sms: "SMS", call: "phone call", app: "in-app notification" },
-      back: "Back to your crops",
     },
   },
   admin: {

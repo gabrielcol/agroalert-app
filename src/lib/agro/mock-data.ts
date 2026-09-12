@@ -13,7 +13,13 @@ export const IRRIGATION_OPTIONS = ["yes", "no"] as const;
 export type Irrigation = (typeof IRRIGATION_OPTIONS)[number];
 export const DEFAULT_IRRIGATION: Irrigation = "no";
 
-export const LOADING_STEPS = ["forecast", "soil", "window", "anm"] as const;
+export const LOADING_STEPS = [
+  "history",
+  "forecast",
+  "crops",
+  "windows",
+  "list",
+] as const;
 export type LoadingStep = (typeof LOADING_STEPS)[number];
 
 export const CROPS = ["grau", "orz", "rapita"] as const;
@@ -42,11 +48,11 @@ export const ALERT_TONE: Record<AlertId, "warning" | "ok"> = {
   anm: "ok",
 };
 
-export const CHANNELS = ["sms", "call", "app"] as const;
-export type ChannelId = (typeof CHANNELS)[number];
-export const DEFAULT_CHANNEL: ChannelId = "sms";
-
-/** Sowing plans shown on the dashboard. Empty → the empty state renders. */
-export const SAMPLE_PLANS: ReadonlyArray<{ id: string; channel: ChannelId }> = [
-  { id: "porumb-p0216", channel: "sms" },
+/**
+ * Sowing plans shown on the dashboard. Empty → the empty state renders.
+ * A plan carries no alert channel: the farmer subscribes to a plan's alerts,
+ * and how those alerts are delivered is not modelled in the prototype.
+ */
+export const SAMPLE_PLANS: ReadonlyArray<{ id: string }> = [
+  { id: "porumb-p0216" },
 ];

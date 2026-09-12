@@ -52,7 +52,7 @@ export default function RootLayout({
               <TRPCReactProvider>{children}</TRPCReactProvider>
             </TooltipProvider>
           </LanguageProvider>
-          <Toaster />
+          <Toaster position="top-center" />
         </ThemeProvider>
       </body>
     </html>

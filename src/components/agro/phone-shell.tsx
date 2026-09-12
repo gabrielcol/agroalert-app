@@ -15,7 +15,7 @@ export function PhoneShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Padded body of a screen; grows so CTAs can sit at the bottom. */
+/** Padded body of a screen; grows so the `StickyBar` sits at the bottom. */
 export function Screen({
   children,
   className,
@@ -25,7 +25,7 @@ export function Screen({
 }) {
   return (
     <div
-      className={cn("flex flex-1 flex-col px-5 pt-[26px] pb-[30px]", className)}
+      className={cn("flex flex-1 flex-col px-5 pt-[26px] pb-[18px]", className)}
     >
       {children}
     </div>

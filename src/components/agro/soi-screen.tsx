@@ -7,7 +7,9 @@ import { ChoiceCard } from "@/components/agro/choice-card";
 import { PhoneHeader } from "@/components/agro/phone-header";
 import { Screen } from "@/components/agro/phone-shell";
 import { PrimaryCta } from "@/components/agro/primary-cta";
+import { ReasonList } from "@/components/agro/reason-list";
 import { StepHeading } from "@/components/agro/step-heading";
+import { StickyBar } from "@/components/agro/sticky-bar";
 import { FactBadge, SuccessBadge } from "@/components/agro/badges";
 import {
   RECOMMENDED_VARIETY,
@@ -53,6 +55,7 @@ export function SoiScreen() {
                 <span className="text-subtle mt-1 block text-[15.5px] leading-[1.5]">
                   {s.varieties[id].description}
                 </span>
+                <ReasonList reasons={s.varieties[id].reasons} />
                 <span className="mt-2.5 flex flex-wrap gap-2">
                   {id === RECOMMENDED_VARIETY && (
                     <SuccessBadge>{t.agro.cultura.recommended}</SuccessBadge>
@@ -63,12 +66,12 @@ export function SoiScreen() {
             </li>
           ))}
         </ul>
-
-        <span className="flex-1" />
+      </Screen>
+      <StickyBar>
         <PrimaryCta asChild>
           <Link href={nextStepPath(STEP) ?? "/"}>{s.cta}</Link>
         </PrimaryCta>
-      </Screen>
+      </StickyBar>
     </>
   );
 }
