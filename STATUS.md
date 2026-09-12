@@ -29,8 +29,8 @@ _Updated: 2026-09-13_
 - Eight untracked `e2e/zz*.spec.ts` files of unknown origin sit in the checkout; they
   will run with the pre-deploy Playwright suite unless removed.
 - Known e2e noise: `e2e/teren.spec.ts` stubs `recommendation.crops` with `{ id,
-  fieldProfileId }` and no `result`, so the cultura step throws `Cannot read properties of
-  undefined (reading 'top')` in the browser after the redirect. The spec still passes;
+fieldProfileId }` and no `result`, so the cultura step throws `Cannot read properties of
+undefined (reading 'top')` in the browser after the redirect. The spec still passes;
   fix by reusing `CROP_RECOMMENDATION` from `e2e/recommendation-mocks.ts`.
 - Issues 0008, 0009 and 0011 are **Done** and on `main`. Last Playwright run: 25 passed
   after issue 0011 (`fix/e2e-wizard-weather-mocks`, 6ffcd88); not run since.
