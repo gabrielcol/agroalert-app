@@ -59,7 +59,9 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    // Geolocation stays first-party only: the teren step's locate button
+    // (issue 0004) reads the phone's position; camera and microphone stay off.
+    value: "camera=(), microphone=(), geolocation=(self)",
   },
   // HSTS only in production — local dev/e2e runs over plain HTTP.
   ...(isDev

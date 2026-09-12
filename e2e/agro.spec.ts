@@ -1,8 +1,43 @@
-import { expect, test, type Locator } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// The public AgroAlert shell: no session, Romanian by default. These specs
-// walk the design as a browsable prototype — navigation, selection states and
-// the staged loading screen — without any backend behaviour.
+import {
+  CROP_RECOMMENDATION,
+  VARIETY_RECOMMENDATION,
+  mockRecommendation,
+} from "./recommendation-mocks";
+
+// The public AgroAlert shell: no session, Romanian by default. The wizard is
+// walked against tRPC mocked at the network edge (issue 0007), so the suite
+// makes no Open-Meteo or Anthropic call: geocoding, Field Profile creation and
+// both recommendations are answered by page.route.
+
+const PROFILE = {
+  id: CROP_RECOMMENDATION.fieldProfileId,
+  villageName: "Reviga, Comuna Reviga, Ialomița",
+  lat: 44.68,
+  lng: 27.1,
+  landBucket: "large",
+  irrigation: false,
+  soilClass: "unknown",
+  createdAt: "2026-09-12T10:00:00.000Z",
+};
+
+const CULTURA_URL = `/plan/cultura?profile=${PROFILE.id}`;
+const SOI_URL = `/plan/soi?profile=${PROFILE.id}&rec=${CROP_RECOMMENDATION.id}&crop=grau_toamna`;
+const REZUMAT_URL = `${SOI_URL.replace("/plan/soi", "/plan/rezumat")}&variety=Voinic`;
+
+async function mockWizard(page: Page) {
+  await mockRecommendation(page, {
+    "geocode.search": {
+      ok: true,
+      data: [{ name: PROFILE.villageName, lat: PROFILE.lat, lng: PROFILE.lng }],
+      meta: null,
+    },
+    "fieldProfile.create": { ok: true, data: PROFILE },
+    "recommendation.crops": { ok: true, data: CROP_RECOMMENDATION },
+    "recommendation.varieties": { ok: true, data: VARIETY_RECOMMENDATION },
+  });
+}
 
 test("the dashboard is public and shows the sample plan", async ({ page }) => {
   await page.goto("/");
@@ -21,10 +56,11 @@ test("the dashboard is public and shows the sample plan", async ({ page }) => {
 test("the add-crop wizard walks all four steps and subscribes to alerts", async ({
   page,
 }) => {
+  await mockWizard(page);
   await page.goto("/");
   await page.getByRole("link", { name: "Adaugă o cultură nouă" }).click();
 
-  // Step 1 — land profile. Defaults match the design's pre-selected options.
+  // Step 1 — Field Profile. Defaults match the design's pre-selected options.
   await expect(page).toHaveURL("/plan/teren");
   await expect(page.getByText("Pasul 1 din 4")).toBeVisible();
   await expect(page.getByRole("radio", { name: "5–10 ha" })).toHaveAttribute(
@@ -36,53 +72,48 @@ test("the add-crop wizard walks all four steps and subscribes to alerts", async 
     "data-state",
     "on",
   );
-  await page.getByLabel("Sat / comună").fill("Reviga, Ialomița");
+  await expect(page.getByRole("radio", { name: "Nu știu" })).toHaveAttribute(
+    "data-state",
+    "on",
+  );
+  await page.getByLabel("Sat / comună").fill("Reviga");
   await page.getByRole("button", { name: "Continuă" }).click();
 
-  // Loading screen plays its five steps (~4 s), then lands on step 2. Generous
-  // timeout: under `next dev` the first navigation compiles the route on demand.
-  await expect(page.getByText("Pregătim recomandarea")).toBeVisible();
-  await expect(
-    page.getByText("Preluăm datele meteorologice din ultimii ani"),
-  ).toBeVisible();
-  await expect(page.getByText("Creăm lista pentru tine")).toBeVisible();
-  await expect(page).toHaveURL("/plan/cultura", { timeout: 20_000 });
+  // The loader runs while the (mocked) recommendation resolves, then lands on
+  // step 2 carrying the Field Profile id. Generous timeout: under `next dev`
+  // the first navigation compiles the route on demand.
+  await expect(page).toHaveURL(CULTURA_URL, { timeout: 20_000 });
   await expect(page.getByText("Pasul 2 din 4")).toBeVisible();
 
-  // Step 2 — crops. Wheat is recommended and pre-selected; pick barley.
+  // Step 2 — Crop Recommendation: rank 1 is pre-selected and badged.
   const wheat = page.getByRole("button", { name: /Grâu de toamnă/ });
-  const barley = page.getByRole("button", { name: /^Orz/ });
+  const barley = page.getByRole("button", { name: /Orz de toamnă/ });
   await expect(wheat).toHaveAttribute("aria-pressed", "true");
+  await expect(wheat).toContainText("Recomandat");
+  await expect(wheat).toContainText("Potrivire 86%");
   await barley.click();
   await expect(barley).toHaveAttribute("aria-pressed", "true");
   await expect(wheat).toHaveAttribute("aria-pressed", "false");
 
-  // Every card says why it is suggested; only the risky ones carry a caution.
-  await expect(
-    page.getByText("Fereastră largă: 25 sept – 15 oct"),
-  ).toBeVisible();
-  await expect(
-    page.getByText("Semănatul târziu sau toamna secetoasă îi strică răsărirea"),
-  ).toBeVisible();
+  // The crops the model set aside are one tap away, with their reason.
+  await page.getByRole("button", { name: "Alte culturi" }).click();
+  await expect(page.getByText("Se seamănă primăvara")).toBeVisible();
+
+  // Back to wheat so step 3 ranks its varieties.
+  await wheat.click();
   await page.getByRole("link", { name: "Continuă" }).click();
 
-  // Step 3 — varieties.
-  await expect(page).toHaveURL("/plan/soi");
+  // Step 3 — Variety Recommendation for the chosen crop.
+  await expect(page).toHaveURL(SOI_URL);
   await expect(page.getByText("Pasul 3 din 4")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Glosa/ })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await expect(
-    page.getByText("Merge pe sol greu, chiar și fără irigare"),
-  ).toBeVisible();
-  await expect(
-    page.getByText("Rezistență medie la secetă — riscant fără irigare"),
-  ).toBeVisible();
+  const glosa = page.getByRole("button", { name: /Glosa/ });
+  await expect(glosa).toHaveAttribute("aria-pressed", "true");
+  await expect(glosa).toContainText("#1");
+  await page.getByRole("button", { name: /Voinic/ }).click();
   await page.getByRole("link", { name: "Vezi planul" }).click();
 
   // Step 4 — the plan: one alerts card with all three rows.
-  await expect(page).toHaveURL("/plan/rezumat");
+  await expect(page).toHaveURL(REZUMAT_URL);
   await expect(page.getByText("Pasul 4 din 4")).toBeVisible();
   await expect(page.getByText("25 sept – 15 oct")).toBeVisible();
   await expect(page.getByText("Alerte pentru zona ta")).toHaveCount(1);
@@ -168,9 +199,10 @@ test("at phone size the header and the plan CTA stay on screen", async ({
 });
 
 test("the wizard back arrows follow the step order", async ({ page }) => {
-  await page.goto("/plan/soi");
+  await mockWizard(page);
+  await page.goto(SOI_URL);
   await page.getByRole("link", { name: "Înapoi" }).click();
-  await expect(page).toHaveURL("/plan/cultura");
+  await expect(page).toHaveURL(CULTURA_URL);
   await page.getByRole("link", { name: "Înapoi" }).click();
   await expect(page).toHaveURL("/plan/teren");
   await page.getByRole("link", { name: "Înapoi" }).click();
