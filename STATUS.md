@@ -4,11 +4,10 @@ _Updated: 2026-09-13_
 
 ## Now
 
-- Issue 0008 (Crop Calendar timeline + Sowing Date) is **In Review** on
-  `feat/crop-calendar-timeline`, gate green (typecheck, lint, prettier, Vitest). **Merge
-  pending, run by the user**: `git checkout main && git merge --no-ff
-feat/crop-calendar-timeline`, then set the issue to Done. Playwright was updated but
-  not run.
+- Issue 0008 (Crop Calendar timeline + Sowing Date) is **Done**: merged into local `main`
+  (a7424bf, **not pushed**) from `feat/crop-calendar-timeline`. Gate green on the branch:
+  typecheck, lint, prettier, Vitest (44 files / 274 tests). Playwright specs were written
+  but not run (pre-deploy only).
 - The AI leg has never run for real: no `ANTHROPIC_API_KEY` in any local `.env`. Add one,
   walk `/plan/teren` → cultura → soi once, and record the result in
   `docs/issues/0007-weather-brief-integration.md` (it says "pending a key").
