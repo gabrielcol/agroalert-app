@@ -11,14 +11,14 @@ test("the dashboard is public and shows the sample plan", async ({ page }) => {
     page.getByRole("heading", { name: "Culturile tale" }),
   ).toBeVisible();
   await expect(page.getByText("Porumb · P0216")).toBeVisible();
-  await expect(page.getByText("Alerte active · SMS")).toBeVisible();
+  await expect(page.getByText("Alerte active")).toBeVisible();
   // Auth is hidden: nothing on the public screen points at sign-in.
   await expect(
     page.getByRole("link", { name: /sign in|autentific/i }),
   ).toHaveCount(0);
 });
 
-test("the add-crop wizard walks all four steps and activates alerts", async ({
+test("the add-crop wizard walks all four steps and subscribes to alerts", async ({
   page,
 }) => {
   await page.goto("/");
@@ -39,9 +39,13 @@ test("the add-crop wizard walks all four steps and activates alerts", async ({
   await page.getByLabel("Sat / comună").fill("Reviga, Ialomița");
   await page.getByRole("button", { name: "Continuă" }).click();
 
-  // Loading screen plays (~3.3 s), then lands on step 2. Generous timeout:
-  // under `next dev` the first navigation compiles the route on demand.
+  // Loading screen plays its five steps (~4 s), then lands on step 2. Generous
+  // timeout: under `next dev` the first navigation compiles the route on demand.
   await expect(page.getByText("Pregătim recomandarea")).toBeVisible();
+  await expect(
+    page.getByText("Preluăm datele meteorologice din ultimii ani"),
+  ).toBeVisible();
+  await expect(page.getByText("Creăm lista pentru tine")).toBeVisible();
   await expect(page).toHaveURL("/plan/cultura", { timeout: 20_000 });
   await expect(page.getByText("Pasul 2 din 4")).toBeVisible();
 
@@ -52,6 +56,14 @@ test("the add-crop wizard walks all four steps and activates alerts", async ({
   await barley.click();
   await expect(barley).toHaveAttribute("aria-pressed", "true");
   await expect(wheat).toHaveAttribute("aria-pressed", "false");
+
+  // Every card says why it is suggested; only the risky ones carry a caution.
+  await expect(
+    page.getByText("Fereastră largă: 25 sept – 15 oct"),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Semănatul târziu sau toamna secetoasă îi strică răsărirea"),
+  ).toBeVisible();
   await page.getByRole("link", { name: "Continuă" }).click();
 
   // Step 3 — varieties.
@@ -61,6 +73,12 @@ test("the add-crop wizard walks all four steps and activates alerts", async ({
     "aria-pressed",
     "true",
   );
+  await expect(
+    page.getByText("Merge pe sol greu, chiar și fără irigare"),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Rezistență medie la secetă — riscant fără irigare"),
+  ).toBeVisible();
   await page.getByRole("link", { name: "Vezi planul" }).click();
 
   // Step 4 — the plan: one alerts card with all three rows.
@@ -72,13 +90,14 @@ test("the add-crop wizard walks all four steps and activates alerts", async ({
     page.getByText("Momentan: niciun cod de avertizare ANM în zonă"),
   ).toBeVisible();
 
-  // Channel choice feeds the confirmation copy.
-  await page.getByRole("radio", { name: "Apel telefonic" }).click();
-  await page.getByRole("button", { name: "Activează alertele" }).click();
+  // Subscribing to the plan's alerts is confirmed with a toast; the button
+  // then locks into its "Abonat" state and a way back to the dashboard shows.
+  await page.getByRole("button", { name: "Abonează-mă la alerte" }).click();
+  await expect(page.getByText("Te-ai abonat la alerte")).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Alertele sunt active" }),
+    page.getByText("Te anunțăm când apar schimbări pentru zona ta."),
   ).toBeVisible();
-  await expect(page.getByText(/prin apel telefonic/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Abonat" })).toBeDisabled();
 
   await page.getByRole("link", { name: "Înapoi la culturile tale" }).click();
   await expect(page).toHaveURL("/");

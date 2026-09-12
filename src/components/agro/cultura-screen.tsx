@@ -8,6 +8,7 @@ import { ChoiceCard } from "@/components/agro/choice-card";
 import { PhoneHeader } from "@/components/agro/phone-header";
 import { Screen } from "@/components/agro/phone-shell";
 import { PrimaryCta } from "@/components/agro/primary-cta";
+import { ReasonList } from "@/components/agro/reason-list";
 import { StepHeading } from "@/components/agro/step-heading";
 import { SuccessBadge } from "@/components/agro/badges";
 import { CROPS, RECOMMENDED_CROP, type CropId } from "@/lib/agro/mock-data";
@@ -53,7 +54,7 @@ export function CulturaScreen() {
                 <ChoiceCard
                   selected={isSelected}
                   onSelect={() => setSelected(id)}
-                  className="flex items-center gap-3.5"
+                  className="flex items-start gap-3.5"
                 >
                   <span
                     className={cn(
@@ -70,8 +71,9 @@ export function CulturaScreen() {
                     <span className="text-subtle mt-0.5 block text-[15.5px]">
                       {s.crops[id].description}
                     </span>
+                    <ReasonList reasons={s.crops[id].reasons} />
                     {id === RECOMMENDED_CROP && (
-                      <SuccessBadge className="mt-1.5">
+                      <SuccessBadge className="mt-2.5">
                         {s.recommended}
                       </SuccessBadge>
                     )}

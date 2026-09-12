@@ -39,7 +39,7 @@ export function DashboardScreen() {
                       {d.sample.crop} · {d.sample.variety}
                     </span>
                     <span className="text-subtle mt-[3px] block text-[15px]">
-                      {d.alertsActive} · {t.agro.done.channel[plan.channel]}
+                      {d.alertsActive}
                     </span>
                   </span>
                   <SuccessBadge>{d.active}</SuccessBadge>
