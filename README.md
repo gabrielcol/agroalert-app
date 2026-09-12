@@ -53,7 +53,11 @@ procedure → Prisma → shadcn UI).
   (`next.config.ts`).
 - **Ops scripts** — `bun run create-user`, `bun run set-role`.
 - **Docker** — multi-stage image, migrations applied on boot
-  (`docker-entrypoint.sh`).
+  (`docker-entrypoint.sh`). Run it with
+  `docker run -p 3030:3030 -e BETTER_AUTH_SECRET=... -e BETTER_AUTH_URL=... -v app-base-data:/data app-base`.
+  Avoid `--env-file .env`: the dev file's `DATABASE_URL=file:./dev.db` overrides
+  the image default (`file:/data/app.db`) and puts the database on the
+  container's ephemeral filesystem instead of the volume.
 
 ## Scripts
 
@@ -154,6 +158,13 @@ manage. Keep to portable column types until you migrate.
 See `.env.example`. Validated at boot by `src/env.ts` (imported in
 `next.config.ts`) — a missing required var fails the build. Set
 `SKIP_ENV_VALIDATION=1` to bypass in Docker/CI image builds.
+
+In Docker, pass the runtime variables explicitly (`-e BETTER_AUTH_SECRET=...`,
+`-e BETTER_AUTH_URL=...`) rather than mounting the dev file with
+`--env-file .env`, which would override the image's `DATABASE_URL`
+(`file:/data/app.db`, the mounted volume) with the dev `file:./dev.db`. The
+entrypoint resolves the `file:` path and refuses to start with a message naming
+the path when its directory is not writable.
 
 To enable GitHub OAuth, set `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`; the
 provider is auto-enabled when both are present.

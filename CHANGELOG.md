@@ -3,6 +3,34 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 01:45 (EEST)** — `fix/docker-sqlite-path-and-openssl` — The production
+  image booted straight into a Prisma schema-engine error
+  (`unable to open database file: ./dev.db`)
+  ([`docs/issues/0016-docker-sqlite-path-and-openssl.md`](docs/issues/0016-docker-sqlite-path-and-openssl.md)).
+  Three fixes. (1) The `runner` stage now installs `openssl` + `ca-certificates` (only
+  `deps` did), so Prisma's engine stops warning that it "failed to detect the libssl/openssl
+  version to use" and guessing `openssl-1.1.x`. (2) `/app` is now `chown node:node` in the
+  runner: `WORKDIR /app` creates it as root _before_ `COPY --from=builder --chown=node:node`
+  runs, and `--chown` does not re-own an existing directory — so a relative `file:` path,
+  which Prisma resolves against the `prisma.config.ts` directory (`/app`), was unwritable
+  for the `node` user. (3) `docker-entrypoint.sh` now resolves the SQLite path out of
+  `DATABASE_URL` before `prisma migrate deploy`: it strips `file:` / `file://` and any
+  `?query`, resolves a relative path against `$APP_DIR` (default `/app`), `mkdir -p`s the
+  parent, and exits 1 with a message naming the resolved path, the `node` user and the
+  `file:/data/app.db` + `-v app-base-data:/data` fix when the directory is not writable;
+  otherwise it logs `> Database: <path>` so the deploy log shows where the data lives.
+  Non-`file:` URLs (a future Postgres DSN) skip the block. `ENTRYPOINT_DRY_RUN=1` prints the
+  resolved path and exits before migrations, which is how the logic was exercised. The
+  root cause of the bad value was the documented run command: the Dockerfile header and
+  README now show `docker run -p 3030:3030 -e BETTER_AUTH_SECRET=... -e BETTER_AUTH_URL=...
+-v app-base-data:/data app-base` and warn that `--env-file .env` carries the dev
+  `DATABASE_URL=file:./dev.db`, which overrides the image default `file:/data/app.db` and
+  points the database at the ephemeral container filesystem. **Test exemption** (AGENTS.md
+  rule 3): config/shell only, no application runtime surface — no Vitest or Playwright
+  specs. Verified with `sh -n docker-entrypoint.sh`, the `ENTRYPOINT_DRY_RUN=1` runs over
+  `file:./dev.db`, `file:/data/app.db`, `file:/data/app.db?connection_limit=1`,
+  `file:///data/app.db` and a `postgresql://` DSN, and prettier. Docker is not installed on
+  this machine, so the image itself was **not** rebuilt.
 - **2026-09-13 01:15 (EEST)** — `feat/start-screen-logos` — Start screen with a mock
   loading bar, and the real AgroPlan artwork everywhere the app used to show the
   whitelabel `Sprout` glyph

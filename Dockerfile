@@ -22,7 +22,21 @@
 #     DATABASE_URL at it (default below) so data survives container restarts.
 #
 # Build:  docker build -t app-base .
-# Run:    docker run -p 3030:3030 --env-file .env -v app-base-data:/data app-base
+# Run:    docker run -p 3030:3030 \
+#           -e BETTER_AUTH_SECRET=... -e BETTER_AUTH_URL=https://your.host \
+#           -v app-base-data:/data app-base
+#
+#         Required at runtime: BETTER_AUTH_SECRET (>=32 chars) and
+#         BETTER_AUTH_URL. DATABASE_URL defaults to the /data volume below.
+#         Add -e ANTHROPIC_API_KEY=... (and optionally AI_MODEL,
+#         GITHUB_CLIENT_ID/SECRET, ADMIN_USER_IDS) for the features that use
+#         them — see .env.example.
+#
+#         Do NOT reach for `--env-file .env` blindly: the dev file carries
+#         DATABASE_URL=file:./dev.db, which overrides the image default
+#         (file:/data/app.db) and points the database at the ephemeral
+#         container filesystem instead of the /data volume. Pass the runtime
+#         variables explicitly, or use an env file that omits DATABASE_URL.
 
 # Node is the runtime; Bun (single self-contained binary) is copied in as the
 # package manager / build runner and for the ops scripts.
@@ -81,6 +95,13 @@ ENV DATABASE_URL="file:/data/app.db"
 # Set to 0 to skip `prisma migrate deploy` on startup.
 ENV RUN_MIGRATIONS=1
 
+# Prisma's query/migration engines link against OpenSSL; without it the engine
+# guesses a libssl version ("Prisma failed to detect the libssl/openssl version
+# to use"). The deps stage installs it for the build — the runner needs it too.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
 # Keep Bun available for the ops scripts (create-user / set-role use bun:sqlite).
 COPY --from=oven/bun:1 /usr/local/bin/bun /usr/local/bin/bun
 RUN ln -sf /usr/local/bin/bun /usr/local/bin/bunx
@@ -90,7 +111,12 @@ RUN ln -sf /usr/local/bin/bun /usr/local/bin/bunx
 # and the prisma CLI needed for `migrate deploy` on boot).
 COPY --from=builder --chown=node:node /app ./
 COPY --chown=node:node docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+# `WORKDIR /app` created /app as root before the COPY above, and --chown does
+# not re-own a directory that already exists — so chown it explicitly. Without
+# this a relative `file:` DATABASE_URL (which Prisma resolves under /app) is
+# unwritable for the node user.
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+  && chown node:node /app \
   && mkdir -p /data && chown node:node /data
 
 # Persist the SQLite database (and any -journal/-wal files) across restarts.
