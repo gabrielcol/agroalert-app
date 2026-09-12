@@ -2,9 +2,12 @@ import { cn } from "@/lib/utils";
 
 /**
  * The action bar every phone screen ends with: a solid strip stuck to the
- * bottom of the phone column, so the next tap is always on screen. It is a
- * normal flex child at the end of the column, not an overlay — content scrolls
- * *to* it, never underneath it. The bottom padding clears the home indicator.
+ * bottom of the phone column, so the next tap is always on screen. It is the
+ * last flex child of the column, so it reserves its own space and the end of
+ * the content clears it — but while the page is taller than the viewport
+ * `sticky bottom-0` floats it over whatever is scrolling past, which is why it
+ * needs an opaque background and a z-index. The bottom padding clears the home
+ * indicator; `viewport-fit=cover` in the (agro) layout makes that inset real.
  */
 export function StickyBar({
   children,

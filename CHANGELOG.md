@@ -9,12 +9,13 @@ Every task, bugfix or modification gets an entry here (newest first). Each entry
   opaque `bg-background` (it already had the bottom hairline), and a new shared
   `StickyBar` (`src/components/agro/sticky-bar.tsx`) closes every screen: solid
   `bg-background`, `border-t` hairline, the same `px-5` gutter as `Screen`, 14px of
-  vertical padding and `pb-[calc(14px+env(safe-area-inset-bottom))]` under it. The bar is
-  an ordinary flex sibling at the end of the phone column rather than a fixed overlay, so
-  the content scrolls **to** it and is never hidden behind it — verified at a 390×700
-  viewport: on `/plan/rezumat` (scroll height 1554) the header stays at y=0 and the bar at
-  y=611 both unscrolled and at the bottom of the scroll, with 53px between the last card
-  and the button. All five public screens use it: the dashboard's dashed "Adaugă o cultură
+  vertical padding and `pb-[calc(14px+env(safe-area-inset-bottom))]` under it. The bar is the
+  last flex child of the phone column, so it reserves its own space and the end of the
+  content clears it; while the page is taller than the viewport `sticky bottom-0` floats it
+  over whatever scrolls past, which is why it is opaque and carries a z-index. Verified at
+  a 390×700 viewport: on `/plan/rezumat` (scroll height 1554) the header stays at y=0 and
+  the bar at y=611 both unscrolled and at the bottom of the scroll, with 53px between the
+  last card and the button once scrolled to the end. All five public screens use it: the dashboard's dashed "Adaugă o cultură
   nouă" button (styling untouched, only its `mt-3.5` dropped), the `PrimaryCta` of teren /
   cultura / soi (replacing the `flex-1` spacer + CTA at the end of `Screen`), and the
   summary's subscribe CTA — which leaves its `PlanCard`, the card keeping its heading and
@@ -22,10 +23,15 @@ Every task, bugfix or modification gets an entry here (newest first). Each entry
   subscribing the bar grows to hold the disabled "Abonat" button and, under it, the link
   back to the dashboard. The loading screen has no action and gets no bar. `PrimaryCta`
   drops its `mt-[22px]` (the bar owns the spacing) and `Screen`'s bottom padding goes
-  `30px` → `18px` for the same reason. `src/app/layout.tsx` gains
+  `30px` → `18px` for the same reason. `src/app/(agro)/layout.tsx` gains
   `export const viewport: Viewport = { viewportFit: "cover" }` — without it
   `env(safe-area-inset-bottom)` always reports 0 and the home-indicator padding would be
-  dead code. Tests: `src/components/agro/sticky-bar.test.tsx` (children, sticky /
+  dead code. It is scoped to the phone routes rather than the root layout because
+  `viewport-fit=cover` also drops the browser's automatic _side_ insets, which the admin
+  and auth areas have no reason to take on. The root layout's `<Toaster>` moves to
+  `position="top-center"`: sonner is bottom-anchored and full-width under 600px, so the
+  subscribe toast would have landed on top of the bar it just confirmed, covering the
+  "Abonat" state and the back link for its four seconds. Tests: `src/components/agro/sticky-bar.test.tsx` (children, sticky /
   `bottom-0` / `z-20`, the solid bar + hairline + gutter, the safe-area padding class,
   caller classes) and `src/components/agro/phone-header.test.tsx` (sticky, opaque, keeps
   its hairline, still renders title + dots), written before the implementation; Vitest is
@@ -53,6 +59,7 @@ Every task, bugfix or modification gets an entry here (newest first). Each entry
   branch** (user's decision, against rule 10) because the sticky bar rearranges the same
   screens that branch just rewrote; it must be rebased or retargeted onto `main` once
   issue 0001 merges.
+
 - **2026-09-12 22:00 (EEST)** — `feat/wizard-content-refinements` — Wizard content
   refinements ([`docs/issues/0001-wizard-content-refinements.md`](docs/issues/0001-wizard-content-refinements.md)).
   Three changes to the wizard prototype. (1) **Alert subscription replaces the alert

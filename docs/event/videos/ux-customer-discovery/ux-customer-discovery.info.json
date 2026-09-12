@@ -1,0 +1,106 @@
+{
+  "id": "8mKsZKB4Pnc",
+  "title": "UX & Customer Discovery",
+  "fulltitle": "UX & Customer Discovery",
+  "description": "00:00 Introduction\n01:30 Why Startups Fail\n05:14 UX - User Experience\n12:54 Where AI Fits In UX\n14:43 Customer Discovery\n18:36 Hypotheses\n22:32 What Discovery Gets You\n26:05 Customer Interviews\n30:29 Tips for Customer Interviews\n39:25 Where AI Fits In Customer Discovery\n41:41 Experiments\n47:54 Where AI Fits In Experiments\n49:04 Jobs To Be Done (JTBD)\n51:07 User Personas\n56:47 Conclusion",
+  "chapters": [
+    {
+      "start_time": 0,
+      "title": "Introduction",
+      "end_time": 90
+    },
+    {
+      "start_time": 90,
+      "title": "Why Startups Fail",
+      "end_time": 314
+    },
+    {
+      "start_time": 314,
+      "title": "UX - User Experience",
+      "end_time": 774
+    },
+    {
+      "start_time": 774,
+      "title": "Where AI Fits In UX",
+      "end_time": 883
+    },
+    {
+      "start_time": 883,
+      "title": "Customer Discovery",
+      "end_time": 1116
+    },
+    {
+      "start_time": 1116,
+      "title": "Hypotheses",
+      "end_time": 1352
+    },
+    {
+      "start_time": 1352,
+      "title": "What Discovery Gets You",
+      "end_time": 1565
+    },
+    {
+      "start_time": 1565,
+      "title": "Customer Interviews",
+      "end_time": 1829
+    },
+    {
+      "start_time": 1829,
+      "title": "Tips for Customer Interviews",
+      "end_time": 2365
+    },
+    {
+      "start_time": 2365,
+      "title": "Where AI Fits In Customer Discovery",
+      "end_time": 2501
+    },
+    {
+      "start_time": 2501,
+      "title": "Experiments",
+      "end_time": 2874
+    },
+    {
+      "start_time": 2874,
+      "title": "Where AI Fits In Experiments",
+      "end_time": 2944
+    },
+    {
+      "start_time": 2944,
+      "title": "Jobs To Be Done (JTBD)",
+      "end_time": 3067
+    },
+    {
+      "start_time": 3067,
+      "title": "User Personas",
+      "end_time": 3407
+    },
+    {
+      "start_time": 3407,
+      "title": "Conclusion",
+      "end_time": 3432
+    }
+  ],
+  "duration": 3432,
+  "duration_string": "57:12",
+  "uploader": "Innovation Labs",
+  "uploader_id": "@innovationlabs1",
+  "channel": "Innovation Labs",
+  "channel_id": "UCtXvtkMKDglXNofYD2XOwVw",
+  "channel_url": "https://www.youtube.com/channel/UCtXvtkMKDglXNofYD2XOwVw",
+  "upload_date": "20260901",
+  "webpage_url": "https://www.youtube.com/watch?v=8mKsZKB4Pnc",
+  "view_count": 40,
+  "like_count": 1,
+  "categories": ["People & Blogs"],
+  "language": "en",
+  "availability": "unlisted",
+  "thumbnail": "https://i.ytimg.com/vi/8mKsZKB4Pnc/maxresdefault.jpg",
+  "width": 1280,
+  "height": 720,
+  "fps": 25,
+  "resolution": "1280x720",
+  "vcodec": "avc1.64001f",
+  "acodec": "opus",
+  "filesize_approx": 113903420,
+  "_note": "Slimmed by hand on 2026-09-11: yt-dlp's automatic_captions, formats and thumbnails indexes were dropped because their URLs expire within hours. Re-fetch with `yt-dlp --write-info-json --skip-download 8mKsZKB4Pnc`."
+}
