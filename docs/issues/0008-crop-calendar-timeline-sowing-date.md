@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Progress
 branch: feat/crop-calendar-timeline
 created: 2026-09-12
 ---

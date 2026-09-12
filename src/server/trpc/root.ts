@@ -6,6 +6,7 @@ import { configRouter } from "@/server/trpc/routers/config";
 import { fieldProfileRouter } from "@/server/trpc/routers/field-profile";
 import { geocodeRouter } from "@/server/trpc/routers/geocode";
 import { recommendationRouter } from "@/server/trpc/routers/recommendation";
+import { sowingPlanRouter } from "@/server/trpc/routers/sowing-plan";
 import { weatherRouter } from "@/server/trpc/routers/weather";
 
 export const appRouter = createTRPCRouter({
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   geocode: geocodeRouter,
   weather: weatherRouter,
   recommendation: recommendationRouter,
+  sowingPlan: sowingPlanRouter,
 });
 
 export type AppRouter = typeof appRouter;
