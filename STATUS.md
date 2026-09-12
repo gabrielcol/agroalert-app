@@ -1,11 +1,14 @@
 # agro-app — status
 
-_Updated: 2026-09-12_
+_Updated: 2026-09-13_
 
 ## Now
 
-- Uncommitted glossary edit in `CONTEXT.md` (adds **Sowing Date** and **Stage**, reworks
-  **Crop Calendar**; not made in this session). Review and commit or discard.
+- Issue 0008 (Crop Calendar timeline + Sowing Date) is **In Review** on
+  `feat/crop-calendar-timeline`, gate green (typecheck, lint, prettier, Vitest). **Merge
+  pending, run by the user**: `git checkout main && git merge --no-ff
+feat/crop-calendar-timeline`, then set the issue to Done. Playwright was updated but
+  not run.
 - The AI leg has never run for real: no `ANTHROPIC_API_KEY` in any local `.env`. Add one,
   walk `/plan/teren` → cultura → soi once, and record the result in
   `docs/issues/0007-weather-brief-integration.md` (it says "pending a key").
@@ -21,13 +24,12 @@ _Updated: 2026-09-12_
 1. Push `main`; open PRs for `feat/field-location-teren`, `feat/weather-brief-client`,
    `feat/crop-variety-recommendation`, `feat/weather-brief-integration` (issues 0004–0007
    are In Review) once `gh auth login` is done, then mark them Done.
-2. Exclude `.claude/worktrees/**` in `vitest.config.ts`: Vitest from the main checkout
-   picks up worktree specs and reports inflated counts (837 vs 233).
-3. Foundation follow-up: `WeatherCell` has no Current Season column; it rides inside the
+2. Foundation follow-up: `WeatherCell` has no Current Season column; it rides inside the
    `forecast` JSON column (`src/lib/weather/brief.ts`). Add a column + migration.
-4. Rezumat step: read `?profile&rec&crop&variety` and show the real Sowing Window and
-   Crop Calendar; persist the Sowing Plan. Glossary terms Sowing Date / Stage (see Now).
-5. Rename `app-base` in `package.json` / README to the product name.
+3. Rezumat step follow-up: the "when to sow" window box is still static copy; show the
+   recommendation's real Sowing Window. Undo / backdating of the Sowing Date is out of
+   scope of 0008.
+4. Rename `app-base` in `package.json` / README to the product name.
 
 ## Blocked / decisions
 
@@ -41,7 +43,8 @@ _Updated: 2026-09-12_
 - Geocoding takes the first match silently; no reverse geocoding exists on Open-Meteo, so
   a geolocated profile stores `villageName = "Locația curentă"`.
 - Farmer auth story undecided (phone-number sign-in? none?); better-auth stays hidden.
-- Alert Subscription delivery deliberately left open in the glossary until a backend exists.
+- Alerts are on for every Sowing Plan (no subscription step); delivery is still undecided.
+- Sowing Plans are per browser (`localStorage` ids) until the farmer auth story is decided.
 
 ## Gotchas
 
@@ -87,7 +90,17 @@ _Updated: 2026-09-12_
 - `ReasonList` sits inside `ChoiceCard`, which is a `<button>`: output must stay phrasing
   content (`span`/`svg`). A unit test enforces this.
 - `Dictionary = typeof en`: edit `en.ts` before `ro.ts`; both dictionaries must agree.
-- The summary screen shows two `Bell` icons (alerts card + subscribe card); accepted.
+- `eslint-plugin-react-hooks` v7 (via `eslint-config-next`) makes `refs`,
+  `set-state-in-effect` and `purity` **errors**: no `ref.current` in render, no sync
+  setState in effects (use ResizeObserver / rAF callbacks), no `new Date()` in render
+  (`useState(() => new Date())`).
+- Tailwind `md:` variants are viewport-based: on a desktop browser they fire inside the
+  480px phone column. Phone screens must not use them (the vendor timeline had them
+  stripped).
+- The timeline dot is `sticky top-24 z-10`: the header and sticky bar are `z-20`, the
+  header is ~71px tall. Raising the dot's z-index makes it float over the header.
+- `.claude/**` (agent worktrees) is ignored by ESLint, Prettier and Vitest; the
+  worktrees still exist and can be removed with `git worktree remove <path>`.
 - Public sign-up is disabled; provision accounts with
   `bun run create-user <email> <password> [role] [name]`.
 - The `/sign-in/email` rate limit is relaxed outside `NODE_ENV=production` so parallel

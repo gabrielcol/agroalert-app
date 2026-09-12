@@ -2,6 +2,9 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import {
   CROP_RECOMMENDATION,
+  SOWING_PLAN,
+  SOWING_PLAN_LIST_META,
+  SOWING_PLAN_META,
   VARIETY_RECOMMENDATION,
   mockRecommendation,
 } from "./recommendation-mocks";
@@ -36,24 +39,61 @@ async function mockWizard(page: Page) {
     "fieldProfile.create": { ok: true, data: PROFILE },
     "recommendation.crops": { ok: true, data: CROP_RECOMMENDATION },
     "recommendation.varieties": { ok: true, data: VARIETY_RECOMMENDATION },
+    // No Sowing Plan yet; confirming "Ai semănat azi?" creates one.
+    "sowingPlan.latestByProfile": { ok: true, data: null, meta: null },
+    "sowingPlan.markSown": {
+      ok: true,
+      data: SOWING_PLAN,
+      meta: SOWING_PLAN_META,
+    },
   });
 }
 
-test("the dashboard is public and shows the sample plan", async ({ page }) => {
+test("the dashboard is public and shows the empty state", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveURL("/");
   await expect(
     page.getByRole("heading", { name: "Culturile tale" }),
   ).toBeVisible();
-  await expect(page.getByText("Porumb · P0216")).toBeVisible();
-  await expect(page.getByText("Alerte active")).toBeVisible();
+  await expect(page.getByText("Nicio cultură adăugată încă")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Adaugă o cultură nouă" }),
+  ).toBeVisible();
   // Auth is hidden: nothing on the public screen points at sign-in.
   await expect(
     page.getByRole("link", { name: /sign in|autentific/i }),
   ).toHaveCount(0);
 });
 
-test("the add-crop wizard walks all four steps and subscribes to alerts", async ({
+test("the dashboard lists the Sowing Plans this browser created", async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    window.localStorage.setItem(
+      "agro.sowingPlanIds",
+      JSON.stringify(["sp_e2e"]),
+    ),
+  );
+  await mockRecommendation(page, {
+    "sowingPlan.byIds": {
+      ok: true,
+      data: [SOWING_PLAN],
+      meta: SOWING_PLAN_LIST_META,
+    },
+  });
+  await page.goto("/");
+
+  const row = page.getByRole("link", { name: /Grâu de toamnă · Voinic/ });
+  await expect(row).toBeVisible();
+  await expect(row).toContainText("Semănat 12 septembrie 2026");
+  await expect(row).toContainText(/Urmează: .+ (în \d+ zile|azi)/);
+  await expect(row).toHaveAttribute(
+    "href",
+    "/plan/rezumat?profile=fp_e2e&crop=grau_toamna&variety=Voinic",
+  );
+});
+
+test("the add-crop wizard walks all four steps and records the Sowing Date", async ({
   page,
 }) => {
   await mockWizard(page);
@@ -112,23 +152,37 @@ test("the add-crop wizard walks all four steps and subscribes to alerts", async 
   await page.getByRole("button", { name: /Voinic/ }).click();
   await page.getByRole("link", { name: "Vezi planul" }).click();
 
-  // Step 4 — the plan: one alerts card with all three rows.
+  // Step 4 — the plan: the crop · variety title, the Crop Calendar timeline
+  // (dimmed, day offsets, a hint on the first Stage) and the alerts card.
   await expect(page).toHaveURL(REZUMAT_URL);
   await expect(page.getByText("Pasul 4 din 4")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Grâu de toamnă · Voinic" }),
+  ).toBeVisible();
   await expect(page.getByText("25 sept – 15 oct")).toBeVisible();
-  await expect(page.getByText("Alerte pentru zona ta")).toHaveCount(1);
+  await expect(page.getByText("Ziua 0")).toBeVisible();
+  await expect(page.getByText("+10 zile")).toBeVisible();
+  await expect(
+    page.getByText(
+      "Apasă „Marchează semănat” mai jos și datele se completează",
+    ),
+  ).toBeVisible();
+  await expect(page.getByText("Alertele sunt active")).toHaveCount(1);
   await expect(
     page.getByText("Momentan: niciun cod de avertizare ANM în zonă"),
   ).toBeVisible();
 
-  // Subscribing to the plan's alerts is confirmed with a toast; the button
-  // then locks into its "Abonat" state and a way back to the dashboard shows.
-  await page.getByRole("button", { name: "Abonează-mă la alerte" }).click();
-  await expect(page.getByText("Te-ai abonat la alerte")).toBeVisible();
+  // Confirming the Sowing Date happens inline in the sticky bar; the Sowing
+  // Plan is created, a toast confirms, the dates fill in and the bar becomes
+  // the way back to the dashboard.
+  await page.getByRole("button", { name: "Marchează semănat" }).click();
+  await expect(page.getByText("Ai semănat azi?")).toBeVisible();
+  await page.getByRole("button", { name: "Confirmă" }).click();
+  await expect(page.getByText("Semănat pe 12 septembrie 2026")).toHaveCount(2); // toast + node
   await expect(
-    page.getByText("Te anunțăm când apar schimbări pentru zona ta."),
+    page.getByText("Alertele sunt active pentru această cultură."),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Abonat" })).toBeDisabled();
+  await expect(page.getByText("22 septembrie 2026")).toBeVisible();
 
   await page.getByRole("link", { name: "Înapoi la culturile tale" }).click();
   await expect(page).toHaveURL("/");
@@ -143,13 +197,13 @@ test("at phone size the header and the plan CTA stay on screen", async ({
 }) => {
   const height = 600;
   await page.setViewportSize({ width: 390, height });
-  await page.goto("/plan/rezumat");
+  // The bar only renders with the wizard params (a plan to mark as sown).
+  await mockWizard(page);
+  await page.goto(REZUMAT_URL);
 
   const header = page.getByRole("banner");
-  const cta = page.getByRole("button", { name: "Abonează-mă la alerte" });
-  const cardBody = page.getByText(
-    "Te anunțăm despre secetă, ploi potrivite și avertizări ANM",
-  );
+  const cta = page.getByRole("button", { name: "Marchează semănat" });
+  const cardBody = page.getByText("Verificat azi");
 
   async function box(locator: Locator) {
     const found = await locator.boundingBox();
@@ -189,9 +243,12 @@ test("at phone size the header and the plan CTA stay on screen", async ({
   const body = await box(cardBody);
   expect(body.y + body.height).toBeLessThanOrEqual(ctaBottom.y);
 
-  // The bar keeps holding the action after subscribing, plus the way back.
+  // The inline confirm and, once sown, the way back stay in the bar.
+  await expect(cta).toBeEnabled();
   await cta.click();
-  await expect(page.getByRole("button", { name: "Abonat" })).toBeDisabled();
+  const confirm = await box(page.getByRole("button", { name: "Confirmă" }));
+  expect(confirm.y + confirm.height).toBeLessThanOrEqual(height);
+  await page.getByRole("button", { name: "Confirmă" }).click();
   const back = await box(
     page.getByRole("link", { name: "Înapoi la culturile tale" }),
   );

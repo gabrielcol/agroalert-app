@@ -31,6 +31,12 @@ export default defineConfig({
       AI_MODEL: "claude-sonnet-5",
     },
     // Playwright specs live in e2e/ and run via `bun run test:e2e`.
-    exclude: ["**/node_modules/**", "**/e2e/**", "**/.next/**"],
+    // Agent worktrees under .claude/ carry their own specs; skip them.
+    exclude: [
+      "**/node_modules/**",
+      "**/e2e/**",
+      "**/.next/**",
+      "**/.claude/**",
+    ],
   },
 });

@@ -220,6 +220,22 @@ export const VARIETY_RECOMMENDATION = {
   createdAt: "2026-09-12T10:05:00.000Z",
 };
 
+/** A Sowing Plan (issue 0008) as the summary and dashboard receive it. */
+export const SOWING_PLAN = {
+  id: "sp_e2e",
+  fieldProfileId: "fp_e2e",
+  cropId: "grau_toamna",
+  varietyName: "Voinic",
+  sownAt: "2026-09-12T08:00:00.000Z",
+  createdAt: "2026-09-12T08:00:00.000Z",
+};
+export const SOWING_PLAN_META = {
+  values: { sownAt: ["Date"], createdAt: ["Date"] },
+};
+export const SOWING_PLAN_LIST_META = {
+  values: { "0.sownAt": ["Date"], "0.createdAt": ["Date"] },
+};
+
 const DATE_META = { values: { createdAt: ["Date"] } };
 
 export type ProcedureMock =

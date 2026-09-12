@@ -3,6 +3,29 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 00:05 (EEST)** — `feat/crop-calendar-timeline` — Crop Calendar timeline and
+  Sowing Date
+  ([`docs/issues/0008-crop-calendar-timeline-sowing-date.md`](docs/issues/0008-crop-calendar-timeline-sowing-date.md)).
+  The summary's static calendar card is now a vertical timeline (shadcn Studio block
+  `timeline-component-02` under `src/components/shadcn-studio/blocks/`, adapted to the
+  480px phone shell: single column, no marketing heading, dots stuck under the header;
+  scroll-driven line fill kept via the new `motion` dependency). Stages carry static
+  day offsets (`CALENDAR_STAGE_DAYS`: 0 / +10 / +150 / +60 / +50) and pure date helpers
+  in `src/lib/agro/crop-calendar.ts`. Confirming "Ai semănat azi?" in the sticky bar
+  creates a **Sowing Plan** (new Prisma model + migration `sowing_plan`, Zod contract in
+  `src/lib/agro/sowing-plan.ts`, public tRPC router `sowingPlan` with `markSown`,
+  `latestByProfile`, `byIds`); the dates then fill in and the bar becomes the way back.
+  The summary reads `?profile&crop&variety` (title from the Crop Dictionary), the
+  subscribe card and toast are gone and the alerts card reads "Alertele sunt active".
+  The dashboard lists the Sowing Plans this browser created (`localStorage`
+  `agro.sowingPlanIds`, `useSyncExternalStore`) with sown date and next Stage; the
+  sample plan is gone. Glossary: Stage, Sowing Date, reworked Crop Calendar; the
+  Alert Subscription row is dropped. Config: `.claude/**` (agent worktrees) is ignored
+  by ESLint, Prettier and Vitest so the gate reads only the repo's own code. Tests:
+  Zod contract, router (fake db), calendar helpers (incl. DST), id store, summary
+  confirm flow and `CropTimeline` (vendor block mocked), `formatLongDate`; Playwright
+  `e2e/agro.spec.ts` rewritten for the new step 4, the dashboard empty/populated states
+  and the phone-viewport bar — **written, not run** (AGENTS.md rule 3).
 - **2026-09-12 23:34 (EEST)** — `feat/weather-brief-integration` — Weather Brief
   integration: real seam, e2e walk-through, docs
   ([`docs/issues/0007-weather-brief-integration.md`](docs/issues/0007-weather-brief-integration.md)).

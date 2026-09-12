@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: feat/crop-calendar-timeline
 created: 2026-09-12
 ---
