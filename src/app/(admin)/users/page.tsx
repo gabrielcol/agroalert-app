@@ -15,7 +15,7 @@ export default async function UsersPage() {
   const role = (session.user as { role?: string | null }).role;
   if (!hasPermission(role, { user: ["list"] })) redirect("/dashboard");
 
-  prefetch(trpc.admin.listUsers.queryOptions());
+  await prefetch(trpc.admin.listUsers.queryOptions());
 
   return (
     <HydrateClient>
