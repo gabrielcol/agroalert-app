@@ -14,7 +14,7 @@ _Updated: 2026-09-13_
   still Todo. Merge with `git merge --no-ff feat/start-screen-logos`.
 - Issue 0013 (log every AI call: raw response, model, input/output/cache tokens as
   separate columns, failures included, rows linked to the recommendation they produced)
-  is **Done**: merged into local `main` (c6e0ea5, **not pushed**). New Prisma model
+  is **Done**: merged into local `main` (c6e0ea5, pushed). New Prisma model
   `AiCall` (`ai_call`), migration `20260912215822_ai_call_log`, `src/lib/ai/call-log.ts`.
   Gate green: typecheck, lint, prettier, Vitest (46 files / 298 tests). Playwright spec
   written, not run. Run `bun run db:migrate` on any other local DB. The migration was applied to `dev.db` via
