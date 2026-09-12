@@ -4,6 +4,14 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0014 (start screen with mock loading on `/`; PNG logos from `public/logos/` in
+  `Brand`, the phone header, sidebar and auth screens; cropped `src/app/icon.png` replaces
+  `favicon.ico`; `app.name` = "AgroPlan") is **In Review** on `feat/start-screen-logos`
+  (8933d4a, pushed; not merged). Gate green: typecheck, lint, prettier, Vitest (47 files /
+  295 tests). Playwright `e2e/start-screen.spec.ts` written, not run. Known limitation:
+  the header/sidebar keep the green lockup in dark theme (mediocre contrast); only the auth
+  panel swaps to `logo-dark`. Issue 0010 (full AgroAlert → AgroPlan rename, theme tokens)
+  still Todo. Merge with `git merge --no-ff feat/start-screen-logos`.
 - Issue 0013 (log every AI call: raw response, model, input/output/cache tokens as
   separate columns, failures included, rows linked to the recommendation they produced)
   is **In Review** on `feat/ai-call-log` (83acd94, pushed; not merged). New Prisma model
