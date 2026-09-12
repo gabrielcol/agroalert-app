@@ -3,6 +3,39 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 23:13 (EEST)** — `feat/weather-brief-client` — Weather Brief: Open-Meteo
+  client, aggregation and cache
+  ([`docs/issues/0005-weather-brief-open-meteo-client.md`](docs/issues/0005-weather-brief-open-meteo-client.md)).
+  `weather.brief` now returns real data. `src/lib/weather/open-meteo.ts` is a keyless client
+  with an injectable `fetch` for three endpoints: the archive (daily max/min/mean
+  temperature, precipitation, FAO ET0 over the ten full years before this one plus the
+  year to date, ending five days back for ERA5 latency), the forecast (`forecast_days=16`,
+  `past_days=30`, daily rows plus hourly `soil_temperature_6cm` /
+  `soil_moisture_3_to_9cm` averaged per day, carried forward where the model stops
+  publishing them) and the seasonal API (`models=ecmwf_ec46`, 46 days, ensemble mean over
+  the control run and 50 members). One verified deviation from the issue text: the archive
+  is queried with Open-Meteo's default model blend, labelled `ERA5-Land/ERA5`, because
+  `models=era5_land` alone returns null precipitation and ET0 for every day. Pure
+  aggregation in `climate.ts` (monthly normals, frost/heat per year with day-of-year
+  mean + spread, GDD base 5/10, per-year table with the driest 60-day window and a
+  drought flag below mean minus one standard deviation; Current Season with the running
+  month's precipitation normal scaled to the days observed), `forecast.ts` and
+  `outlook.ts` (weeks 3-7 as anomalies against the Climate Profile's own normals, the
+  dominant tendency labelled, always `confidence: "low"`). `brief.ts` exports
+  `getWeatherBrief(fieldProfileId, { db, client?, now? })` for issue 0006: it reads the
+  `WeatherCell` row for the 0.1° cell, refreshes the Climate Profile after 30 days and
+  the short-range pieces after 6 hours (or when the cached rows are keyed to another
+  day), stores aggregates only — the Current Season rides in the `forecast` column next
+  to the Forecast, both keyed to today, since the cell has no dedicated column — and
+  throws `WeatherUnavailableError` on any Open-Meteo failure, writing nothing; the router
+  maps it to `SERVICE_UNAVAILABLE` and an unknown profile to `NOT_FOUND`. The stub fixture
+  now derives its dates from today instead of a hard-coded 2026-09-12. Tests: recorded
+  responses under `src/lib/weather/__fixtures__/` (lat 44.6, lng 27.1), a hand-computed
+  three-year synthetic series for the aggregation arithmetic, URL/parameter and
+  failure-mapping tests for the client, cache hit / short TTL / long TTL / stale-by-date /
+  corrupt-row / failure tests for `getWeatherBrief`, router mapping tests; Vitest green
+  (176 tests, 27 files). Playwright: none — no route surfaces `weather.brief` yet and a
+  spec would hit Open-Meteo; the retry screen's e2e coverage belongs to issue 0006.
 - **2026-09-12 22:50 (EEST)** — `feat/weather-brief-foundation` — Foundation: Weather Brief
   and recommendation data model
   ([`docs/issues/0003-weather-brief-recommendation-data-model.md`](docs/issues/0003-weather-brief-recommendation-data-model.md)).
