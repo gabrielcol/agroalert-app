@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: feat/loading-screen-real-steps
 created: 2026-09-13
 ---

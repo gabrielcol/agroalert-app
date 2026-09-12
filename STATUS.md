@@ -4,6 +4,12 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0011 (loading screen: every step driven by a real call, single fading step) is
+  **Done**: merged into local `main` (34df534, **not pushed**) from
+  `feat/loading-screen-real-steps`. Gate green: typecheck, lint, prettier, Vitest
+  (44 files / 289 tests). New `weather.climate` / `weather.forecast` tRPC queries refresh
+  one cache slice each; `e2e/teren.spec.ts` was updated but **Playwright has not been run**
+  since; run it before the next deploy.
 - Issue 0009 (forecast trailing-null days past the Open-Meteo horizon) is **Done**: merged
   into local `main` (1759157, **not pushed**). Gate green: typecheck, lint, prettier, Vitest
   (44 files / 279 tests). Playwright not extended. The tRPC route now logs the error cause
