@@ -1,80 +1,61 @@
-# STATUS
+# agro-app — status
+
+_Updated: 2026-09-12_
 
 ## Now
 
-- Branch `feat/sticky-header-cta-bar` (**stacked on the unmerged
-  `feat/wizard-content-refinements`**, by decision): the phone chrome stops scrolling away.
-  `PhoneHeader` is `sticky top-0 z-20 bg-background`; a new shared `StickyBar`
-  (`src/components/agro/sticky-bar.tsx`) closes all five public screens with a solid
-  `bg-background` strip, a `border-t` hairline, the `px-5` gutter and
-  `pb-[calc(14px+env(safe-area-inset-bottom))]`. It holds the dashboard's dashed add-crop
-  button, the `PrimaryCta` of teren/cultura/soi and the summary's subscribe CTA (which
-  left its card; the card keeps heading + body, the bar grows to hold "Abonat" + the back
-  link after subscribing). The loading screen gets no bar. `PrimaryCta` lost its
-  `mt-[22px]`, `Screen`'s bottom padding went 30px → 18px, and the root layout opts into
-  `viewportFit: "cover"` so the safe-area inset is non-zero.
-  Issue: `docs/issues/0002-sticky-header-and-cta-bar.md`, status `In Review`.
-- Green on this branch: `bun run format`, `bun run typecheck`, `bun run lint`,
-  `bunx prettier --check .`, `bun run test` (13 files, 80 tests).
-- Its PR targets `feat/wizard-content-refinements`, not `main`.
-- Branch `feat/wizard-content-refinements` (off `main`): three content changes to the
-  wizard prototype — the alert **channel** is replaced by a single alert **subscription**
-  card confirmed with a sonner toast (disabled "Abonat" + back link afterwards); every
-  crop/variety card gains three icon bullets (soil, sowing window, weather) plus a caution
-  line on the risky options via the new `ReasonList`; the loading screen plays five steps
-  naming the real inputs (~4 s) instead of four about a 7-day forecast. `CONTEXT.md`
-  trades the Alert Channel row for Alert Subscription. Issue 0001, status `In Review`.
-  **Its PR is still not open — `gh` is not authenticated (`gh auth login`).**
-- e2e: `feat/wizard-content-refinements`'s five agro specs were run once in a throwaway
-  worktree during review — **4 passed** (the other suites need a migrated `dev.db`). **The
-  new phone-viewport spec on `feat/sticky-header-cta-bar` has never been run** — see the
-  pre-deploy rule below.
-- `main` carries the tracker commit and both issue files (0001, 0002).
+- Nothing in flight. `main` (56c1510, pushed) holds the wizard content refinements,
+  the sticky header + `StickyBar`, the expanded `CONTEXT.md` glossary, ADRs 0001–0003,
+  issues 0001–0006 and the hackathon materials (`docs/event/`, `resources/`).
+- Verified on merged `main`: `bun run typecheck`, `bun run test` (13 files, 80 tests).
+  Not run on the merged tree: `bun run lint`, `bunx prettier --check .`, e2e.
+- Both feature branches were merged directly to `main` by decision (no PRs, `gh` was
+  never authenticated). They still exist locally and on `origin`; delete when convenient.
 
 ## Next
 
-- `gh auth login`, then open the PR for `feat/wizard-content-refinements` and the one for
-  `feat/sticky-header-cta-bar` (base `feat/wizard-content-refinements`; body drafted in the
-  session scratchpad as `pr-body-0002.md`). Wait ~10 min for CodeRabbit on each, address
-  feedback. Never auto-merge.
-- The earlier `feat/agroalert-design-shell` PR, if still open, needs the same treatment.
-- Before any deploy: `E2E_PORT=3100 bun run test:e2e` against a migrated `dev.db`, and fix
-  whatever the suite catches (the sticky-bar phone-viewport spec has never executed).
-- Decide the real auth story for farmers (phone-number sign-in? none?) and un-hide or
-  replace the better-auth flow accordingly.
-- Give the wizard real data flow: carry the chosen Crop into step 3's title and the Plan
-  summary, persist Sowing Plans, wire the dashboard list.
-- Decide how an Alert Subscription is actually delivered (the glossary deliberately leaves
-  it open) once there is a backend.
-- Rename `app-base` in `package.json` / README to the product name.
+1. Issue 0003 `docs/issues/0003-weather-brief-recommendation-data-model.md` — the shared
+   foundation (Weather Brief + recommendation data model, Prisma schema, tRPC contracts).
+   Rule 10: land this on `main` before 0004–0006 fan out.
+2. Issue 0005 `docs/issues/0005-weather-brief-open-meteo-client.md` — Open-Meteo client,
+   aggregation, cache (branch `feat/weather-brief-client`).
+3. Issue 0004 `docs/issues/0004-field-location-teren-step.md` — geocoding, Soil Class,
+   Field Profile creation on the teren step (branch `feat/field-location-teren`).
+4. Issue 0006 `docs/issues/0006-crop-variety-recommendation-ai-call.md` — Claude call for
+   Crop/Variety Recommendation, wire cultura and soi (branch
+   `feat/crop-variety-recommendation`).
+5. Before any deploy: `E2E_PORT=3100 bun run test:e2e` against a migrated `dev.db`. The
+   phone-viewport sticky-bar spec in `e2e/agro.spec.ts` has never executed.
 
-## Blocked
+## Blocked / decisions
 
-- Nothing.
+- `gh` is not authenticated on this machine (`gh auth login`); until it is, PRs cannot be
+  opened from a session and CodeRabbit review (rule 5) is skipped.
+- Farmer auth story undecided (phone-number sign-in? none?); better-auth stays hidden.
+- Alert Subscription delivery deliberately left open in the glossary until a backend exists.
+- `app-base` in `package.json` / README still needs renaming to the product name.
 
 ## Gotchas
 
-- **`feat/sticky-header-cta-bar` is stacked on `feat/wizard-content-refinements`**, against
-  AGENTS.md rule 10. Merge 0001 first, then rebase or retarget this branch onto `main`
-  before merging it; do not merge it into `main` while its base is unmerged.
+- Hackathon pace: **e2e runs pre-deploy, not per PR** (AGENTS.md rule 3). Specs are still
+  written per task; per-task gate is typecheck + lint + prettier + Vitest. No review
+  passes; speed over polish.
+- Tracker is `docs/issues/` markdown; the issue file lands on `main` before the branch.
 - The sticky bar works because it is an ordinary flex child at the end of the phone column
   (`PhoneShell`), not a fixed overlay: the window scrolls, there is no inner overflow
-  container, so `sticky bottom-0` pins it to the viewport while the content still reserves
-  the space. Wrapping the screens in a scroll container, or giving the column
-  `overflow: hidden`, would silently break both sticky elements.
-- `env(safe-area-inset-bottom)` is 0 unless the document asks for the full display: the
-  root layout's `export const viewport = { viewportFit: "cover" }` is load-bearing, not
-  decoration.
-- **e2e runs pre-deploy, not per PR** (AGENTS.md rule 3, prototype/hackathon pace). Specs
-  are still written per task; the per-task gate is typecheck + lint + prettier + Vitest.
+  container. Wrapping screens in a scroll container or giving the column
+  `overflow: hidden` silently breaks both sticky elements.
+- `env(safe-area-inset-bottom)` is 0 unless the root layout's
+  `export const viewport = { viewportFit: "cover" }` is present; it is load-bearing.
 - Use `E2E_PORT=3100` for Playwright so `reuseExistingServer` cannot test a stale dev
   server on :3000.
-- `ReasonList` sits inside `ChoiceCard`, which is a `<button>`: its output must stay
-  phrasing content (`span`/`svg`), no `div`/`p`/`ul`. A unit test enforces this.
-- `Dictionary = typeof en`, so `en.ts` is edited before `ro.ts`, and `reasons.caution` is
-  required-or-absent per id — the two dictionaries must agree on which ids have one.
-- The summary screen shows two `Bell` icons (alerts card + subscribe card); accepted by
-  decision, swap one to `BellRing` only if review objects.
+- `ReasonList` sits inside `ChoiceCard`, which is a `<button>`: output must stay phrasing
+  content (`span`/`svg`). A unit test enforces this.
+- `Dictionary = typeof en`: edit `en.ts` before `ro.ts`; `reasons.caution` is
+  required-or-absent per id and both dictionaries must agree.
+- The summary screen shows two `Bell` icons (alerts card + subscribe card); accepted.
+- Merging stacked branches into `main` conflicts on `CHANGELOG.md` and any issue file
+  cherry-picked from `main`; the branch side is the superset, take it.
 - Public sign-up is disabled; provision accounts with
   `bun run create-user <email> <password> [role] [name]`.
 - The `/sign-in/email` rate limit is relaxed outside `NODE_ENV=production` so parallel
