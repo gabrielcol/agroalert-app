@@ -20,7 +20,7 @@ export default function AuthLayout({
         </div>
         <div className="w-full max-w-sm space-y-8">
           <Link href="/" className="flex justify-center lg:hidden">
-            <Brand />
+            <Brand imageClassName="h-10 w-auto" />
           </Link>
           {children}
         </div>

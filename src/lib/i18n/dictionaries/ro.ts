@@ -4,7 +4,7 @@ import type { Dictionary } from "./en";
 
 export const ro: Dictionary = {
   app: {
-    name: "AgroAlert",
+    name: "AgroPlan",
     tagline: "Planuri de semănat și alerte meteo pentru culturile tale",
   },
   common: {
@@ -92,6 +92,9 @@ export const ro: Dictionary = {
         nisipos: "Nisipos",
         unknown: "Nu știu",
       },
+    },
+    splash: {
+      loading: "Se încarcă planurile tale…",
     },
     loading: {
       title: "Pregătim recomandarea",

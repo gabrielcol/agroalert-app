@@ -1,7 +1,8 @@
 "use client";
 
-import { Check, Sprout } from "lucide-react";
+import { Check } from "lucide-react";
 
+import { Brand } from "@/components/shared/brand";
 import { useT } from "@/lib/i18n/provider";
 
 /** Branded left panel for the auth screens (hidden on small viewports). */
@@ -10,12 +11,18 @@ export function AuthBrandPanel() {
 
   return (
     <div className="bg-primary text-primary-foreground relative hidden flex-col justify-between overflow-hidden p-10 lg:flex">
-      <div className="flex items-center gap-2.5">
-        <span className="bg-primary-foreground/15 flex size-9 items-center justify-center rounded-lg">
-          <Sprout className="size-5" />
-        </span>
-        <span className="text-lg font-bold">{t.app.name}</span>
-      </div>
+      {/* `bg-primary` is near-black in the light theme and near-white in the
+          dark one, so the lockup has to flip with it. */}
+      <Brand
+        variant="dark"
+        className="dark:hidden"
+        imageClassName="h-9 w-auto"
+      />
+      <Brand
+        variant="light"
+        className="hidden dark:flex"
+        imageClassName="h-9 w-auto"
+      />
 
       <div className="space-y-6">
         <div className="space-y-3">

@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: feat/start-screen-logos
 created: 2026-09-13
 ---
@@ -30,15 +30,15 @@ Two things (asked 2026-09-13):
 
 ## Acceptance criteria
 
-- [ ] Opening `/` shows the splash (green ground, `logo-dark.png`, progress bar) and,
+- [x] Opening `/` shows the splash (green ground, `logo-dark.png`, progress bar) and,
       without interaction, the dashboard within ~2.5 s. `/plan/teren` shows no splash.
-- [ ] `Brand` renders an `<img>` of the AgroPlan logo (no `Sprout` icon, no text
+- [x] `Brand` renders an `<img>` of the AgroPlan logo (no `Sprout` icon, no text
       wordmark) in the phone header, the sidebar and the auth screens; `showTagline` still
       works; sizes are constrained so the ~1 MB originals are never shipped at full size
       (downscaled copies under `public/logos/` are acceptable).
-- [ ] `src/app/icon.png` exists (the calendar-sprout mark), `src/app/favicon.ico` is gone.
-- [ ] `app.name` is "AgroPlan" in `en.ts` and `ro.ts`.
-- [ ] Unit tests: the splash calls its `onDone` after the mock progress completes (fake
+- [x] `src/app/icon.png` exists (the calendar-sprout mark), `src/app/favicon.ico` is gone.
+- [x] `app.name` is "AgroPlan" in `en.ts` and `ro.ts`.
+- [x] Unit tests: the splash calls its `onDone` after the mock progress completes (fake
       timers); `Brand` renders an image with the app name as alt. An e2e spec is written
       (not run, pre-deploy only).
-- [ ] Gate green: typecheck, lint, prettier, Vitest.
+- [x] Gate green: typecheck, lint, prettier, Vitest.
