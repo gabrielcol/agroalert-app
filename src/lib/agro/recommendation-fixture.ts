@@ -78,7 +78,7 @@ export const varietyRecommendationFixture: VarietyRecommendation = {
       reasons: ["Foarte rezistent la secetă și la iernare."],
     },
     {
-      varietyName: "Pitar",
+      varietyName: "Otilia",
       fit: 76,
       reasons: ["Randament mare în anii cu ploi de primăvară."],
     },
