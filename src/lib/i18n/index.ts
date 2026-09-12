@@ -4,8 +4,8 @@ import { ro } from "./dictionaries/ro";
 export const LOCALES = ["en", "ro"] as const;
 export type Locale = (typeof LOCALES)[number];
 
-/** English is the default; other locales are available via the toggle. */
-export const DEFAULT_LOCALE: Locale = "en";
+/** Romanian is the default (the product targets Romanian farmers); English is available via the toggle. */
+export const DEFAULT_LOCALE: Locale = "ro";
 
 export const STORAGE_KEY = "app-locale";
 

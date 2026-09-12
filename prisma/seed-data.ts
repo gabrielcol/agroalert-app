@@ -9,7 +9,7 @@ import type { PrismaClient } from "@/generated/prisma/client";
 /** Singleton system configuration (id = "singleton"). */
 export const SEED_SYSTEM_CONFIG = {
   id: "singleton",
-  defaultLocale: "en",
+  defaultLocale: "ro",
   siteName: "",
 } as const;
 

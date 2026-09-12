@@ -4,8 +4,8 @@ import type { Dictionary } from "./en";
 
 export const ro: Dictionary = {
   app: {
-    name: "App",
-    tagline: "O fundație pentru aplicații full-stack",
+    name: "AgroAlert",
+    tagline: "Planuri de semănat și alerte meteo pentru culturile tale",
   },
   common: {
     next: "Continuă",
@@ -42,12 +42,174 @@ export const ro: Dictionary = {
       administration: "Administrare",
     },
   },
-  landing: {
-    title: "Aplicația ta începe aici",
-    subtitle:
-      "Autentificare, roluri, jurnal de audit și un API tipizat — conectate cap-coadă, gata de extins.",
-    cta: "Deschide panoul",
-    note: "Autentifică-te cu un cont creat de administrator pentru a continua.",
+  agro: {
+    dashboard: {
+      title: "Culturile tale",
+      subtitle: "Alertele active și planurile de semănat, într-un singur loc.",
+      add: "Adaugă o cultură nouă",
+      emptyTitle: "Nicio cultură adăugată încă",
+      emptyBody: "Adaugă prima ta cultură ca să primești recomandări și alerte",
+      active: "Activ",
+      alertsActive: "Alerte active",
+      sample: { crop: "Porumb", variety: "P0216" },
+    },
+    wizard: {
+      stepOf: "Pasul {n} din {total}",
+      continue: "Continuă",
+      back: "Înapoi",
+    },
+    teren: {
+      title: "Spune-ne despre teren",
+      subtitle: "Trei întrebări simple, apoi îți arătăm ce se potrivește.",
+      village: {
+        label: "Sat / comună",
+        placeholder: "ex: Reviga, Ialomița",
+        detect: "Detectează automat locația",
+      },
+      land: {
+        label: "Câte hectare ai?",
+        small: "< 5 ha",
+        medium: "5–10 ha",
+        large: "10+ ha",
+      },
+      irrigation: {
+        label: "Ai posibilitate de irigare?",
+        yes: "Da, am",
+        no: "Nu am",
+      },
+    },
+    loading: {
+      title: "Pregătim recomandarea",
+      subtitle: "Câteva secunde",
+      steps: {
+        forecast: "Citim prognoza meteo pe 7 zile",
+        soil: "Verificăm umiditatea solului",
+        window: "Comparăm cu fereastra de semănat",
+        anm: "Verificăm avertizările ANM",
+      },
+    },
+    cultura: {
+      header: "Recomandare culturi",
+      title: "Ce se potrivește terenului tău",
+      subtitle:
+        "Pe baza vremii din zona ta și a răspunsurilor tale. Alege o cultură.",
+      recommended: "Recomandat",
+      crops: {
+        grau: {
+          name: "Grâu de toamnă",
+          description: "Cea mai bună potrivire cu solul și ploile din zonă",
+        },
+        orz: {
+          name: "Orz",
+          description: "Rezistă mai bine la secetă, recoltă mai devreme",
+        },
+        rapita: {
+          name: "Rapiță",
+          description: "Are nevoie de umiditate mai mare la semănat",
+        },
+      },
+    },
+    soi: {
+      header: "Alege soiul",
+      title: "Soiuri de grâu potrivite",
+      subtitle: "Cele mai potrivite soiuri pentru vremea și solul din zona ta.",
+      cta: "Vezi planul",
+      varieties: {
+        glosa: {
+          name: "Glosa",
+          description:
+            "Rezistă bine la secetă. Se potrivește cu fereastra de semănat din zona ta.",
+          tag: "Rezistență secetă: mare",
+        },
+        pitar: {
+          name: "Pitar",
+          description:
+            "Producție bună în ani normali, mai sensibil la secetă timpurie.",
+          tag: "Rezistență secetă: medie",
+        },
+        ursita: {
+          name: "Ursita",
+          description:
+            "Maturitate timpurie, bun dacă vrei să recoltezi mai devreme vara.",
+          tag: "Maturitate: timpurie",
+        },
+      },
+    },
+    rezumat: {
+      header: "Planul tău",
+      title: "Grâu de toamnă · Glosa",
+      subtitle: "Planul complet, pe baza prognozei pentru zona ta.",
+      when: {
+        title: "Când să semeni",
+        window: "25 sept – 15 oct",
+        note: "Fereastra optimă pentru zona ta, pe baza prognozei",
+      },
+      calendar: {
+        title: "Calendarul culturii",
+        rows: {
+          sowing: {
+            when: "Sept–Oct",
+            title: "Semănat",
+            sub: "În fereastra de mai sus",
+          },
+          emergence: {
+            when: "Noiembrie",
+            title: "Răsărire și fertilizare de bază",
+            sub: "Verifici răsărirea uniformă",
+          },
+          spring: {
+            when: "Martie",
+            title: "Fertilizare de primăvară",
+            sub: "La reluarea vegetației",
+          },
+          treatments: {
+            when: "Mai–Iun",
+            title: "Tratamente și monitorizare boli",
+            sub: "Pe baza umidității din sol",
+          },
+          harvest: {
+            when: "Iulie",
+            title: "Recoltare",
+            sub: "Estimativ, în funcție de an",
+          },
+        },
+      },
+      alerts: {
+        title: "Alerte pentru zona ta",
+        drought: {
+          title: "Te anunțăm dacă vine o secetă în fereastra de semănat",
+          sub: "Pe baza prognozei pe 7 zile",
+        },
+        rain: {
+          title: "Te anunțăm când vine ploaia potrivită pentru semănat",
+          sub: "Peste 10 mm în 48 de ore",
+        },
+        anm: {
+          title: "Momentan: niciun cod de avertizare ANM în zonă",
+          sub: "Verificat azi",
+        },
+      },
+      channel: {
+        title: "Cum vrei să primești alertele?",
+        sms: { title: "SMS", sub: "Un mesaj scurt, direct pe telefon" },
+        call: { title: "Apel telefonic", sub: "Te sunăm dacă e ceva urgent" },
+        app: {
+          title: "Notificare în aplicație",
+          sub: "O vezi când deschizi AgroAlert",
+        },
+      },
+      activate: "Activează alertele",
+    },
+    done: {
+      title: "Alertele sunt active",
+      body: "Te anunțăm prin {channel} când e momentul potrivit pentru semănat, sau dacă apare o secetă.",
+      channel: {
+        sms: "SMS",
+        call: "apel telefonic",
+        app: "notificare în aplicație",
+      },
+      back: "Înapoi la culturile tale",
+    },
   },
   admin: {
     topbar: {

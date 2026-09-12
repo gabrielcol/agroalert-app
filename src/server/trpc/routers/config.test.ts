@@ -58,7 +58,7 @@ describe("config router — system config", () => {
     const cfg = await caller.config.getSystem();
     expect(cfg).toMatchObject({
       id: "singleton",
-      defaultLocale: "en",
+      defaultLocale: "ro",
       siteName: "",
     });
   });

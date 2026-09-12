@@ -1,11 +1,11 @@
 "use client";
 
-import { ShieldCheck } from "lucide-react";
+import { Sprout } from "lucide-react";
 
 import { useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
-/** App wordmark + logo mark. Used in the sidebar, auth screens and landing. */
+/** App wordmark + logo mark. Used in the phone header, sidebar and auth screens. */
 export function Brand({
   className,
   showTagline = false,
@@ -25,7 +25,7 @@ export function Brand({
           iconClassName,
         )}
       >
-        <ShieldCheck className="size-5" />
+        <Sprout className="size-5" />
       </span>
       <span className="flex flex-col leading-none">
         <span className="font-heading text-base font-bold tracking-tight">

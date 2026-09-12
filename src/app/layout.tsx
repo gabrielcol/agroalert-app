@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,19 +10,19 @@ import { TRPCReactProvider } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 
 // latin-ext covers Central/Eastern European diacritics (e.g. ă â î ș ț).
-const inter = Inter({
+const geistSans = Geist({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-inter",
+  variable: "--font-geist-sans",
 });
 
-const jetBrainsMono = JetBrains_Mono({
+const geistMono = Geist_Mono({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-jetbrains-mono",
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
-  title: "App",
-  description: "A full-stack application foundation.",
+  title: "AgroAlert",
+  description: "Planuri de semănat și alerte meteo pentru culturile tale.",
 };
 
 export default function RootLayout({
@@ -32,12 +32,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ro"
       suppressHydrationWarning
       className={cn(
         "h-full antialiased",
-        inter.variable,
-        jetBrainsMono.variable,
+        geistSans.variable,
+        geistMono.variable,
       )}
     >
       <body className="flex min-h-full flex-col">

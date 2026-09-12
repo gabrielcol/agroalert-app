@@ -29,14 +29,29 @@ test.describe("dashboard", () => {
   });
 });
 
-// No locale pin here: English is the default, and the persisted choice must
-// survive a reload on its own.
+// The sign-in helper relies on English labels, so EN is pinned before sign-in;
+// the switch to Romanian afterwards must survive a reload on its own. The pin
+// is conditional: init scripts also run in same-origin frames created later
+// (the Next dev overlay), and an unconditional write would fire a `storage`
+// event that resets the locale mid-test.
 test("language toggle persists across reloads", async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!window.localStorage.getItem("app-locale")) {
+      window.localStorage.setItem("app-locale", "en");
+    }
+  });
   const email = `e2e+lang+${Date.now()}@example.com`;
   await createUserAndSignIn(page, email, "member", "Lang User");
 
-  await expect(page.getByRole("link", { name: "Dashboard" })).toBeVisible();
-  await page.getByRole("button", { name: "ro" }).click();
+  // The server renders the Romanian default; "en" pressed proves hydration has
+  // applied the pinned locale, so the click below reaches a live handler.
+  await expect(
+    page.getByRole("button", { name: "en", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "ro", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "ro", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
   await expect(
     page.getByRole("link", { name: "Panou principal" }),
   ).toBeVisible();
@@ -45,8 +60,7 @@ test("language toggle persists across reloads", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "Panou principal" }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "ro" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await expect(
+    page.getByRole("button", { name: "ro", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
 });

@@ -32,7 +32,7 @@ export const configRouter = createTRPCRouter({
       return (
         config ?? {
           id: SYSTEM_CONFIG_ID,
-          defaultLocale: "en" as const,
+          defaultLocale: "ro" as const,
           siteName: "",
           updatedAt: new Date(0),
         }
