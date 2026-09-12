@@ -20,7 +20,13 @@ export default async function AdminLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="flex min-h-svh flex-col">
-        <AdminTopbar />
+        <AdminTopbar
+          initialUser={{
+            name: session.user.name,
+            email: session.user.email,
+            role: (session.user as { role?: string | null }).role ?? null,
+          }}
+        />
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
