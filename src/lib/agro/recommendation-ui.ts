@@ -50,6 +50,15 @@ export function formatShortDate(isoDate: string, locale: Locale): string {
   }).format(date);
 }
 
+/** "12 septembrie 2026" style full date in the viewer's locale (local time). */
+export function formatLongDate(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 /** Replace `{name}` placeholders in dictionary copy. */
 export function fill(
   template: string,

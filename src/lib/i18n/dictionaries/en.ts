@@ -49,8 +49,10 @@ export const en = {
       emptyTitle: "No crops added yet",
       emptyBody: "Add your first crop to get recommendations and alerts",
       active: "Active",
-      alertsActive: "Alerts active",
-      sample: { crop: "Maize", variety: "P0216" },
+      sownOn: "Sown {date}",
+      nextStage: "Next: {stage} in {n} days",
+      nextToday: "Next: {stage} today",
+      finished: "Harvest done",
     },
     wizard: {
       stepOf: "Step {n} of {total}",
@@ -151,36 +153,37 @@ export const en = {
       },
       calendar: {
         title: "Crop calendar",
+        dayZero: "Day 0",
+        dayOffset: "+{n} days",
+        hint: "Tap “Mark as sown” below and the dates fill in",
+        sownOn: "Sown on {date}",
         rows: {
           sowing: {
-            when: "Sep–Oct",
             title: "Sowing",
             sub: "Within the window above",
           },
           emergence: {
-            when: "November",
             title: "Emergence and base fertilisation",
             sub: "Check for even emergence",
           },
           spring: {
-            when: "March",
             title: "Spring fertilisation",
             sub: "When growth resumes",
           },
           treatments: {
-            when: "May–Jun",
             title: "Treatments and disease monitoring",
             sub: "Based on soil moisture",
           },
           harvest: {
-            when: "July",
             title: "Harvest",
             sub: "Estimated, depends on the year",
           },
         },
       },
       alerts: {
-        title: "Alerts for your area",
+        title: "Alerts are on",
+        intro:
+          "For this plan we warn you about drought, suitable rain and ANM codes.",
         drought: {
           title: "We warn you if a drought hits during the sowing window",
           sub: "Based on the 7-day forecast",
@@ -194,16 +197,13 @@ export const en = {
           sub: "Checked today",
         },
       },
-      subscribe: {
-        title: "Get alerts for this plan",
-        body: "We warn you about drought, suitable rain and ANM warnings during the sowing period.",
-        cta: "Subscribe to alerts",
-        done: "Subscribed",
+      sown: {
+        cta: "Mark as sown",
+        question: "Sown today?",
+        toastTitle: "Sown on {date}",
+        toastBody: "Alerts are active for this crop.",
+        error: "Could not save. Try again.",
         back: "Back to your crops",
-        toast: {
-          title: "You are subscribed to alerts",
-          body: "We will let you know when things change in your area.",
-        },
       },
     },
   },

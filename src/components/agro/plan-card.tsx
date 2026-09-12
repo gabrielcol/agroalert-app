@@ -45,30 +45,6 @@ export function WindowBox({ range, note }: { range: string; note: string }) {
   );
 }
 
-export function CalendarRow({
-  when,
-  title,
-  sub,
-}: {
-  when: string;
-  title: string;
-  sub: string;
-}) {
-  return (
-    <div className="flex gap-3 border-t py-3">
-      <span className="text-faint w-16 shrink-0 pt-0.5 font-mono text-[12.5px]">
-        {when}
-      </span>
-      <span className="text-[16.5px] font-medium">
-        {title}
-        <span className="text-subtle mt-0.5 block text-sm font-normal">
-          {sub}
-        </span>
-      </span>
-    </div>
-  );
-}
-
 export function AlertRow({
   icon: Icon,
   tone,
