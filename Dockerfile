@@ -21,10 +21,10 @@
 #   - DATABASE_URL is a SQLite file path: mount a volume at /data and point
 #     DATABASE_URL at it (default below) so data survives container restarts.
 #
-# Build:  docker build -t app-base .
+# Build:  docker build -t agroplan .
 # Run:    docker run -p 3030:3030 \
 #           -e BETTER_AUTH_SECRET=... -e BETTER_AUTH_URL=https://your.host \
-#           -v app-base-data:/data app-base
+#           -v agroplan-data:/data agroplan
 #
 #         Required at runtime: BETTER_AUTH_SECRET (>=32 chars) and
 #         BETTER_AUTH_URL. DATABASE_URL defaults to the /data volume below.

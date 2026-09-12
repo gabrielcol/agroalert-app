@@ -136,7 +136,7 @@ model SystemConfig {
 }
 
 // ---------------------------------------------------------------------------
-// AgroAlert domain — Field Profile, weather cache, recommendations
+// AgroPlan domain — Field Profile, weather cache, recommendations
 // (issue 0003; terms in CONTEXT.md, decisions in docs/adr/0003)
 // ---------------------------------------------------------------------------
 

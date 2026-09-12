@@ -1,4 +1,4 @@
-# ANM agrometeorological reports: what they are and how AgroAlert can use them
+# ANM agrometeorological reports: what they are and how AgroPlan can use them
 
 Assessed 2026-09-12 against the `feat/agroalert-design-shell` branch (public wizard,
 mock data, no persistence). Source files: `sandbox/anm-info/md/*.md`, converted from
@@ -62,7 +62,7 @@ Good enough to read and hand-extract facts. Not good enough to parse automatical
 
 **Useful as domain knowledge and as a validation baseline. Not usable as a runtime data
 feed.** The reports are retrospective, published after the season ends, regional, and
-narrative. They contain no forecasts and not a single ANM warning code. AgroAlert's
+narrative. They contain no forecasts and not a single ANM warning code. AgroPlan's
 loading screen promises four live checks (7-day forecast, soil moisture, sowing window,
 ANM warnings); none of those come from these files. What the files give us is the
 **vocabulary, thresholds and seasonal logic** that ANM itself uses, so that whatever live

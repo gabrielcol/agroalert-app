@@ -9,7 +9,7 @@ import {
   mockRecommendation,
 } from "./recommendation-mocks";
 
-// The public AgroAlert shell: no session, Romanian by default. The wizard is
+// The public AgroPlan shell: no session, Romanian by default. The wizard is
 // walked against tRPC mocked at the network edge (issue 0007), so the suite
 // makes no Open-Meteo or Anthropic call: geocoding, Field Profile creation and
 // both recommendations are answered by page.route.

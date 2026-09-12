@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: Done
 branch: feat/agroplan-branding
 created: 2026-09-13
 ---
@@ -7,6 +7,10 @@ created: 2026-09-13
 # AgroPlan branding: name, logo, app icon and green/amber theme
 
 ## Description
+
+> Merged 2026-09-13 after issue 0014. The PNG logos and `src/app/icon.png` from 0014 won
+> the merge; the inline-SVG `Brand` and `src/app/icon.svg` described below were dropped.
+> The name, theme tokens and package/Docker rename landed as described.
 
 The product is called **AgroPlan**, not "AgroAlert", and the repository is still named
 `app-base`. The shell also carries the original whitelabel palette: a warm-neutral "ink"

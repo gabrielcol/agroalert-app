@@ -4,6 +4,11 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0010 (AgroPlan branding: product name everywhere, green/amber theme tokens on the
+  logo's own hues, `agroplan` package/Docker names) is **Done**: merged into `main` on
+  2026-09-13. Resolved against issue 0014: the PNG logos and `src/app/icon.png` from 0014
+  win; the branch's inline-SVG `Brand`, `brand.test.tsx` and `src/app/icon.svg` were
+  dropped in the merge. `--brand` is now the forest green.
 - Issue 0016 (Docker boot: `prisma migrate deploy` failed with "unable to open database
   file: ./dev.db" and an OpenSSL warning) is **Done** and on `main`. Causes: the dev
   `DATABASE_URL=file:./dev.db` reached the container (`--env-file .env` overrides the
@@ -64,7 +69,6 @@ undefined (reading 'top')` in the browser after the redirect. The spec still pas
 3. Rezumat step follow-up: the "when to sow" window box is still static copy; show the
    recommendation's real Sowing Window. Undo / backdating of the Sowing Date is out of
    scope of 0008.
-4. Rename `app-base` in `package.json` / README to the product name.
 
 ## Blocked / decisions
 

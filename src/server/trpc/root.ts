@@ -14,7 +14,7 @@ export const appRouter = createTRPCRouter({
   admin: adminRouter,
   audit: auditRouter,
   config: configRouter,
-  // AgroAlert (issue 0003 foundation; bodies land in 0004-0006)
+  // AgroPlan (issue 0003 foundation; bodies land in 0004-0006)
   fieldProfile: fieldProfileRouter,
   geocode: geocodeRouter,
   weather: weatherRouter,
