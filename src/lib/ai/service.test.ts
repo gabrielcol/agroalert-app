@@ -30,6 +30,7 @@ function failingBriefService(source: () => Promise<never>) {
     weatherBriefSource: source,
     model: "claude-sonnet-5",
     today: () => "2026-09-12",
+    logAiCall: async () => null,
   });
 }
 
@@ -65,6 +66,7 @@ describe("createRecommendationService().crops — Weather Brief failures", () =>
       weatherBriefSource: async () => brief,
       model: "claude-sonnet-5",
       today: () => "2026-09-12",
+      logAiCall: async () => null,
     });
     // The fake client answers nothing usable; only the request is inspected.
     await svc.crops(profile).catch(() => undefined);

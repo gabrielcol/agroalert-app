@@ -157,6 +157,7 @@ model FieldProfile {
 
   cropRecommendations CropRecommendation[]
   sowingPlans         SowingPlan[]
+  aiCalls             AiCall[]
 
   @@map("field_profile")
 }
@@ -198,6 +199,7 @@ model CropRecommendation {
   createdAt      DateTime     @default(now())
 
   varietyRecommendations VarietyRecommendation[]
+  aiCalls                AiCall[]
 
   @@index([fieldProfileId])
   @@map("crop_recommendation")
@@ -214,8 +216,49 @@ model VarietyRecommendation {
   modelId              String
   createdAt            DateTime           @default(now())
 
+  aiCalls AiCall[]
+
   @@index([cropRecommendationId])
   @@map("variety_recommendation")
+}
+
+/// One row per call to the Anthropic API (issue 0013): the raw SDK response,
+/// the model that answered and the token counts, for cost tracking and
+/// debugging. Written whether the call succeeded, the API threw or the tool
+/// output failed validation; a failed write never breaks the recommendation.
+model AiCall {
+  id                       String                 @id @default(cuid())
+  createdAt                DateTime               @default(now())
+  /// "crops" | "varieties"
+  kind                     String
+  fieldProfileId           String
+  fieldProfile             FieldProfile           @relation(fields: [fieldProfileId], references: [id], onDelete: Cascade)
+  /// The model we asked for
+  model                    String
+  /// The model that answered, null when the API threw
+  responseModel            String?
+  inputTokens              Int?
+  outputTokens             Int?
+  cacheReadInputTokens     Int?
+  cacheCreationInputTokens Int?
+  durationMs               Int
+  /// "ok" | "error"
+  status                   String
+  errorName                String?
+  errorMessage             String?
+  /// The SDK `Message` exactly as returned, null when the API threw
+  rawResponse              Json?
+  /// Set by the router once it has persisted what this call produced
+  cropRecommendationId     String?
+  cropRecommendation       CropRecommendation?    @relation(fields: [cropRecommendationId], references: [id], onDelete: SetNull)
+  varietyRecommendationId  String?
+  varietyRecommendation    VarietyRecommendation? @relation(fields: [varietyRecommendationId], references: [id], onDelete: SetNull)
+
+  @@index([fieldProfileId])
+  @@index([cropRecommendationId])
+  @@index([varietyRecommendationId])
+  @@index([createdAt])
+  @@map("ai_call")
 }
 
 /// A Sowing Plan (CONTEXT.md): one Crop + one Variety for a Field Profile,
