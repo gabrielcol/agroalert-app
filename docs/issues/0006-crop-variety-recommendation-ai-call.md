@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Progress
 branch: feat/crop-variety-recommendation
 created: 2026-09-12
 ---
