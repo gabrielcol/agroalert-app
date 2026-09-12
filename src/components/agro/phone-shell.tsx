@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * The design is mobile-first: a 480px phone frame centred on a subtle ground
- * on wide screens, full-bleed on phones. Every public AgroAlert screen renders
+ * on wide screens, full-bleed on phones. Every public AgroPlan screen renders
  * inside it.
  */
 export function PhoneShell({ children }: { children: React.ReactNode }) {

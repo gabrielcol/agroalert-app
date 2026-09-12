@@ -3,7 +3,7 @@
 
 export const en = {
   app: {
-    name: "AgroAlert",
+    name: "AgroPlan",
     tagline: "Sowing plans and weather alerts for your crops",
   },
   common: {

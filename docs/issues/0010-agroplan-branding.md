@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: feat/agroplan-branding
 created: 2026-09-13
 ---

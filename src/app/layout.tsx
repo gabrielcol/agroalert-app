@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgroAlert",
+  title: "AgroPlan",
   description: "Planuri de semănat și alerte meteo pentru culturile tale.",
 };
 

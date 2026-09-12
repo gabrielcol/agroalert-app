@@ -1,9 +1,9 @@
-# app-base
+# AgroPlan
 
-A production-shaped **foundation to fork** for new apps. Batteries chosen once,
-correctly, so each new project starts from a working full-stack skeleton:
-authentication, roles, an audit trail, user management, settings, i18n and a
-typed API — wired end to end.
+Sowing plans and weather alerts for Romanian growers, built on a
+production-shaped **foundation to fork**. Batteries chosen once, correctly, so
+the product starts from a working full-stack skeleton: authentication, roles, an
+audit trail, user management, settings, i18n and a typed API — wired end to end.
 
 ## Stack
 
@@ -98,7 +98,7 @@ src/
   app/
     api/auth/[...all]     better-auth handler
     api/trpc/[trpc]       tRPC fetch adapter
-    (agro)/               public AgroAlert screens (dashboard + /plan wizard), no session
+    (agro)/               public AgroPlan screens (dashboard + /plan wizard), no session
     (auth)/               sign-in / sign-up (disabled notice)
     (admin)/              signed-in shell: dashboard, users, audit, settings
   components/             shadcn ui/, admin shell, auth, posts, shared

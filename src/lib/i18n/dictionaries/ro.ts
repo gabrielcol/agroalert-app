@@ -4,7 +4,7 @@ import type { Dictionary } from "./en";
 
 export const ro: Dictionary = {
   app: {
-    name: "AgroAlert",
+    name: "AgroPlan",
     tagline: "Planuri de semănat și alerte meteo pentru culturile tale",
   },
   common: {

@@ -21,8 +21,8 @@
 #   - DATABASE_URL is a SQLite file path: mount a volume at /data and point
 #     DATABASE_URL at it (default below) so data survives container restarts.
 #
-# Build:  docker build -t app-base .
-# Run:    docker run -p 3030:3030 --env-file .env -v app-base-data:/data app-base
+# Build:  docker build -t agroplan .
+# Run:    docker run -p 3030:3030 --env-file .env -v agroplan-data:/data agroplan
 
 # Node is the runtime; Bun (single self-contained binary) is copied in as the
 # package manager / build runner and for the ops scripts.

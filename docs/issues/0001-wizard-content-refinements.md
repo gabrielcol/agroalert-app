@@ -8,7 +8,7 @@ created: 2026-09-12
 
 ## Description
 
-Three content changes to the AgroAlert wizard prototype (public routes
+Three content changes to the AgroPlan wizard prototype (public routes
 `/plan/teren|cultura|soi|rezumat`):
 
 1. **Alert subscription instead of an alert channel.** The summary screen asks "Cum vrei

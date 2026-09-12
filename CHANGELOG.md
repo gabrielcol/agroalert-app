@@ -3,6 +3,36 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 00:32 (EEST)** — `feat/agroplan-branding` — AgroPlan name, logo, app icon
+  and green/amber theme
+  ([`docs/issues/0010-agroplan-branding.md`](docs/issues/0010-agroplan-branding.md)).
+  The product is **AgroPlan**: the name replaces "AgroAlert" in the document title, both
+  i18n dictionaries (`app.name`), `package.json`/`bun.lock` (`app-base` → `agroplan`), the
+  README title and intro, the Dockerfile image name, `prisma/schema.prisma`, `CONTEXT.md`
+  and the remaining hand-written comments (historical `CHANGELOG.md` entries are left as
+  the record they are). `Brand` no longer wraps a `lucide-react` `Sprout` in a rounded
+  square: it renders `AgroPlanMark`, an inline 64×64 SVG of the real logo — a cream
+  calendar with two ring tabs on a forest-green tile, an amber two-leaf sprout rising from
+  a cream field curve — next to a wordmark whose second half is amber. The split is
+  derived from `t.app.name` and only applies to a name ending in "Plan", so a whitelabel
+  fork that renames the app still gets a working lockup. The same geometry ships as a
+  static `src/app/icon.svg` (Next's `app/icon.svg` metadata file convention, picked up
+  automatically — no `metadata.icons` entry); `src/app/favicon.ico` is gone. Theme: the
+  accent hue moves off the arbitrary 152 onto the logo's own green. `--primary` is
+  `oklch(0.378 0.078 149)` (#1F4D2A) on a cream `oklch(0.956 0.017 90)` foreground,
+  `--ring`/`--brand`/`--chart-1`/`--sidebar-primary` follow it, `--accent` becomes an
+  amber tint, `--chart-2` the logo amber `oklch(0.765 0.141 73)` (#E8A33C), `--secondary`
+  a faint cream; `.dark` mirrors them lighter (`oklch(0.72 0.12 149)` primary on
+  `oklch(0.2 0.045 149)`). Three fixed logo tokens (`--brand-green`, `--brand-cream`,
+  `--brand-amber`) are mapped through `@theme inline`; the tile green and frame cream do
+  **not** change between themes — it is a logo, not a surface. Page surfaces
+  (`--background`, `--card`, `--popover`, `--foreground`, `--muted`, `--border`,
+  `--input`, sidebar backgrounds) are byte-identical in both blocks, so no layout shifts.
+  Tests: `src/components/shared/brand.test.tsx` (three cases: the mark renders as an
+  `aria-hidden` `svg`, the wordmark splits with "Plan" carrying `text-brand-amber`,
+  `iconClassName` reaches the mark). Playwright `e2e/branding.spec.ts` was **written but
+  not run** (AGENTS.md rule 3: e2e runs pre-deploy). Gate green: typecheck, lint, prettier,
+  Vitest 45 files / 282 tests.
 - **2026-09-13 00:18 (EEST)** — `fix/forecast-trailing-null-days` — Forecast tolerates
   trailing null days past the Open-Meteo horizon
   ([`docs/issues/0009-forecast-trailing-null-days.md`](docs/issues/0009-forecast-trailing-null-days.md)).

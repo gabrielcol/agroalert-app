@@ -8,7 +8,7 @@ created: 2026-09-12
 
 ## Description
 
-On the AgroAlert phone screens the header scrolls away and the primary action sits at the
+On the AgroPlan phone screens the header scrolls away and the primary action sits at the
 bottom of the document, so on a real phone the farmer has to scroll to find out what to tap
 next. The plan summary is the worst case: the subscribe button is four cards down.
 

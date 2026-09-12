@@ -1,4 +1,4 @@
-# AgroAlert — domain glossary
+# AgroPlan — domain glossary
 
 Canonical English terms used in code, with the Romanian term farmers see in the UI.
 Glossary only: no implementation details.

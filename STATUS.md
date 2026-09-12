@@ -4,6 +4,10 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0010 (AgroPlan branding) is **In Review** on `feat/agroplan-branding`: the product
+  name, the calendar-sprout logo (inline SVG in `Brand` + `src/app/icon.svg`), and a
+  green/amber theme built on the logo's own hues. Page surfaces (`--background`, `--card`,
+  `--popover`, `--muted`, `--border`, sidebar) are deliberately unchanged.
 - Issue 0009 (forecast trailing-null days past the Open-Meteo horizon) is **Done**: merged
   into local `main` (1759157, **not pushed**). Gate green: typecheck, lint, prettier, Vitest
   (44 files / 279 tests). Playwright not extended. The tRPC route now logs the error cause
@@ -32,7 +36,6 @@ _Updated: 2026-09-13_
 3. Rezumat step follow-up: the "when to sow" window box is still static copy; show the
    recommendation's real Sowing Window. Undo / backdating of the Sowing Date is out of
    scope of 0008.
-4. Rename `app-base` in `package.json` / README to the product name.
 
 ## Blocked / decisions
 

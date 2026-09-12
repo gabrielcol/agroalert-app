@@ -45,10 +45,7 @@ export function PhoneHeader({
       {title ? (
         <span className="text-lg font-semibold tracking-tight">{title}</span>
       ) : (
-        <Brand
-          className="gap-[9px]"
-          iconClassName="bg-brand text-brand-foreground size-7 rounded-lg shadow-none [&>svg]:size-4"
-        />
+        <Brand className="gap-[9px]" iconClassName="size-7" />
       )}
       {step && (
         <span className="ml-auto flex gap-[7px]" aria-hidden="true">

@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "app-base",
+      "name": "agroplan",
       "dependencies": {
         "@anthropic-ai/sdk": "^0.125.0",
         "@hookform/resolvers": "^5.4.0",
