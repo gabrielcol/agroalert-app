@@ -14,23 +14,36 @@ These rules are mandatory for every task.
 
 ## 1. Track everything in the issue tracker
 
-- All work must be reflected in the project's issue tracker (fill in the team/project
-  link here when you fork: `<TRACKER_URL>`).
-- **Document the task first**, before writing any code. Create the issue with a clear
-  description and acceptance criteria, then start work.
+- All work must be reflected in the project's issue tracker: the markdown files under
+  [`docs/issues/`](docs/issues/). See [`docs/issues/README.md`](docs/issues/README.md) for
+  the naming and frontmatter format.
+- **Document the task first**, before writing any code. Create the issue file on `main`
+  with a clear description and acceptance criteria, then start work. Creating the issue is
+  not task work, so it is the one thing that lands on `main` directly (rule 2).
 
 ## 2. One branch per task
 
 - **Every task must be done in its own branch**, created off the up-to-date `main`.
 - Never commit task work directly to `main`. One task = one branch = one PR.
 
-## 3. Tests & e2e must pass before PR
+## 3. Tests are written per task; the e2e suite gates the deploy
 
 - **Every task must ship tests**: **unit tests** (Vitest) **and** **e2e tests**
   (Playwright) covering the new behavior. Add them alongside the existing setup in
-  `test/` and `e2e/`.
-- **Both suites must pass locally before opening the PR.** Do not open a PR on red or
-  missing tests.
+  `test/` and `e2e/`. This has not changed — both are still written per task.
+- **Per-task gate, green before the PR:**
+
+  ```bash
+  bun run typecheck
+  bun run lint
+  bunx prettier --check .   # run `bun run format` first if needed
+  bun run test              # Vitest
+  ```
+
+- **e2e runs before each deploy, not per PR.** This is a prototype/hackathon pace: the
+  Playwright suite boots the app and is too slow to sit in front of every PR. Run
+  `E2E_PORT=3100 bun run test:e2e` before a deploy and fix the suite then. A PR whose
+  Playwright spec has not been run says so in its description.
 - **Exemption:** tasks with **no runtime surface** (for example, docs-only or
   comment-only changes) are exempt. A config change that can affect build/runtime
   behavior still requires tests. State the exemption in the PR/changelog.

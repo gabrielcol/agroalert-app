@@ -3,6 +3,18 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 21:56 (EEST)** — `main` — Markdown issue tracker + e2e gate moved to
+  pre-deploy. Added `docs/issues/` as the project's issue tracker (one markdown file per
+  issue, `NNNN-kebab-slug.md`, frontmatter `status` / `branch` / `created`) with
+  `docs/issues/README.md` describing the format, and the first issue,
+  `docs/issues/0001-wizard-content-refinements.md`. `AGENTS.md` rule 1 now points at that
+  folder instead of the `<TRACKER_URL>` placeholder; rule 3 keeps "every task ships unit
+  **and** e2e tests" but makes the per-task gate `typecheck` + `lint` +
+  `prettier --check` + Vitest, with the Playwright suite running **before each deploy**
+  rather than per PR (prototype/hackathon pace). The no-runtime-surface exemption is
+  unchanged. Docs-only, so test-exempt under that rule. Committing the issue file to
+  `main` is the analogue of opening a ticket, not task work.
+
 - **2026-09-12 13:45 (EEST)** — `feat/agroalert-design-shell` — AgroAlert design shell.
   Implemented the Claude Design prototype (`app/index.html`) as public Next.js routes: `/`
   (sowing-plan dashboard), `/plan/teren`, `/plan/cultura`, `/plan/soi`, `/plan/rezumat`,
