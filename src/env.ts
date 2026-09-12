@@ -23,6 +23,10 @@ export const env = createEnv({
     // Comma-separated user ids granted admin access regardless of stored role
     // (bootstrap — see better-auth admin plugin `adminUserIds`).
     ADMIN_USER_IDS: z.string().optional(),
+    // Crop / Variety Recommendation (issue 0006) — Anthropic API, server only.
+    ANTHROPIC_API_KEY: z.string().min(1),
+    // Sonnet-class by default (Claude Sonnet 5); override to A/B during demos.
+    AI_MODEL: z.string().min(1).default("claude-sonnet-5"),
   },
   client: {
     NEXT_PUBLIC_BETTER_AUTH_URL: z.url().optional(),
@@ -35,6 +39,8 @@ export const env = createEnv({
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     ADMIN_USER_IDS: process.env.ADMIN_USER_IDS,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    AI_MODEL: process.env.AI_MODEL,
     NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
   },
   emptyStringAsUndefined: true,

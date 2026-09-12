@@ -77,11 +77,21 @@ export const ro: Dictionary = {
         yes: "Da, am",
         no: "Nu am",
       },
+      // Soil Class (issue 0004 wires the selector)
+      soil: {
+        label: "Ce tip de sol ai?",
+        cernoziom: "Cernoziom",
+        lutos: "Lutos",
+        argilos: "Argilos",
+        nisipos: "Nisipos",
+        unknown: "Nu știu",
+      },
     },
     loading: {
       title: "Pregătim recomandarea",
       subtitle: "Câteva secunde",
       steps: {
+        location: "Găsim terenul",
         history: "Preluăm datele meteorologice din ultimii ani",
         forecast: "Preluăm datele meteo pentru următoarea perioadă",
         crops: "Inspectăm culturile potrivite pentru tine",
@@ -95,6 +105,21 @@ export const ro: Dictionary = {
       subtitle:
         "Pe baza vremii din zona ta și a răspunsurilor tale. Alege o cultură.",
       recommended: "Recomandat",
+      // Crop Recommendation cards (issue 0006 renders them)
+      recommendation: {
+        fit: "Potrivire {n}%",
+        reasons: "De ce",
+        risks: "Ai grijă la",
+        window: "Fereastra de semănat: {from} – {to}",
+        others: "Alte culturi",
+        excluded: "Lăsate deoparte de data asta",
+        confidence: {
+          low: "Încredere scăzută",
+          medium: "Încredere medie",
+          high: "Încredere ridicată",
+        },
+        retry: "Nu am putut citi vremea. Încearcă din nou.",
+      },
       crops: {
         grau: {
           name: "Grâu de toamnă",
@@ -133,6 +158,13 @@ export const ro: Dictionary = {
       title: "Soiuri de grâu potrivite",
       subtitle: "Cele mai potrivite soiuri pentru vremea și solul din zona ta.",
       cta: "Vezi planul",
+      // Variety Recommendation ranking (issue 0006 renders it)
+      ranking: {
+        rank: "#{n}",
+        fit: "Potrivire {n}%",
+        reasons: "De ce",
+        empty: "Nu există soi înregistrat pentru această cultură.",
+      },
       varieties: {
         glosa: {
           name: "Glosa",
