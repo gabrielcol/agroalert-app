@@ -65,6 +65,10 @@ export const ro: Dictionary = {
         label: "Sat / comună",
         placeholder: "ex: Reviga, Ialomița",
         detect: "Detectează automat locația",
+        located: "Locația curentă",
+        notFound:
+          "Nu am găsit localitatea. Verifică numele și încearcă din nou.",
+        denied: "Nu am putut citi locația telefonului. Scrie satul sau comuna.",
       },
       land: {
         label: "Câte hectare ai?",
@@ -90,6 +94,8 @@ export const ro: Dictionary = {
     loading: {
       title: "Pregătim recomandarea",
       subtitle: "Câteva secunde",
+      error: "Nu am putut pregăti recomandarea.",
+      retry: "Încearcă din nou",
       steps: {
         location: "Găsim terenul",
         history: "Preluăm datele meteorologice din ultimii ani",

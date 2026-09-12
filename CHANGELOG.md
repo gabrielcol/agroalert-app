@@ -3,6 +3,34 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 23:06 (EEST)** — `feat/field-location-teren` — Field Location, Soil Class
+  and Field Profile creation on the teren step
+  ([`docs/issues/0004-field-location-teren-step.md`](docs/issues/0004-field-location-teren-step.md)).
+  The first wizard step stops being a prototype. `geocode.search` now calls the Open-Meteo
+  Geocoding API (`src/lib/geocode/open-meteo.ts`: `countryCode=RO`, `count=5`,
+  `language=ro`, fetch injectable, names joined as "Sat, Comuna, Județ", non-RO results
+  dropped, upstream failures mapped to `BAD_GATEWAY`); the teren screen takes the first
+  match silently. The locate button is live: browser geolocation fills the Field Location
+  and labels the village field "Locația curentă" (Open-Meteo has no reverse geocoding), a
+  denial shows an inline error. A Soil Class toggle group (cernoziom / lutos / argilos /
+  nisipos / nu știu, default `unknown`) joins land size and irrigation; land buckets are
+  unchanged. "Continuă" geocodes if needed, creates the Field Profile through
+  `fieldProfile.create`, then requests `recommendation.crops` (still the 0003 stub until
+  issue 0006) while the loader plays, and lands on `/plan/cultura?profile=<id>`. The loader
+  has six real stages: `location` ("Găsim terenul") is prepended to the five from issue
+  0001 and completes when the Field Location resolves; the rest tick while the
+  recommendation is pending, never past the last, and all complete when it settles
+  (`src/lib/agro/loading-stages.ts`). A failed call freezes the stages under "Nu am putut
+  pregăti recomandarea." with a retry that reuses the created profile. New i18n keys, RO/EN:
+  `agro.teren.village.{located,notFound,denied}`, `agro.loading.{error,retry}`. Tests:
+  geocode client (URL params, mapping, empty, non-RO, HTTP error), geocode router with a
+  stubbed fetch, loader stage progression, teren screen (Soil Class default, geocode →
+  create → crops → navigate, not-found, geolocation, retry without recreating the
+  profile); Vitest green (146 tests, 25 files). Playwright `e2e/teren.spec.ts` written
+  (tRPC mocked via `page.route`, geolocation via the browser context) but not run — e2e runs
+  pre-deploy per rule 3. Known follow-up: the wizard walkthrough in `e2e/agro.spec.ts`
+  still expects the teren step to reach `/plan/cultura` without a backend and now needs
+  the same mocks; left to the pre-deploy e2e pass since 0006 changes that flow again.
 - **2026-09-12 22:50 (EEST)** — `feat/weather-brief-foundation` — Foundation: Weather Brief
   and recommendation data model
   ([`docs/issues/0003-weather-brief-recommendation-data-model.md`](docs/issues/0003-weather-brief-recommendation-data-model.md)).
