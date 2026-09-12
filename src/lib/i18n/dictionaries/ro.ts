@@ -119,43 +119,15 @@ export const ro: Dictionary = {
           high: "Încredere ridicată",
         },
         retry: "Nu am putut citi vremea. Încearcă din nou.",
-      },
-      crops: {
-        grau: {
-          name: "Grâu de toamnă",
-          description: "Cel mai mic risc pentru terenul tău anul acesta.",
-          reasons: {
-            soil: "Sol potrivit — reține bine apa pentru răsărire",
-            window: "Fereastră largă: 25 sept – 15 oct",
-            weather: "Ploile din ultimii ani și prognoza îi priesc",
-          },
-        },
-        orz: {
-          name: "Orz",
-          description: "Se recoltează cu 2–3 săptămâni înaintea grâului.",
-          reasons: {
-            soil: "Se descurcă și pe soluri mai sărace",
-            window: "Fereastră mai scurtă: 20 sept – 5 oct",
-            weather: "Rezistă mai bine la secetă decât grâul",
-            caution: "Iernile aspre îl pot afecta mai mult decât grâul",
-          },
-        },
-        rapita: {
-          name: "Rapiță",
-          description: "Preț bun, dar cere lucrări mai atente.",
-          reasons: {
-            soil: "Cere un pat germinativ bine pregătit",
-            window: "Fereastră scurtă: 1 – 15 sept",
-            weather: "Fără irigare, prognoza dă prea puțină ploaie",
-            caution:
-              "Semănatul târziu sau toamna secetoasă îi strică răsărirea",
-          },
-        },
+        retryAi: "Nu am putut pregăti recomandarea. Încearcă din nou.",
+        retryTitle: "Ceva nu a mers",
+        retryAction: "Încearcă din nou",
       },
     },
     soi: {
       header: "Alege soiul",
-      title: "Soiuri de grâu potrivite",
+      title: "Soiuri potrivite",
+      titleFor: "Soiuri de {crop} potrivite",
       subtitle: "Cele mai potrivite soiuri pentru vremea și solul din zona ta.",
       cta: "Vezi planul",
       // Variety Recommendation ranking (issue 0006 renders it)
@@ -164,41 +136,6 @@ export const ro: Dictionary = {
         fit: "Potrivire {n}%",
         reasons: "De ce",
         empty: "Nu există soi înregistrat pentru această cultură.",
-      },
-      varieties: {
-        glosa: {
-          name: "Glosa",
-          description: "Soiul cel mai semănat în zonă, cu producție constantă.",
-          tag: "Rezistență secetă: mare",
-          reasons: {
-            soil: "Merge pe sol greu, chiar și fără irigare",
-            window: "Semănat ideal la mijlocul ferestrei: 1 – 10 oct",
-            weather: "A dat recolte bune în anii secetoși de până acum",
-          },
-        },
-        pitar: {
-          name: "Pitar",
-          description: "Boabe de calitate bună pentru panificație.",
-          tag: "Rezistență secetă: medie",
-          reasons: {
-            soil: "Cere sol mai bine aprovizionat cu apă",
-            window: "Semănat devreme în fereastră: 25 sept – 5 oct",
-            weather: "În anii cu toamnă ploioasă a dat producții mari",
-            caution: "Rezistență medie la secetă — riscant fără irigare",
-          },
-        },
-        ursita: {
-          name: "Ursita",
-          description:
-            "Eliberează terenul mai devreme, bun înainte de o a doua cultură.",
-          tag: "Maturitate: timpurie",
-          reasons: {
-            soil: "Nu are pretenții mari la sol",
-            window: "Se seamănă la sfârșitul ferestrei: 5 – 15 oct",
-            weather: "Se coace devreme și scapă de arșița din iunie",
-            caution: "Semănată prea devreme, riscă înghețul de primăvară",
-          },
-        },
       },
     },
     rezumat: {
