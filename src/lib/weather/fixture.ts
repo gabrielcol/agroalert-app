@@ -1,3 +1,4 @@
+import { addDays, todayIn } from "./dates";
 import {
   FORECAST_DAYS,
   OUTLOOK_WEEKS,
@@ -21,17 +22,14 @@ const MONTH_T_MEAN = [-1.5, 0.5, 5.5, 11.5, 17, 21, 23.5, 23, 18, 12, 6, 0.5];
 const MONTH_PRECIP = [30, 28, 32, 40, 55, 70, 55, 40, 40, 35, 38, 35];
 const MONTH_ET0 = [10, 18, 40, 75, 115, 140, 155, 140, 90, 50, 20, 10];
 
-function isoDate(d: Date): string {
-  return d.toISOString().slice(0, 10);
+/** Fixture dates derive from "today" so the data never goes stale. */
+function defaultToday(): string {
+  return todayIn(new Date());
 }
 
-function addDays(date: string, days: number): string {
-  const d = new Date(`${date}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + days);
-  return isoDate(d);
-}
-
-export function climateProfileFixture(toYear = 2025): ClimateProfile {
+export function climateProfileFixture(
+  toYear = Number(defaultToday().slice(0, 4)) - 1,
+): ClimateProfile {
   const fromYear = toYear - 9;
   const years = Array.from({ length: 10 }, (_, i) => fromYear + i);
   return {
@@ -82,7 +80,7 @@ export function climateProfileFixture(toYear = 2025): ClimateProfile {
   };
 }
 
-export function currentSeasonFixture(today = "2026-09-12"): CurrentSeason {
+export function currentSeasonFixture(today = defaultToday()): CurrentSeason {
   const year = Number(today.slice(0, 4));
   const monthsSoFar = Number(today.slice(5, 7));
   const throughDate = addDays(today, -5);
@@ -108,7 +106,7 @@ export function currentSeasonFixture(today = "2026-09-12"): CurrentSeason {
   };
 }
 
-export function forecastFixture(today = "2026-09-12"): Forecast {
+export function forecastFixture(today = defaultToday()): Forecast {
   return {
     issuedAt: `${today}T06:00:00+03:00`,
     trustedDays: TRUSTED_FORECAST_DAYS,
@@ -133,7 +131,9 @@ export function forecastFixture(today = "2026-09-12"): Forecast {
   };
 }
 
-export function seasonalOutlookFixture(today = "2026-09-12"): SeasonalOutlook {
+export function seasonalOutlookFixture(
+  today = defaultToday(),
+): SeasonalOutlook {
   return {
     dataset: "EC46",
     issuedAt: `${today}T00:00:00+03:00`,
@@ -161,7 +161,7 @@ export function seasonalOutlookFixture(today = "2026-09-12"): SeasonalOutlook {
   };
 }
 
-export function weatherBriefFixture(today = "2026-09-12"): WeatherBrief {
+export function weatherBriefFixture(today = defaultToday()): WeatherBrief {
   const year = Number(today.slice(0, 4));
   return {
     today,
