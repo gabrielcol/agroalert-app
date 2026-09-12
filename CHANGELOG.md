@@ -16,7 +16,11 @@ Every task, bugfix or modification gets an entry here (newest first). Each entry
   i18n namespace in both dictionaries. Added shadcn `toggle` / `toggle-group`. Fixed the
   prototype's duplicated "Alerte pentru zona ta" card (one card, three rows). Tests: unit
   (`plan-steps`), e2e (`e2e/agro.spec.ts`), and the language-toggle / config-default specs
-  updated for the RO default. Started `CONTEXT.md` (domain glossary).
+  updated for the RO default. Started `CONTEXT.md` (domain glossary). Review follow-ups: dropped the `cn` package the
+  shadcn CLI added by mistake, moved `SystemConfig.defaultLocale`'s schema default to `ro`
+  (migration `default_locale_ro`), pointed the admin sidebar wordmark at `/dashboard`
+  (the public shell has no route back into the signed-in area), swapped the sign-in
+  panel glyph to the sprout, and refreshed the README i18n/structure notes.
 
 - **2026-09-12 (EEST)** — `main` — Whitelabel reset. Removed the previous product's domain
   features, screens (including the tablet/kiosk flow), naming, ticket references, client

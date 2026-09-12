@@ -52,7 +52,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="border-b px-4 py-3.5">
-        <Link href="/">
+        <Link href="/dashboard">
           <Brand />
         </Link>
       </SidebarHeader>

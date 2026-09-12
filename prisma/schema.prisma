@@ -128,7 +128,7 @@ model AuditLog {
 /// and the site name shown in the app masthead. Extend with your own settings.
 model SystemConfig {
   id            String   @id @default("singleton")
-  defaultLocale String   @default("en")
+  defaultLocale String   @default("ro")
   siteName      String   @default("")
   updatedAt     DateTime @updatedAt
 

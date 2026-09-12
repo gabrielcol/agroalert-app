@@ -47,7 +47,7 @@ procedure → Prisma → shadcn UI).
 - **Settings** (`/settings`) — a `SystemConfig` singleton (default locale, site
   name) edited through an audited, transactional mutation. Extend it with your
   own keys.
-- **i18n** — EN (default) and RO dictionaries in `src/lib/i18n`, a persisted
+- **i18n** — RO (default) and EN dictionaries in `src/lib/i18n`, a persisted
   locale toggle, `useT()` hook. `en.ts` is the type source of truth.
 - **Security headers** — CSP, HSTS (production), frame denial, nosniff
   (`next.config.ts`).
@@ -94,6 +94,7 @@ src/
   app/
     api/auth/[...all]     better-auth handler
     api/trpc/[trpc]       tRPC fetch adapter
+    (agro)/               public AgroAlert screens (dashboard + /plan wizard), no session
     (auth)/               sign-in / sign-up (disabled notice)
     (admin)/              signed-in shell: dashboard, users, audit, settings
   components/             shadcn ui/, admin shell, auth, posts, shared

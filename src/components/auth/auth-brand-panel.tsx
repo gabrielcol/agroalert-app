@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ShieldCheck } from "lucide-react";
+import { Check, Sprout } from "lucide-react";
 
 import { useT } from "@/lib/i18n/provider";
 
@@ -12,7 +12,7 @@ export function AuthBrandPanel() {
     <div className="bg-primary text-primary-foreground relative hidden flex-col justify-between overflow-hidden p-10 lg:flex">
       <div className="flex items-center gap-2.5">
         <span className="bg-primary-foreground/15 flex size-9 items-center justify-center rounded-lg">
-          <ShieldCheck className="size-5" />
+          <Sprout className="size-5" />
         </span>
         <span className="text-lg font-bold">{t.app.name}</span>
       </div>
