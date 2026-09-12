@@ -10,20 +10,44 @@ import compact from "./crop-dictionary.compact.json";
  */
 export const cropDictionary = compact;
 
-type CompactCrop = (typeof compact.crops)[number];
+export type CompactCrop = (typeof compact.crops)[number];
 
-/** Every Crop id in the dictionary, in file order. */
-export const CROP_IDS = compact.crops.map((crop) => crop.id) as [
-  string,
-  ...string[],
-];
+/**
+ * Every Crop id in the dictionary, in file order. Spelled out so `CropId` is
+ * a real union (a JSON import widens to `string`); `crop-dictionary-ids.test`
+ * pins this list to the JSON, so a regenerated dictionary fails loudly here.
+ */
+export const CROP_IDS = [
+  "grau_toamna",
+  "grau_primavara",
+  "orz_toamna",
+  "orzoaica_primavara",
+  "porumb",
+  "sorg",
+  "ovaz",
+  "secara",
+  "triticale",
+  "orez",
+  "floarea_soarelui",
+  "rapita_toamna",
+  "soia",
+  "sfecla_zahar",
+  "in_ulei",
+  "canepa",
+  "mazare",
+  "fasole",
+  "naut",
+  "linte",
+  "lucerna",
+  "trifoi",
+] as const;
 
 /** A Crop id that exists in the Crop Dictionary. */
 export const cropIdSchema = z.enum(CROP_IDS);
 export type CropId = z.infer<typeof cropIdSchema>;
 
 export function isCropId(value: string): value is CropId {
-  return (CROP_IDS as string[]).includes(value);
+  return (CROP_IDS as readonly string[]).includes(value);
 }
 
 export function getCrop(id: CropId): CompactCrop {

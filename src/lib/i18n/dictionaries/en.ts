@@ -120,42 +120,15 @@ export const en = {
           high: "High confidence",
         },
         retry: "We couldn't read the weather. Try again.",
-      },
-      crops: {
-        grau: {
-          name: "Winter wheat",
-          description: "The lowest-risk choice for your land this year.",
-          reasons: {
-            soil: "Soil fits — it holds the water needed for emergence",
-            window: "Wide window: 25 Sep – 15 Oct",
-            weather: "Past years' rainfall and the forecast suit it",
-          },
-        },
-        orz: {
-          name: "Barley",
-          description: "Harvested two to three weeks before wheat.",
-          reasons: {
-            soil: "Copes with poorer soils too",
-            window: "Shorter, earlier window: 20 Sep – 5 Oct",
-            weather: "Handles drought better than wheat",
-            caution: "A harsh winter hits it harder than wheat",
-          },
-        },
-        rapita: {
-          name: "Rapeseed",
-          description: "Good price, but it needs more careful work.",
-          reasons: {
-            soil: "Needs a well-prepared seedbed",
-            window: "Short window: 1 – 15 Sep",
-            weather: "Without irrigation the forecast gives too little rain",
-            caution: "Late sowing or a dry autumn ruins its emergence",
-          },
-        },
+        retryAi: "We couldn't prepare the recommendation. Try again.",
+        retryTitle: "Something went wrong",
+        retryAction: "Try again",
       },
     },
     soi: {
       header: "Choose the variety",
-      title: "Suitable wheat varieties",
+      title: "Suitable varieties",
+      titleFor: "Suitable {crop} varieties",
       subtitle:
         "The varieties best suited to the weather and soil in your area.",
       cta: "See the plan",
@@ -165,40 +138,6 @@ export const en = {
         fit: "Fit {n}%",
         reasons: "Why",
         empty: "No registered variety is listed for this crop.",
-      },
-      varieties: {
-        glosa: {
-          name: "Glosa",
-          description: "The most widely sown variety here, with steady yields.",
-          tag: "Drought tolerance: high",
-          reasons: {
-            soil: "Works on heavy soil, even without irrigation",
-            window: "Best sown mid-window: 1 – 10 Oct",
-            weather: "Yielded well in the dry years so far",
-          },
-        },
-        pitar: {
-          name: "Pitar",
-          description: "Good milling quality grain.",
-          tag: "Drought tolerance: medium",
-          reasons: {
-            soil: "Wants soil with a better water supply",
-            window: "Sow early in the window: 25 Sep – 5 Oct",
-            weather: "In rainy autumns it gave big yields",
-            caution: "Medium drought tolerance — risky without irrigation",
-          },
-        },
-        ursita: {
-          name: "Ursita",
-          description: "Frees the field earlier — good ahead of a second crop.",
-          tag: "Maturity: early",
-          reasons: {
-            soil: "Not fussy about soil",
-            window: "Sow at the end of the window: 5 – 15 Oct",
-            weather: "Ripens early, so it escapes the June heat",
-            caution: "Sown too early, it risks a late spring frost",
-          },
-        },
       },
     },
     rezumat: {

@@ -24,7 +24,9 @@ export const env = createEnv({
     // (bootstrap — see better-auth admin plugin `adminUserIds`).
     ADMIN_USER_IDS: z.string().optional(),
     // Crop / Variety Recommendation (issue 0006) — Anthropic API, server only.
-    ANTHROPIC_API_KEY: z.string().min(1),
+    // Optional at boot so `bun dev` and the Playwright web server start without
+    // a key; the recommendation call itself fails with MissingApiKeyError.
+    ANTHROPIC_API_KEY: z.string().min(1).optional(),
     // Sonnet-class by default (Claude Sonnet 5); override to A/B during demos.
     AI_MODEL: z.string().min(1).default("claude-sonnet-5"),
   },

@@ -3,6 +3,37 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 23:20 (EEST)** — `feat/crop-variety-recommendation` — Crop and Variety
+  Recommendation: Claude call, cultura and soi steps
+  ([`docs/issues/0006-crop-variety-recommendation-ai-call.md`](docs/issues/0006-crop-variety-recommendation-ai-call.md)).
+  `src/lib/ai/`: the Anthropic SDK is called server-side with the compact Crop Dictionary
+  in a prompt-cached system block (stable bytes, `cache_control: ephemeral`) and today's
+  date, the Field Profile (surface as a hectare range, Soil Class, irrigation) and the
+  Weather Brief in the user turn; structured output is a forced tool call whose JSON
+  schema derives from the frozen Zod contracts and is re-validated with the same schema
+  before storage. The 46-day candidate rule is computed in code (`candidates.ts`, `MM-DD`
+  windows with year wrap) and both stated in the prompt and enforced on the answer: a
+  non-candidate in the top list is demoted to `excluded`; invented varieties are dropped
+  and an omitted one rejects the ranking. `recommendation.crops` / `.varieties` are
+  idempotent (stored row returned, no second model call) and map failures to
+  `SERVICE_UNAVAILABLE` / `WEATHER_UNAVAILABLE` and `INTERNAL_SERVER_ERROR` /
+  `AI_INVALID_OUTPUT` | `AI_UNAVAILABLE`. Weather Brief source is a seam
+  (`weather-brief-source.ts`) on the foundation fixture until issue 0005's
+  `getWeatherBrief` lands. `ANTHROPIC_API_KEY` is now optional at boot (missing key fails
+  only the AI call). `CropId` is a real union pinned to the compact dictionary by test.
+  Screens: `/plan/cultura?profile=<id>` renders the top 3 as choice cards with fit, two
+  reasons, risks, confidence, the Recommended badge on rank 1 and an "Alte culturi"
+  collapsible (shadcn) for the excluded crops; `/plan/soi?profile&rec&crop` renders every
+  dictionary variety ranked; both show a retry screen (shadcn Alert) on any failure and
+  redirect when URL params are missing. Mock crop / variety ids and their copy are
+  removed from `mock-data.ts` and the dictionaries; new copy under
+  `agro.cultura.recommendation.*` and `agro.soi.titleFor`. Tests: Vitest 161 green
+  (candidate rule incl. the day-50 case, tool schema and parsing, prompts, recommend with
+  a fake client and malformed payloads, router with a fake db and fake service, UI
+  helpers). Playwright `e2e/cultura.spec.ts` and `e2e/soi.spec.ts` mock tRPC at the network
+  edge — written, not run (rule 3: e2e runs pre-deploy). Known: `e2e/agro.spec.ts`'s
+  four-step walk-through predates the URL contract and needs issue 0004's teren flow to
+  pass again.
 - **2026-09-12 23:13 (EEST)** — `feat/weather-brief-client` — Weather Brief: Open-Meteo
   client, aggregation and cache
   ([`docs/issues/0005-weather-brief-open-meteo-client.md`](docs/issues/0005-weather-brief-open-meteo-client.md)).

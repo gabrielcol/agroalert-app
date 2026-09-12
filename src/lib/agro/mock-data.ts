@@ -23,13 +23,8 @@ export const LOADING_STEPS = [
 ] as const;
 export type LoadingStep = (typeof LOADING_STEPS)[number];
 
-export const CROPS = ["grau", "orz", "rapita"] as const;
-export type CropId = (typeof CROPS)[number];
-export const RECOMMENDED_CROP: CropId = "grau";
-
-export const VARIETIES = ["glosa", "pitar", "ursita"] as const;
-export type VarietyId = (typeof VARIETIES)[number];
-export const RECOMMENDED_VARIETY: VarietyId = "glosa";
+// The cultura and soi steps read their Crop / Variety Recommendation from the
+// API (issue 0006); their mock ids and copy are gone.
 
 export const CALENDAR_ROWS = [
   "sowing",
