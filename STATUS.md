@@ -4,6 +4,16 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0012 (dashboard hydration mismatch: `prefetch` was not awaited, so the server
+  rendered the "Loading…" branch while the client hydrated with data) is **Done**: merged
+  into local `main` (c3c74fe, **not pushed**) from `fix/dashboard-hydration-mismatch`.
+  `prefetch()` now returns its promise and the dashboard, audit and users pages await it.
+  Gate green: typecheck, lint, prettier, Vitest (290 tests). `e2e/dashboard.spec.ts` now
+  fails on any "Hydration" page error but Playwright has not been run since.
+- Known e2e noise: `e2e/teren.spec.ts` stubs `recommendation.crops` with `{ id,
+fieldProfileId }` and no `result`, so the cultura step throws `Cannot read properties of
+undefined (reading 'top')` in the browser after the redirect. The spec still passes;
+  fix by reusing `CROP_RECOMMENDATION` from `e2e/recommendation-mocks.ts`.
 - Issue 0011 (loading screen: every step driven by a real call, single fading step) is
   **Done**: merged into local `main` (34df534, **not pushed**) from
   `feat/loading-screen-real-steps`. Gate green: typecheck, lint, prettier, Vitest

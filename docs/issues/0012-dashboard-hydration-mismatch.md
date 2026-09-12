@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: fix/dashboard-hydration-mismatch
 created: 2026-09-13
 ---
