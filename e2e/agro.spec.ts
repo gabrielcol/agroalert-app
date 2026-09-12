@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
 
 // The public AgroAlert shell: no session, Romanian by default. These specs
 // walk the design as a browsable prototype — navigation, selection states and
@@ -101,6 +101,70 @@ test("the add-crop wizard walks all four steps and subscribes to alerts", async 
 
   await page.getByRole("link", { name: "Înapoi la culturile tale" }).click();
   await expect(page).toHaveURL("/");
+});
+
+// The phone chrome: the header sticks to the top of the phone column and the
+// action bar to its bottom, so the next tap is on screen whatever the scroll
+// position. Asserted at a real phone viewport — the default project runs a
+// desktop window, where every screen fits without scrolling.
+test("at phone size the header and the plan CTA stay on screen", async ({
+  page,
+}) => {
+  const height = 600;
+  await page.setViewportSize({ width: 390, height });
+  await page.goto("/plan/rezumat");
+
+  const header = page.getByRole("banner");
+  const cta = page.getByRole("button", { name: "Abonează-mă la alerte" });
+  const cardBody = page.getByText(
+    "Te anunțăm despre secetă, ploi potrivite și avertizări ANM",
+  );
+
+  async function box(locator: Locator) {
+    const found = await locator.boundingBox();
+    expect(found, "element has no layout box").not.toBeNull();
+    return found!;
+  }
+
+  // The summary is taller than the viewport — otherwise the test proves nothing.
+  const scrollHeight = await page.evaluate(
+    () => document.documentElement.scrollHeight,
+  );
+  expect(scrollHeight).toBeGreaterThan(height);
+
+  // Top of the page: both are already on screen, unscrolled.
+  await expect(page.evaluate(() => window.scrollY)).resolves.toBe(0);
+  const headerTop = await box(header);
+  expect(headerTop.y).toBeGreaterThanOrEqual(0);
+  expect(headerTop.y + headerTop.height).toBeLessThanOrEqual(height);
+  const ctaTop = await box(cta);
+  expect(ctaTop.y).toBeGreaterThanOrEqual(0);
+  expect(ctaTop.y + ctaTop.height).toBeLessThanOrEqual(height);
+
+  // Bottom of the page: they have not scrolled away, and the last of the
+  // scrolling content sits above the bar rather than behind it.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(0);
+
+  const headerBottom = await box(header);
+  expect(headerBottom.y).toBeGreaterThanOrEqual(0);
+  expect(headerBottom.y + headerBottom.height).toBeLessThanOrEqual(height);
+  const ctaBottom = await box(cta);
+  expect(ctaBottom.y).toBeGreaterThanOrEqual(0);
+  expect(ctaBottom.y + ctaBottom.height).toBeLessThanOrEqual(height);
+
+  const body = await box(cardBody);
+  expect(body.y + body.height).toBeLessThanOrEqual(ctaBottom.y);
+
+  // The bar keeps holding the action after subscribing, plus the way back.
+  await cta.click();
+  await expect(page.getByRole("button", { name: "Abonat" })).toBeDisabled();
+  const back = await box(
+    page.getByRole("link", { name: "Înapoi la culturile tale" }),
+  );
+  expect(back.y + back.height).toBeLessThanOrEqual(height);
 });
 
 test("the wizard back arrows follow the step order", async ({ page }) => {

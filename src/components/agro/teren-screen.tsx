@@ -13,6 +13,7 @@ import { PhoneHeader } from "@/components/agro/phone-header";
 import { Screen } from "@/components/agro/phone-shell";
 import { PrimaryCta } from "@/components/agro/primary-cta";
 import { StepHeading } from "@/components/agro/step-heading";
+import { StickyBar } from "@/components/agro/sticky-bar";
 import {
   DEFAULT_IRRIGATION,
   DEFAULT_LAND_SIZE,
@@ -127,12 +128,12 @@ export function TerenScreen() {
             ))}
           </ToggleGroup>
         </fieldset>
-
-        <span className="flex-1" />
+      </Screen>
+      <StickyBar>
         <PrimaryCta onClick={() => setLoading(true)}>
           {t.agro.wizard.continue}
         </PrimaryCta>
-      </Screen>
+      </StickyBar>
     </>
   );
 }

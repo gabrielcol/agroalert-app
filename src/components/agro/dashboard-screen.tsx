@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { PhoneHeader } from "@/components/agro/phone-header";
 import { Screen } from "@/components/agro/phone-shell";
 import { StepHeading } from "@/components/agro/step-heading";
+import { StickyBar } from "@/components/agro/sticky-bar";
 import { SuccessBadge } from "@/components/agro/badges";
 import { SAMPLE_PLANS } from "@/lib/agro/mock-data";
 import { planStepPath } from "@/lib/agro/plan-steps";
@@ -50,18 +51,19 @@ export function DashboardScreen() {
         ) : (
           <DashboardEmpty />
         )}
-
+      </Screen>
+      <StickyBar>
         <Button
           asChild
           variant="outline"
-          className="border-input text-muted-foreground hover:border-brand-line hover:text-brand hover:bg-accent mt-3.5 h-[62px] w-full rounded-[var(--radius-md)] border-[1.5px] border-dashed text-[17.5px] font-semibold shadow-none"
+          className="border-input text-muted-foreground hover:border-brand-line hover:text-brand hover:bg-accent h-[62px] w-full rounded-[var(--radius-md)] border-[1.5px] border-dashed text-[17.5px] font-semibold shadow-none"
         >
           <Link href={planStepPath("teren")}>
             <Plus className="size-5" />
             {d.add}
           </Link>
         </Button>
-      </Screen>
+      </StickyBar>
     </>
   );
 }

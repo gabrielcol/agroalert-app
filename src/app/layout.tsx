@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -23,6 +23,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AgroAlert",
   description: "Planuri de semănat și alerte meteo pentru culturile tale.",
+};
+
+// The phone screens end in a bar stuck to the bottom of the viewport, which
+// pads itself past the home indicator with `env(safe-area-inset-bottom)`. That
+// inset only reports a real value when the page opts into the full display.
+export const viewport: Viewport = {
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

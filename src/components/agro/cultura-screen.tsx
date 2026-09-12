@@ -10,6 +10,7 @@ import { Screen } from "@/components/agro/phone-shell";
 import { PrimaryCta } from "@/components/agro/primary-cta";
 import { ReasonList } from "@/components/agro/reason-list";
 import { StepHeading } from "@/components/agro/step-heading";
+import { StickyBar } from "@/components/agro/sticky-bar";
 import { SuccessBadge } from "@/components/agro/badges";
 import { CROPS, RECOMMENDED_CROP, type CropId } from "@/lib/agro/mock-data";
 import { nextStepPath, previousStepPath } from "@/lib/agro/plan-steps";
@@ -83,12 +84,12 @@ export function CulturaScreen() {
             );
           })}
         </ul>
-
-        <span className="flex-1" />
+      </Screen>
+      <StickyBar>
         <PrimaryCta asChild>
           <Link href={nextStepPath(STEP) ?? "/"}>{t.agro.wizard.continue}</Link>
         </PrimaryCta>
-      </Screen>
+      </StickyBar>
     </>
   );
 }

@@ -25,6 +25,7 @@ import {
 } from "@/components/agro/plan-card";
 import { PrimaryCta } from "@/components/agro/primary-cta";
 import { StepHeading } from "@/components/agro/step-heading";
+import { StickyBar } from "@/components/agro/sticky-bar";
 import {
   ALERTS,
   ALERT_TONE,
@@ -92,32 +93,35 @@ export function RezumatScreen() {
           <span className="text-subtle mt-1 block text-[15.5px] leading-[1.5]">
             {s.subscribe.body}
           </span>
-          <PrimaryCta
-            className="mt-4"
-            disabled={subscribed}
-            onClick={() => {
-              setSubscribed(true);
-              toast.success(s.subscribe.toast.title, {
-                description: s.subscribe.toast.body,
-              });
-            }}
-          >
-            {subscribed ? (
-              <>
-                <Check className="size-5" />
-                {s.subscribe.done}
-              </>
-            ) : (
-              s.subscribe.cta
-            )}
-          </PrimaryCta>
-          {subscribed && (
-            <Button asChild variant="link" className="mt-1.5 w-full text-base">
-              <Link href={DASHBOARD_PATH}>{s.subscribe.back}</Link>
-            </Button>
-          )}
         </PlanCard>
       </Screen>
+      {/* The subscribe CTA leaves its card so it is reachable without
+          scrolling past four plan cards. */}
+      <StickyBar>
+        <PrimaryCta
+          disabled={subscribed}
+          onClick={() => {
+            setSubscribed(true);
+            toast.success(s.subscribe.toast.title, {
+              description: s.subscribe.toast.body,
+            });
+          }}
+        >
+          {subscribed ? (
+            <>
+              <Check className="size-5" />
+              {s.subscribe.done}
+            </>
+          ) : (
+            s.subscribe.cta
+          )}
+        </PrimaryCta>
+        {subscribed && (
+          <Button asChild variant="link" className="mt-1.5 w-full text-base">
+            <Link href={DASHBOARD_PATH}>{s.subscribe.back}</Link>
+          </Button>
+        )}
+      </StickyBar>
     </>
   );
 }
