@@ -3,6 +3,18 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 22:12 (EEST)** — `main` — Issue 0002: sticky header and CTA bar
+  ([`docs/issues/0002-sticky-header-and-cta-bar.md`](docs/issues/0002-sticky-header-and-cta-bar.md)).
+  Opened the ticket for making `PhoneHeader` sticky at the top and adding a shared
+  `StickyBar` at the bottom of the five public AgroAlert screens (dashboard + the four
+  wizard steps), with the agreed bar style (solid `bg-background`, top hairline, `px-5`,
+  ~14px vertical padding plus `env(safe-area-inset-bottom)`), the summary screen's subscribe
+  button moving out of its card into the bar, and no bar on the loading screen. Docs-only,
+  so test-exempt under AGENTS.md rule 3. The work branch `feat/sticky-header-cta-bar` is
+  cut from `feat/wizard-content-refinements`, **deliberately stacked on that unmerged
+  branch** (user's decision, against rule 10) because the sticky bar rearranges the same
+  screens that branch just rewrote; it must be rebased or retargeted onto `main` once
+  issue 0001 merges.
 - **2026-09-12 22:00 (EEST)** — `feat/wizard-content-refinements` — Wizard content
   refinements ([`docs/issues/0001-wizard-content-refinements.md`](docs/issues/0001-wizard-content-refinements.md)).
   Three changes to the wizard prototype. (1) **Alert subscription replaces the alert
