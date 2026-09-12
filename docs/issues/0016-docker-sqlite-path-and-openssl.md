@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: fix/docker-sqlite-path-and-openssl
 created: 2026-09-13
 ---

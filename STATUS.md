@@ -4,7 +4,17 @@ _Updated: 2026-09-13_
 
 ## Now
 
-- `main` is **pushed to origin** (1359d02) and holds everything through issue 0014.
+- Issue 0016 (Docker boot: `prisma migrate deploy` failed with "unable to open database
+  file: ./dev.db" and an OpenSSL warning) is **Done** and on `main`. Causes: the dev
+  `DATABASE_URL=file:./dev.db` reached the container (`--env-file .env` overrides the
+  image default `file:/data/app.db`) and `/app` was root-owned in the runner; the runner
+  also lacked `openssl`. Fix: runner installs `openssl`/`ca-certificates`, `/app` is
+  chowned to `node`, and `docker-entrypoint.sh` resolves the SQLite path, creates its
+  directory and fails with a readable message when it is unwritable
+  (`ENTRYPOINT_DRY_RUN=1` exercises it). Docker is not installed on this machine: the
+  image has **not** been rebuilt; verify on the next deploy that the log shows
+  `> Database: /data/app.db`.
+- `main` is **pushed to origin** and holds everything through issue 0016.
   Another session is on `fix/admin-topbar-hydration-mismatch` (issue 0015, not merged);
   merges from this machine run in a temporary worktree so that checkout is not moved.
 - Issue 0014 (start screen with mock loading on `/`; PNG logos from `public/logos/` in
