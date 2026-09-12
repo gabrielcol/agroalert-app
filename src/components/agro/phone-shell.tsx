@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 /**
  * The design is mobile-first: a 480px phone frame centred on a subtle ground
  * on wide screens, full-bleed on phones. Every public AgroAlert screen renders
@@ -23,7 +25,7 @@ export function Screen({
 }) {
   return (
     <div
-      className={`flex flex-1 flex-col px-5 pt-[26px] pb-[30px] ${className ?? ""}`}
+      className={cn("flex flex-1 flex-col px-5 pt-[26px] pb-[30px]", className)}
     >
       {children}
     </div>
