@@ -1,0 +1,2689 @@
+{
+  "version": "1.0.0",
+  "generated_on": "2026-09-12",
+  "evidence_class": "desk-research finding",
+  "provenance": {
+    "stripped": true,
+    "source": "resources/culturi/crop-dictionary.json",
+    "note": "Every value here has a source and a verified flag in the research file; they were removed to fit the model prompt. A missing field means no source gave a value."
+  },
+  "conventions": {
+    "units": {
+      "precipitation": "mm pe sezon",
+      "temperature": "°C",
+      "altitude": "m",
+      "area": "ha",
+      "yield": "t/ha (lucernă, trifoi: t/ha substanță uscată sau fân, vezi sursa)",
+      "dates": "MM-DD",
+      "days": "zile"
+    },
+    "irrigation_rule": "Dacă parcela are irigare disponibilă, cerința requirements.precipitation.season_need_mm nu se aplică. Nicio altă cerință nu se schimbă.",
+    "missing_field_rule": "Un câmp lipsă înseamnă că nicio sursă nu a dat valoarea. Modelul spune că nu știe; nu estimează.",
+    "soil_classes": ["cernoziom", "lutos", "argilos", "nisipos"]
+  },
+  "crops": [
+    {
+      "id": "grau_toamna",
+      "name_ro": "Grâu de toamnă",
+      "name_en": "Winter wheat",
+      "scientific_name": "Triticum aestivum",
+      "group": "cereale",
+      "sowing_regime": "toamna",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["lutos", "cernoziom"],
+          "unsuitable_classes": ["nisipos", "argilos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "season_need_mm": {
+            "min": 225,
+            "optimal": 600
+          },
+          "critical_period": "înspicare, înflorire și umplerea boabelor (mai-iunie); șiștăvire frecventă în Bărăgan și Dobrogea",
+          "drought_tolerance": "medie"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "optimal_growth_c": {
+            "min": 14,
+            "max": 20
+          },
+          "frost_tolerance_c_min": -20
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "sud, vest și Câmpia Transilvaniei",
+            "from": "10-01",
+            "to": "10-10"
+          },
+          {
+            "zone": "zona colinară, nordul țării și depresiunile intramontane",
+            "from": "09-25",
+            "to": "10-05"
+          },
+          {
+            "zone": "sud (Bărăgan) — ghidaj INCDA Fundulea 2026, decalat cu ≥10 zile față de epoca clasică",
+            "from": "10-11",
+            "to": "10-20"
+          }
+        ],
+        "sowing_condition": "plantele să vegeteze 40-50 zile în toamnă și să acumuleze 400-500 °C sumă termică (>0 °C) până la intrarea în iarnă, formând 2-3 frați și 4-5 frunze",
+        "flowering_period": "mai-iunie",
+        "harvest_window": {
+          "from": "06-20",
+          "to": "07-20"
+        },
+        "days_to_maturity": {
+          "min": 270,
+          "max": 290
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "mazare",
+          "fasole",
+          "rapita_toamna",
+          "in_ulei",
+          "trifoi",
+          "canepa",
+          "naut",
+          "soia",
+          "sfecla_zahar",
+          "floarea_soarelui",
+          "porumb"
+        ],
+        "bad_preceding": ["sorg", "orz_toamna", "lucerna"],
+        "years_before_repeat": 2
+      },
+      "notes": "Zonare USAMV: foarte favorabil Câmpia de Vest, Câmpia Dunării, Câmpia Transilvaniei, NE Moldovei; favorabil vest, sud, Dobrogea, Transilvania, Moldova; puțin favorabil dealurile subcarpatice. INCDA Fundulea (2026) recomandă în sud semănatul la sfârșitul epocii optime sau mai târziu, nu la început.",
+      "varieties": [
+        {
+          "name": "Izvor",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2008,
+          "maturity_class": "precoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "sud",
+            "est",
+            "zone cu frecvență mare a secetei"
+          ],
+          "traits": "foarte rezistent la secetă; rezistență bună la cădere și iernare; rezistent la rugina brună și septorioză; spor de 19-29% față de Dropia/Flamura 85 în condiții de secetă; MH 77-79 kg/hl; radiat din catalog 31.12.2022, comercializare până la 30.06.2025"
+        },
+        {
+          "name": "Ursita",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2021,
+          "maturity_class": "timpuriu",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură a grâului din România"
+          ],
+          "traits": "rezistență foarte bună la ger, secetă și arșiță; rezistență bună la cădere și încolțire în spic; rezistent la mălură, rugină brună, rugină galbenă, făinare; proteine 13,5%, gluten umed 32%, W 244; spor 6% față de Glosa (2017-2019)"
+        },
+        {
+          "name": "Glosa",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2005,
+          "maturity_class": "precoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": ["sud", "vest", "est"],
+          "traits": "rezistent la iernare, secetă și arșiță; rezistență bună la cădere; rezistență mijlocie la rugini și făinare; gluten tare, calitate panificație similară Flamura 85; MH 76-82 kg/hl; soiul cel mai răspândit (23% din suprafața de producere a semințelor în 2024, Revista Ferma)"
+        },
+        {
+          "name": "Otilia",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2013,
+          "maturity_class": "precoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": ["vest", "Câmpia Română", "Dobrogea", "Moldova"],
+          "traits": "rezistență bună la cădere, iernare, secetă și arșiță; rezistent la rugina galbenă și septorioză; calitate foarte bună de panificație (superioară Dropia și Glosa); spor 5-6% față de Glosa"
+        },
+        {
+          "name": "Voinic",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "precoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură a grâului din România"
+          ],
+          "traits": "rezistență bună la cădere, iernare, secetă și arșiță; rezistență bună la boli foliare; calitate foarte bună de panificație; MH 79-82 kg/hl; spor 7-9% față de Glosa, 7102 kg/ha medie în rețeaua ISTIS"
+        }
+      ]
+    },
+    {
+      "id": "grau_primavara",
+      "name_ro": "Grâu de primăvară",
+      "name_en": "Spring wheat",
+      "scientific_name": "Triticum aestivum",
+      "group": "cereale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["lutos", "cernoziom"],
+          "unsuitable_classes": ["nisipos", "argilos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "critical_period": "înspicare-înflorire-umplerea bobului (iunie)",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "național (aceleași zone ca grâul de toamnă)",
+            "from": "02-20",
+            "to": "03-15"
+          }
+        ],
+        "sowing_condition": "prima urgență, imediat ce terenul s-a zvântat și permite intrarea utilajelor; întârzierea după 15 martie impune creșterea normei de semănat",
+        "flowering_period": "iunie",
+        "harvest_window": {
+          "from": "06-15",
+          "to": "07-15"
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "rapita_toamna",
+          "floarea_soarelui",
+          "porumb",
+          "mazare",
+          "fasole",
+          "soia"
+        ],
+        "bad_preceding": ["orz_toamna", "orzoaica_primavara", "sorg"]
+      },
+      "notes": "Cultură marginală în România (INS nu o raportează separat de grâu). Soi românesc: Pădureni (SCDA Turda, 14,2% proteină). Se cultivă în aceleași zone ca grâul de toamnă, de regulă ca înlocuitor al semănăturilor de toamnă compromise. Toleranța la ger, altitudinea și durata de vegetație nu au fost găsite într-o sursă românească.",
+      "varieties": [
+        {
+          "name": "Feleacu",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2024,
+          "recommended_zones": ["Transilvania (zona de ameliorare SCDA Turda)"],
+          "traits": "grâu comun de primăvară (ISTIS obs. 9); singurul soi românesc de grâu de primăvară înregistrat recent; fișa SCDA Turda (PDF scanat) nu a putut fi citită; toleranța la secetă nedocumentată în sursele consultate"
+        },
+        {
+          "name": "Pădureni",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 1998,
+          "recommended_zones": ["Transilvania"],
+          "traits": "grâu comun de primăvară, reînscris 2022 ca 'soi în conservare'; fișa SCDA Turda (PDF scanat) nu a putut fi citită; toleranța la secetă nedocumentată în sursele consultate"
+        },
+        {
+          "name": "Forriblat",
+          "breeder": "Vercelio SL (Spania)",
+          "type": "soi",
+          "registered_year": 2024,
+          "traits": "grâu de primăvară pentru furaj (ISTIS obs. 9 și 18); caracteristici nepublicate în sursele consultate"
+        }
+      ]
+    },
+    {
+      "id": "orz_toamna",
+      "name_ro": "Orz de toamnă",
+      "name_en": "Winter barley",
+      "scientific_name": "Hordeum vulgare",
+      "group": "cereale",
+      "sowing_regime": "toamna",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["nisipos", "argilos"],
+          "ph_range": {
+            "min": 6.5,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "critical_period": "formarea paiului până la înspicare (aprilie-mai); evită de regulă seceta de la începutul verii",
+          "drought_tolerance": "medie"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "frost_tolerance_c_min": -15
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "sud și vest",
+            "from": "09-25",
+            "to": "10-05"
+          },
+          {
+            "zone": "zona colinară și nordul țării",
+            "from": "09-20",
+            "to": "10-01"
+          },
+          {
+            "zone": "sud (Bărăgan) — ghidaj INCDA Fundulea 2026, decalat cu ≥10 zile",
+            "from": "10-05",
+            "to": "10-15"
+          }
+        ],
+        "sowing_condition": "45-50 zile de vegetație în toamnă și 500-550 °C sumă termică (>0 °C) până la intrarea în iarnă (2-3 frați, 5-6 frunze)",
+        "flowering_period": "mai",
+        "harvest_window": {
+          "from": "06-10",
+          "to": "06-30"
+        },
+        "days_to_maturity": {
+          "min": 260,
+          "max": 283
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "mazare",
+          "fasole",
+          "rapita_toamna",
+          "in_ulei",
+          "trifoi",
+          "ovaz",
+          "floarea_soarelui",
+          "soia",
+          "porumb",
+          "sfecla_zahar"
+        ],
+        "bad_preceding": ["orz_toamna", "orzoaica_primavara", "grau_toamna"],
+        "years_before_repeat": 2
+      },
+      "notes": "Zonare USAMV: foarte favorabil Câmpia de Vest, sudul Olteniei și Munteniei, Bărăgan, sudul Dobrogei, NE Moldovei; favorabil centrul și sudul Moldovei, Câmpia Transilvaniei. La același regim de umiditate orzul dă producții cu 20-25% mai mari decât grâul (Bîlteanu, citat de Ion 2010). După orz se pot semăna culturi duble (porumb, soia, fasole).",
+      "varieties": [
+        {
+          "name": "Iulian",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2021,
+          "maturity_class": "semitardiv",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură a orzului de toamnă; mai bine adaptat la condiții nefavorabile de mediu"
+          ],
+          "traits": "orz de toamnă cu 6 rânduri; comportare superioară martorului Dana în condiții de secetă; rezistență bună la iernare, cădere și boli foliare; potențial 8,5-9,2 t/ha; MMB 45-48 g; proteine 9,9-11,5%"
+        },
+        {
+          "name": "Lucian",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2018,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele favorabile culturii orzului de toamnă"
+          ],
+          "traits": "orz de toamnă cu 6 rânduri; comportare superioară martorului Dana în condiții de secetă; rezistență bună la iernare, cădere, boli foliare; potențial 7,0-9,4 t/ha; MMB 50,5 g; spor 11% față de Dana (2016-2018)"
+        },
+        {
+          "name": "Ametist",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2012,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură ale orzului de toamnă"
+          ],
+          "traits": "orz de toamnă cu 6 rânduri; rezistență superioară la iernare, cădere, boli foliare și ale spicului; stabilitate deosebită chiar în condiții de secetă (Revista Ferma/INCDA); potențial 6,5-8,7 t/ha; MMB 44-52 g; proteine 9,9-12,3%"
+        },
+        {
+          "name": "Smarald",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2013,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "stepa Bărăganului și Dobrogei",
+            "silvostepa Munteniei, Olteniei și Transilvaniei",
+            "Câmpia de Vest",
+            "stepa Moldovei"
+          ],
+          "traits": "orz de toamnă cu 6 rânduri; rezistență superioară la iernare, cădere, boli foliare; spor 19% față de Dana în 22 condiții de mediu; potențial 7,0-9,3 t/ha; INCDA recomandă cultivarea în tandem cu Ametist sau Simbol"
+        },
+        {
+          "name": "Cardinal FD",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2003,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "medie",
+          "recommended_zones": ["toate zonele de cultură a orzului de toamnă"],
+          "traits": "orz de toamnă cu 6 rânduri; rezistent la făinare, sfâșierea frunzelor, tăciune zburător; mijlociu sensibil la BYDV; dublă destinație (bere/furaj); spor 9-13% față de Univers; MMB 46-50 g; MH 57-63 kg/hl"
+        }
+      ]
+    },
+    {
+      "id": "orzoaica_primavara",
+      "name_ro": "Orzoaică de primăvară",
+      "name_en": "Spring barley (two-row)",
+      "scientific_name": "Hordeum vulgare",
+      "group": "cereale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["nisipos", "argilos"],
+          "ph_range": {
+            "min": 6.5,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "critical_period": "formarea paiului până la înspicare (mai-iunie)",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "național (zone favorabile: Câmpia Timișului, Țara Bârsei, depresiunile Sf. Gheorghe și Tg. Secuiesc, bazinele Oltului, Someșului, Mureșului, Podișul Sucevei)",
+            "from": "02-25",
+            "to": "03-25",
+            "note": "Datele calendaristice sunt o estimare în jurul condiției sursate (semănat „în prima urgență”, sol 2-3 °C). Nicio sursă românească nu dă intervalul de date. Tratează ca nesursat."
+          }
+        ],
+        "sowing_condition": "prima urgență, imediat ce terenul s-a zvântat și se poate lucra; întârzierea reduce producția și calitatea pentru bere (boabe mici, proteină ridicată)",
+        "flowering_period": "iunie",
+        "harvest_window": {
+          "from": "07-01",
+          "to": "07-25"
+        },
+        "days_to_maturity": {
+          "min": 90,
+          "max": 120
+        }
+      },
+      "rotation": {
+        "good_preceding": ["porumb", "sfecla_zahar", "in_ulei"],
+        "bad_preceding": [
+          "orzoaica_primavara",
+          "orz_toamna",
+          "grau_toamna",
+          "mazare",
+          "fasole",
+          "soia",
+          "lucerna"
+        ]
+      },
+      "notes": "Densitate 400-500 boabe germinabile/m², normă 160-200 kg/ha (Ion 2010). Zone puțin favorabile: climat continental din Moldova și Muntenia, soluri nisipoase, acide sau grele. Toleranța la ger și altitudinea nu au fost găsite într-o sursă românească.",
+      "varieties": [
+        {
+          "name": "Romanița",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2004,
+          "recommended_zones": [
+            "Transilvania",
+            "zone colinare/reci (Turda, Brașov, Suceava, Miercurea Ciuc)"
+          ],
+          "traits": "orzoaică de primăvară cu 2 rânduri (ISTIS obs. 9), reînscrisă 2022; în testele SCDA Turda 2012-2017 a depășit martorul Turdeana în fiecare an (95-112%), medie 4136 kg/ha 2009-2013 (109% față de Turdeana), mai stabilă decât Daciana în anii secetoși 2012 și 2016; toleranța la secetă nu este evaluată explicit în sursă"
+        },
+        {
+          "name": "Daciana",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 1999,
+          "recommended_zones": [
+            "Transilvania",
+            "zone colinare/reci (Turda, Brașov, Suceava, Miercurea Ciuc)"
+          ],
+          "traits": "orzoaică de primăvară cu 2 rânduri, reînscrisă 2022; media 2005-2008 în 4 localități 4650 kg/ha (114,7% față de Turdeana); producții reduse în anii secetoși 2012 și 2016 (79-80% din martor); pentru bere și furaj"
+        },
+        {
+          "name": "Dumbrăvița",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2024,
+          "traits": "orzoaică de primăvară cu 2 rânduri, nou înregistrată 2024; fișa SCDA Turda (PDF scanat) nu a putut fi citită"
+        },
+        {
+          "name": "Ioana",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2024,
+          "traits": "orzoaică de primăvară cu 2 rânduri, nou înregistrată 2024; fișa SCDA Turda (PDF scanat) nu a putut fi citită"
+        },
+        {
+          "name": "Adina SV",
+          "breeder": "SCDA Suceava",
+          "type": "soi",
+          "registered_year": 1998,
+          "traits": "orzoaică de primăvară cu 2 rânduri, reînscrisă 2021; capacitate de producție mai mare și rezistențe îmbunătățite față de soiurile cultivate anterior (SCDA Suceava); autori Gașpăr Ilie, Zamă Emil"
+        }
+      ]
+    },
+    {
+      "id": "porumb",
+      "name_ro": "Porumb (boabe)",
+      "name_en": "Maize (grain)",
+      "scientific_name": "Zea mays",
+      "group": "cereale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos"],
+          "ph_range": {
+            "min": 6.5,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "season_need_mm": {
+            "min": 250,
+            "optimal": 350
+          },
+          "critical_period": "10-20 iunie până la 10-20 august (înaintea apariției paniculului până la maturitatea în lapte); solul la 60-80% din capacitatea de câmp",
+          "drought_tolerance": "medie"
+        },
+        "temperature": {
+          "germination_soil_c_min": 8,
+          "optimal_growth_c": {
+            "min": 24,
+            "max": 30
+          },
+          "frost_tolerance_c_min": -4,
+          "heat_critical_c": 30
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "câmpia din vestul și sudul țării, Dobrogea, sudul Moldovei",
+            "from": "04-01",
+            "to": "04-20"
+          },
+          {
+            "zone": "centrul Transilvaniei și centrul Moldovei",
+            "from": "04-15",
+            "to": "04-30"
+          },
+          {
+            "zone": "zonele submontane și nordul țării",
+            "from": "04-20",
+            "to": "04-30"
+          }
+        ],
+        "sowing_condition": "temperatura solului la 10 cm adâncime, la ora 7 dimineața, de 8 °C, cu vremea în curs de încălzire",
+        "emergence_days": {
+          "min": 5,
+          "max": 20
+        },
+        "flowering_period": "iulie (apariția paniculului și mătăsitul)",
+        "harvest_window": {
+          "from": "09-10",
+          "to": "10-31"
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "mazare",
+          "fasole",
+          "soia",
+          "grau_toamna",
+          "orz_toamna",
+          "in_ulei",
+          "canepa",
+          "sfecla_zahar",
+          "floarea_soarelui"
+        ],
+        "bad_preceding": ["sorg", "lucerna"],
+        "years_before_repeat": 0
+      },
+      "notes": "Zonare termică USAMV (sumă TBA, prag 10 °C): zona I >1600 °C (sudul Câmpiei Olteniei, Munteniei, Dobrogea) hibrizi FAO 500-600+; zona II 1501-1600; zona III 1401-1500 (Banat, Crișana); zona IV 1201-1400 (Moldova, Someș); zona V 1001-1200 (NE Moldovei, Transilvania) FAO 100-300; zona VI 800-1000 (Suceava, submontan) FAO 100-200. Durata de vegetație depinde de grupa FAO. Densitate 45.000-70.000 plante/ha.",
+      "varieties": [
+        {
+          "name": "Olt",
+          "breeder": "INCDA Fundulea",
+          "type": "hibrid",
+          "registered_year": 1993,
+          "maturity_class": "HS FAO 400 (ISTIS); fișa INCDA: FAO 450-500, 135-138 zile",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": ["sud", "sud-est", "vest; irigat și neirigat"],
+          "traits": "hibrid simplu; rezistent la secetă și arșiță, la frângere și cădere, tăciune, Ostrinia și Helicoverpa; plasticitate ecologică mare; 8,8-12,5 t/ha neirigat; MMB 300-320 g; 16 rânduri boabe; bob dentat galben"
+        },
+        {
+          "name": "FDL Ovidiu",
+          "breeder": "INCDA Fundulea",
+          "type": "hibrid",
+          "registered_year": 2023,
+          "maturity_class": "HS FAO 320 (ISTIS); fișa INCDA: FAO 400, semitimpuriu",
+          "drought_tolerance": "medie",
+          "recommended_zones": ["zona I și a II-a de cultivare a porumbului"],
+          "traits": "hibrid simplu; mediu tolerant la secetă și arșiță; rezistent la frângere și cădere; toleranță bună la temperaturi scăzute la germinare; pierde rapid apa din boabe (15,6% umiditate la recoltare vs 18,3% F423); 11,5-12 t/ha neirigat; 8402 kg/ha medie ISTIS 2020-2022"
+        },
+        {
+          "name": "KWS Oltenio",
+          "breeder": "KWS",
+          "type": "hibrid",
+          "registered_year": 2023,
+          "maturity_class": "HS FAO 360",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură a porumbului din România, inclusiv colinare și premontane, chiar afectate frecvent de secetă și arșiță"
+          ],
+          "traits": "grupa ClimaControl3; comportare extraordinară la perioadele de stres cauzate de secetă prelungită și arșiță; știulete cilindric 16-18 rânduri, 38-40 boabe/rând; MMB 310-320 g; vigoare timpurie, închide rapid rândurile; plasticitate ecologică largă"
+        },
+        {
+          "name": "KWS Kashmir",
+          "breeder": "KWS",
+          "type": "hibrid",
+          "registered_year": 2018,
+          "maturity_class": "HS FAO 350 (ISTIS); pagina KWS: FAO 370",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură a porumbului din România, cu excepția zonelor reci premontane"
+          ],
+          "traits": "grupa Plus4Grain; stabilitate foarte bună a producțiilor în anii cu stres hidric; cantitate mare de polen (panicul ramificat); plasticitate ecologică ridicată; pierde rapid apa din bob; potențial ridicat în condiții intensive"
+        },
+        {
+          "name": "DKC4098",
+          "breeder": "Bayer / Dekalb",
+          "type": "hibrid",
+          "maturity_class": "FAO 300-340",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură din România (Câmpia Română, Moldova, Banat, Transilvania, Dobrogea)"
+          ],
+          "traits": "hibrid timpuriu; 'toleranța la secetă și arșiță: excelentă' (fișa distribuitor); vigoare foarte bună la răsărire; pierdere rapidă a apei din bob; toleranță la bolile știuletelui; pretabil la densități mari; potrivit pentru zone cu precipitații reduse"
+        }
+      ]
+    },
+    {
+      "id": "sorg",
+      "name_ro": "Sorg pentru boabe",
+      "name_en": "Grain sorghum",
+      "scientific_name": "Sorghum bicolor",
+      "group": "cereale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos", "nisipos"],
+          "ph_range": {
+            "min": 4.5,
+            "max": 8.5
+          }
+        },
+        "precipitation": {
+          "drought_tolerance": "ridicata"
+        },
+        "temperature": {
+          "germination_soil_c_min": 12,
+          "optimal_growth_c": {
+            "min": 25,
+            "max": 40
+          }
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "național (zone recomandate: vest și nord-vest, sud și sud-est, sudul Moldovei, unele zone din Transilvania cu suma gradelor utile (bază 6 °C) peste 1700)",
+            "from": "05-01",
+            "to": "05-15"
+          }
+        ],
+        "sowing_condition": "temperatura solului la adâncimea de semănat minimum 12 °C, optim 14-15 °C, cu tendință de creștere",
+        "harvest_window": {
+          "from": "08-15",
+          "to": "09-30"
+        },
+        "days_to_maturity": {
+          "min": 90,
+          "max": 140
+        }
+      },
+      "rotation": {
+        "good_preceding": ["porumb", "floarea_soarelui"]
+      },
+      "notes": "Nu există statistică INS separată pentru sorg (agregat cu porumbul în comunicate). Densitate 250-300 mii plante/ha neirigat, 300-350 mii irigat (Agrointeligența). Toleranța la brumă, altitudinea și necesarul de precipitații în mm nu au fost găsite într-o sursă românească; sursă primară românească (INCDA/USAMV) nu a fost găsită, toate valorile provin din presa agricolă.",
+      "varieties": [
+        {
+          "name": "ES Alize",
+          "breeder": "Lidea (ex-Euralis)",
+          "type": "hibrid",
+          "registered_year": 2014,
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "ridicata",
+          "traits": "sorg boabe (HS, ISTIS obs. 17); potențial 12.000 kg/ha; vigoare timpurie; toleranță excelentă la cădere; toleranță ridicată la secetă și la scuturare; bob roșu, panicul semicompact; toleranță foarte bună la Fusarium"
+        },
+        {
+          "name": "N2G207",
+          "breeder": "Nuseed",
+          "type": "hibrid",
+          "registered_year": 2020,
+          "maturity_class": "semitimpuriu, 101-109 zile",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "soluri cu fertilitate scăzută și soluri alcaline"
+          ],
+          "traits": "sorg boabe (înregistrat ISTIS ca N2G207, anterior 319X120); bob roșu fără tanin; capacitate de extragere a umidității 9/9, rezistență la stres 9/9; potențial 10-12 t/ha; rezistență la cădere 9; helmintosporioză 9, fuzarioză 8; densitate 250-300 mii pl./ha"
+        },
+        {
+          "name": "N2G102",
+          "breeder": "Nuseed",
+          "type": "hibrid",
+          "registered_year": 2020,
+          "maturity_class": "timpuriu, 95-105 zile",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "soluri cu fertilitate scăzută și soluri alcaline; pretabil în cultură succesivă"
+          ],
+          "traits": "sorg boabe (înregistrat ISTIS ca N2G102, anterior 419X124); bob roșu fără tanin; rezistență foarte bună la stres (9), extragere umiditate 9; potențial 10-12 t/ha; rezistență la cădere 9; mozaic 9, fuzarioză 8"
+        },
+        {
+          "name": "RGT Huggo",
+          "breeder": "RAGT",
+          "type": "hibrid",
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "ridicata",
+          "traits": "sorg boabe, bob portocaliu; 'stabilitate și productivitate foarte bune, atât în condiții de secetă, cât și în irigat'; talie medie; rezistență la cădere; MMB ridicat; 270-300 mii semințe/ha în condiții limitative; nu figurează în Catalogul ISTIS 2025 (RAGT are înregistrate RGT Maggic 2021), comercializat în RO din catalogul comun UE"
+        },
+        {
+          "name": "KWS Nemesis",
+          "breeder": "KWS",
+          "type": "hibrid",
+          "maturity_class": "maturitate medie",
+          "drought_tolerance": "ridicata",
+          "traits": "sorg boabe; 'maturitate medie, randament stabil și foarte tolerant la secetă'; robust, rezistent la dăunători; nu figurează în Catalogul ISTIS 2025, comercializat în RO de KWS din catalogul comun UE"
+        }
+      ]
+    },
+    {
+      "id": "ovaz",
+      "name_ro": "Ovăz",
+      "name_en": "Oats",
+      "scientific_name": "Avena sativa",
+      "group": "cereale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["lutos"],
+          "ph_range": {
+            "min": 5.5,
+            "max": 6.8
+          }
+        },
+        "precipitation": {
+          "critical_period": "înspicare-umplerea bobului (iunie); suferă în verile secetoase",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 2,
+          "frost_tolerance_c_min": -10
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "național (zone favorabile: Podișul Transilvaniei, Câmpia de Vest, Podișul Getic, depresiunea Jijiei)",
+            "from": "02-25",
+            "to": "03-25",
+            "note": "Datele calendaristice sunt o estimare în jurul condiției sursate (semănat „în prima urgență”, sol 2-3 °C). Nicio sursă românească nu dă intervalul de date. Tratează ca nesursat."
+          }
+        ],
+        "sowing_condition": "prima urgență, când temperatura solului ajunge la 2-3 °C; orice întârziere scade producția",
+        "flowering_period": "iunie",
+        "harvest_window": {
+          "from": "07-01",
+          "to": "07-31"
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "porumb",
+          "floarea_soarelui",
+          "mazare",
+          "fasole",
+          "soia"
+        ],
+        "bad_preceding": ["sfecla_zahar", "ovaz"]
+      },
+      "notes": "Normă 140-160 kg/ha, 400-450 boabe germinabile/m², 12,5 cm între rânduri, 3-4 cm adâncime (Dragomir 2009). Suprafața INS a scăzut de la 161 mii ha (2019) la 71 mii ha (2024). Sursă primară românească (USAMV/INCDA) neaccesată; valorile provin din presa agricolă semnată de cadre universitare.",
+      "varieties": [
+        {
+          "name": "Sorin",
+          "breeder": "SCDA Lovrin",
+          "type": "soi",
+          "registered_year": 2015,
+          "maturity_class": "ovăz de toamnă (ISTIS obs. 8)",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "Câmpia de Vest (Banat)",
+            "zone cu ierni blânde"
+          ],
+          "traits": "unicul soi de ovăz de toamnă omologat în România (SCDA Lovrin); potențial ~6000 kg/ha, cu 1000-1500 kg/ha peste soiurile de primăvară; valorifică umiditatea de iarnă-primăvară; rezistență bună spre foarte bună la condițiile agroclimatice, mai ales la secetă și arșiță (SCDA Lovrin citat în Revista Ferma); proteină brută 14-16%, MMB peste 30-35 g, MH 45-50 kg; rezistență medie-bună la boli și dăunători"
+        },
+        {
+          "name": "Ovidiu",
+          "breeder": "SCDA Lovrin",
+          "type": "soi",
+          "registered_year": 2019,
+          "maturity_class": "ovăz de primăvară (ISTIS obs. 9)",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "Câmpia de Vest",
+            "zonele de cultură a ovăzului"
+          ],
+          "traits": "cel mai nou soi de ovăz de primăvară Lovrin; rezistență bună spre foarte bună la condițiile agroclimatice, mai ales la secetă și arșiță (SCDA Lovrin citat în Revista Ferma); proteină brută 14-16%, MMB peste 30-35 g, MH 45-50 kg; rezistență medie-bună la boli și dăunători"
+        },
+        {
+          "name": "Lovrin 1",
+          "breeder": "SCDA Lovrin",
+          "type": "soi",
+          "registered_year": 2002,
+          "maturity_class": "ovăz de primăvară (ISTIS obs. 9), reînscris 2019",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "Câmpia de Vest",
+            "zonele de cultură a ovăzului"
+          ],
+          "traits": "productiv, producții stabile; rezistență bună spre foarte bună la condițiile agroclimatice, mai ales la secetă și arșiță (SCDA Lovrin citat în Revista Ferma); proteină brută 14-16%, MMB peste 30-35 g, MH 45-50 kg; rezistență medie-bună la boli și dăunători"
+        },
+        {
+          "name": "Mureșana",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2013,
+          "maturity_class": "ovăz de primăvară (ISTIS obs. 9), reînscris 2024",
+          "recommended_zones": ["Transilvania"],
+          "traits": "soi de ovăz de primăvară creat la SCDA Turda pentru zona Transilvaniei; fișa SCDA Turda (PDF scanat) nu a putut fi citită; toleranța la secetă nedocumentată în sursele consultate"
+        },
+        {
+          "name": "Jeremy",
+          "breeder": "SCDA Lovrin",
+          "type": "soi",
+          "registered_year": 2005,
+          "maturity_class": "ovăz de primăvară (ISTIS obs. 9), reînscris 2017, soi în conservare",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": ["Câmpia de Vest"],
+          "traits": "soi de primăvară Lovrin menținut 'în conservare'; rezistență bună spre foarte bună la condițiile agroclimatice, mai ales la secetă și arșiță (SCDA Lovrin citat în Revista Ferma); proteină brută 14-16%, MMB peste 30-35 g, MH 45-50 kg; rezistență medie-bună la boli și dăunători"
+        }
+      ]
+    },
+    {
+      "id": "secara",
+      "name_ro": "Secară",
+      "name_en": "Rye",
+      "scientific_name": "Secale cereale",
+      "group": "cereale",
+      "sowing_regime": "toamna",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["nisipos", "lutos", "cernoziom"]
+        },
+        "precipitation": {
+          "drought_tolerance": "ridicata"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "frost_tolerance_c_min": -20
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "zone subcarpatice (reci)",
+            "from": "09-15",
+            "to": "09-25"
+          },
+          {
+            "zone": "sud și Dobrogea",
+            "from": "09-25",
+            "to": "10-05"
+          },
+          {
+            "zone": "nord",
+            "from": "09-15",
+            "to": "09-20"
+          },
+          {
+            "zone": "sud",
+            "from": "10-01",
+            "to": "10-10"
+          }
+        ],
+        "sowing_condition": "45-50 zile de vegetație în toamnă pentru înrădăcinare și înfrățire; se seamănă cu circa 10 zile înaintea grâului de toamnă",
+        "flowering_period": "mai (înspică cu ~2 săptămâni înaintea grâului)",
+        "harvest_window": {
+          "from": "06-15",
+          "to": "07-10"
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "mazare",
+          "fasole",
+          "trifoi",
+          "rapita_toamna",
+          "floarea_soarelui",
+          "porumb",
+          "in_ulei"
+        ],
+        "years_before_repeat": 0
+      },
+      "notes": "Zone de cultură (Dragomir 2009): regiuni subcarpatice umede și răcoroase, depresiuni intramontane, microzone podzolice din Transilvania și NV Moldovei. INS nu raportează secara separat în comunicatele consultate. Sumă termică 1800-2000 °C. Densitate 500-600 boabe germinabile/m², normă 160-200 kg/ha.",
+      "varieties": [
+        {
+          "name": "Suceveana",
+          "breeder": "SCDA Suceava",
+          "type": "soi",
+          "registered_year": 1996,
+          "maturity_class": "timpuriu (cu 3-4 zile mai timpuriu decât alte soiuri de secară)",
+          "traits": "secară de toamnă; singurul soi de secară din Catalogul ISTIS 2025 (reînscris 2021); talie semi-înaltă ~135 cm, pai gros și elastic, rezistent la frângere și cădere; rezistent la iernare, făinare, rugină, foarte rezistent la mucegaiul de zăpadă; proteină 12,9%, amidon 60,7%, MMB 40,6 g; 6460 kg/ha vs 4480 kg/ha martor Gloria; autori Gașpăr Ilie, Zamă Emil; sursele nu menționează toleranța la secetă"
+        }
+      ]
+    },
+    {
+      "id": "triticale",
+      "name_ro": "Triticale",
+      "name_en": "Triticale",
+      "scientific_name": "x Triticosecale",
+      "group": "cereale",
+      "sowing_regime": "toamna",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["nisipos", "lutos", "cernoziom"]
+        },
+        "precipitation": {
+          "critical_period": "formarea bobului (mai-iunie); seceta produce sterilitatea spiculețelor din vârful spicului",
+          "drought_tolerance": "medie"
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "zone de deal și premontane",
+            "from": "09-15",
+            "to": "10-01"
+          },
+          {
+            "zone": "câmpie",
+            "from": "10-01",
+            "to": "10-15"
+          },
+          {
+            "zone": "național",
+            "from": "09-20",
+            "to": "10-15"
+          }
+        ],
+        "sowing_condition": "adâncime 5-6 cm (mai adânc decât grâul), 450-600 boabe germinabile/m², 12,5 cm între rânduri",
+        "flowering_period": "mai-iunie",
+        "harvest_window": {
+          "from": "06-25",
+          "to": "07-25"
+        },
+        "days_to_maturity": {
+          "min": 220,
+          "max": 260
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "mazare",
+          "fasole",
+          "naut",
+          "soia",
+          "in_ulei",
+          "rapita_toamna",
+          "floarea_soarelui",
+          "porumb",
+          "sfecla_zahar",
+          "canepa"
+        ],
+        "bad_preceding": [
+          "grau_toamna",
+          "orz_toamna",
+          "secara",
+          "triticale",
+          "ovaz",
+          "grau_primavara",
+          "orzoaica_primavara"
+        ],
+        "years_before_repeat": 2
+      },
+      "notes": "Soiuri românești în Catalogul oficial (Borcean 2021): Cascador F, Haiduc, Negoiu, Oda FD, Pisc, Stil, Tulnic, Utrifun, Zori, Zvelt — majoritatea create la INCDA Fundulea. Zone optime (BASF): depresiunile intramontane și regiunile submontane din Transilvania, nordul Moldovei; se poate cultiva în toate zonele. Rezistență ridicată la ger (sursele nu dau o valoare în °C). Nu există statistică INS separată în comunicatele consultate. Sursă primară românească (INCDA/USAMV) neaccesată.",
+      "varieties": [
+        {
+          "name": "FDL Caltrit",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2024,
+          "maturity_class": "precoce (aceeași precocitate ca Haiduc)",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele destinate speciei triticale",
+            "soluri podzolice din zona colinară subcarpatică",
+            "câmpia din sud și vest"
+          ],
+          "traits": "triticale de toamnă; tolerant la secetă și arșiță (testări ISTIS/ASAS 2021-2023); rezistență bună la ger și cădere; rezistență ridicată la BYDV; mediu sensibil la noile rase de rugină galbenă; 8070 kg/ha medie ISTIS, spor 11% față de Haiduc și Utrifun; proteine 12-13%"
+        },
+        {
+          "name": "FDL Ascendent",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2022,
+          "maturity_class": "precoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele destinate speciei triticale",
+            "soluri fertile din câmpia de sud și vest",
+            "Transilvania"
+          ],
+          "traits": "triticale de toamnă; rezistență bună la iernare, secetă și arșiță; rezistent la făinare și rugina brună; toleranță la toxicitatea ionilor de aluminiu; spor 10-12% față de Stil în ISTIS; proteine 12,8%"
+        },
+        {
+          "name": "Zaraza",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2021,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "toate zonele destinate speciei triticale",
+            "soluri podzolice din zona colinară subcarpatică",
+            "câmpia din sud și vest"
+          ],
+          "traits": "triticale de toamnă; rezistență bună la iernare și cădere; rezistent la rugina brună, rugina galbenă, septorioză; rezistență ridicată la BYDV; toleranță la aluminiu; spor 9-12% față de Stil și Haiduc; proteine 13,1%; sursa nu menționează explicit seceta"
+        },
+        {
+          "name": "Utrifun",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2018,
+          "maturity_class": "semiprecoce (2-3 zile mai tardiv la înspicat decât Stil)",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "toate arealele destinate speciei triticale",
+            "soluri fertile din câmpia de sud și vest",
+            "Transilvania"
+          ],
+          "traits": "triticale de toamnă; talie scurtă (gena Ddw1), rezistență foarte bună la cădere; rezistență bună la iernare, făinare, rugina brună; toleranță la aluminiu; 6800 kg/ha medie, până la 10,6 t/ha; proteine 12,4%; sursa nu menționează explicit seceta"
+        },
+        {
+          "name": "Tulnic",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2017,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "toate zonele destinate speciei triticale",
+            "soluri podzolice din zona colinară subcarpatică",
+            "câmpia din sud și vest"
+          ],
+          "traits": "triticale de toamnă; rezistență bună la cădere, încolțire în spic, fuzarioză, septorioză, BYDV; toleranță la aluminiu; 6600 kg/ha medie, spor 500 kg/ha față de Stil; sursa nu menționează explicit seceta"
+        }
+      ]
+    },
+    {
+      "id": "orez",
+      "name_ro": "Orez",
+      "name_en": "Rice",
+      "scientific_name": "Oryza sativa",
+      "group": "cereale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["argilos"],
+          "unsuitable_classes": ["nisipos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "ridicata",
+          "requires_drained_soil": false
+        },
+        "precipitation": {
+          "season_need_mm": {
+            "min": 1000,
+            "optimal": 1800
+          },
+          "critical_period": "înflorire (iulie-august): temperaturi sub 15 °C provoacă căderea florilor; necesar minim 20 °C în iunie-august",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 10,
+          "optimal_growth_c": {
+            "min": 20,
+            "max": 30
+          },
+          "heat_critical_c": 35
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "sudul Câmpiei Române – Lunca Dunării (Brăila, Ialomița, Călărași)",
+            "from": "05-01",
+            "to": "05-15"
+          }
+        ],
+        "sowing_condition": "temperatura solului la adâncimea de semănat 10-12 °C cu tendință de creștere; semănat în strat de apă (parcela inundată cu 10 cm apă cu 1-2 zile înainte) sau pe teren uscat",
+        "emergence_days": {
+          "min": 7,
+          "max": 7
+        },
+        "flowering_period": "iulie-august",
+        "harvest_window": {
+          "from": "09-01",
+          "to": "10-31"
+        },
+        "days_to_maturity": {
+          "min": 100,
+          "max": 140
+        }
+      },
+      "rotation": {
+        "good_preceding": ["porumb", "soia", "lucerna"],
+        "years_before_repeat": 0
+      },
+      "notes": "Cultură exclusiv irigată (submersie intermitentă cu nivel variabil) pe terenuri amenajate. Necesar minim 1.000 ore de strălucire a soarelui. Soiuri românești: Polizești-28, Brăila-1 (SCDA Brăila), Magic, Elida (SCDA Brăila / Chirnogi). Cercetare SCDA Brăila în Anale INCDA Fundulea vol. LXXXVII (2019): linii KM-1809, KM-1810. Pagina MADR 'Orez' și raportul ADER 1.1.4 nu au putut fi accesate (WAF).",
+      "varieties": [
+        {
+          "name": "Polizești 28",
+          "breeder": "SCDA Brăila",
+          "type": "soi",
+          "registered_year": 1978,
+          "maturity_class": "semitardiv, ~130 zile de la răsărit la maturitate (Polizești 2018)",
+          "recommended_zones": [
+            "Bărăgan / Lunca Dunării (Brăila), inclusiv soluri sărăturate"
+          ],
+          "traits": "soi de referință al oriziculturii românești, reînscris 2021, înscris și în catalogul comun UE; talie ~75 cm; rezistent la frângere; mai precoce cu 10-15 zile decât soiurile italiene; MMB 30,1 g; 10120 kg/ha în cultura comparativă Polizești 2018; bază ereditară pentru noile soiuri SCDA Brăila; SCDA Brăila recomandă orezul ca soluție antisecetă în zone cu resurse de apă"
+        },
+        {
+          "name": "Polizești 19",
+          "breeder": "SCDA Brăila",
+          "type": "soi",
+          "registered_year": 2019,
+          "traits": "soi nou SCDA Brăila obținut din programul de ameliorare bazat pe Polizești 28 (hibridare directă și selecție, linii cu precocitate și productivitate îmbunătățite față de martorul Polizești 28, 8000-11000 kg/ha); caracteristici individuale nepublicate în sursele consultate"
+        },
+        {
+          "name": "Polizești 23",
+          "breeder": "SCDA Brăila",
+          "type": "soi",
+          "registered_year": 2024,
+          "traits": "soi nou SCDA Brăila (înregistrat 2024); caracteristici individuale nepublicate în sursele consultate"
+        },
+        {
+          "name": "Roko 20",
+          "breeder": "SCDA Brăila",
+          "type": "soi",
+          "registered_year": 2021,
+          "traits": "soi SCDA Brăila, seria Roko rezultată din colaborarea cu Kyungpook National University (Coreea de Sud) pentru linii adaptate încălzirii globale (linii KM-1809 Osmancik-97 x KM-306 și KM-1810 Haedam x Polizești 28 introduse la ISTIS 2019-2020); caracteristici individuale nepublicate în sursele consultate"
+        },
+        {
+          "name": "Roko 21",
+          "breeder": "SCDA Brăila",
+          "type": "soi",
+          "registered_year": 2022,
+          "traits": "soi SCDA Brăila, seria Roko (colaborare româno-coreeană); caracteristici individuale nepublicate în sursele consultate"
+        }
+      ]
+    },
+    {
+      "id": "floarea_soarelui",
+      "name_ro": "Floarea-soarelui",
+      "name_en": "Sunflower",
+      "scientific_name": "Helianthus annuus",
+      "group": "oleaginoase_industriale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["nisipos", "argilos"],
+          "ph_range": {
+            "min": 6.4,
+            "max": 7.2
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "exposure": "indiferent",
+        "precipitation": {
+          "season_need_mm": {
+            "min": 350,
+            "optimal": 500
+          },
+          "critical_period": "buton floral 3 cm – 15-20 zile după înflorit (25-30 mai – 20-30 iulie); faza cea mai critică: prima decadă după ofilirea petalelor",
+          "drought_tolerance": "ridicata"
+        },
+        "temperature": {
+          "germination_soil_c_min": 4,
+          "optimal_growth_c": {
+            "min": 15,
+            "max": 22
+          },
+          "frost_tolerance_c_min": -6,
+          "heat_critical_c": 30
+        },
+        "altitude_m": {
+          "min": 0,
+          "max": 600
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "national (epoca optimă)",
+            "from": "03-25",
+            "to": "04-15"
+          },
+          {
+            "zone": "zone mai răcoroase (întârziere 7-10 zile)",
+            "from": "04-01",
+            "to": "04-25"
+          },
+          {
+            "zone": "sud (primăveri secetoase: începutul epocii optime)",
+            "from": "03-25",
+            "to": "04-05"
+          }
+        ],
+        "sowing_condition": "temperatura de 7 °C la adâncimea de semănat, la ora 7 dimineața, cu vremea în curs de încălzire",
+        "emergence_days": {
+          "min": 7,
+          "max": 20
+        },
+        "flowering_period": "iunie – prima jumătate a lunii iulie",
+        "harvest_window": {
+          "from": "08-20",
+          "to": "09-15"
+        },
+        "days_to_maturity": {
+          "min": 113,
+          "max": 138
+        }
+      },
+      "rotation": {
+        "good_preceding": ["porumb", "grau_toamna", "orz_toamna", "mazare"],
+        "bad_preceding": [
+          "floarea_soarelui",
+          "soia",
+          "fasole",
+          "naut",
+          "sfecla_zahar",
+          "rapita_toamna",
+          "in_ulei",
+          "lucerna",
+          "sorg"
+        ],
+        "years_before_repeat": 5
+      },
+      "notes": "Cultura cel mai des cântărită de fermierul din zona neirigată față de grâu/porumb: rezistă la secetă prin rădăcina pivotantă (2-2,5 m) și măduva tulpinii, dar producția depinde de rezerva de apă din sol acumulată septembrie-aprilie (Ion 2010). Zonarea (Hera, Sin, Toncea 1989): zona I Câmpia Română, Dobrogea (cernoziom) și Câmpia de Vest; II Lunca Dunării; III Câmpia Română/Dobrogea neirigat pe preluvosoluri, cernoziomuri, soluri bălane; IV Câmpia Găvanu-Burdea, Leu-Rotunda, Plenița; V Câmpia Jijiei, Podișul Bârladului, Câmpia Transilvaniei (limita inferioară); VI podișuri și piemonturi (slab favorabil). Densitate neirigat 45-55 mii plante/ha, irigat 55-65 mii (Ion 2010). Anul 2024 (secetă) a dat cea mai mică medie națională din seria 2015-2024.",
+      "varieties": [
+        {
+          "name": "P64LE162",
+          "breeder": "Pioneer / Corteva Agriscience",
+          "type": "hibrid",
+          "registered_year": 2021,
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură a florii-soarelui din România, inclusiv cele infestate cu lupoaie"
+          ],
+          "traits": "sistem erbicid ExpressSun (rezistent la tribenuron-metil/Express); rezistență genetică la lupoaie (Orobanche cumana) rasa G; toleranță la Phomopsis și Sclerotinia; talie medie-înaltă, autofertilitate ridicată; în 3 ani de testare a depășit P64LE25, P64LE137, P64LE136"
+        },
+        {
+          "name": "LG 55.55 CLP",
+          "breeder": "Limagrain",
+          "type": "hibrid",
+          "registered_year": 2017,
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "sudul și estul României",
+            "zone cu perioade lungi de secetă și arșiță, soluri sărace"
+          ],
+          "traits": "sistem erbicid Clearfield Plus (imazamox); rezistență la lupoaie (Orobanche cumana) notă 4/5, toleranță la rase virulente; Phomopsis/Sclerotinia 3/5; mană 4/5; linoleic; MMB 62-64 g; densitate 53-56 mii plante/ha"
+        },
+        {
+          "name": "SY Experto",
+          "breeder": "Syngenta",
+          "type": "hibrid",
+          "registered_year": 2019,
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "ridicata",
+          "traits": "sistem erbicid Clearfield (imazamox); High Oleic; rezistență ridicată la lupoaie (Orobanche cumana) rasa E"
+        },
+        {
+          "name": "FD15E27",
+          "breeder": "INCDA Fundulea",
+          "type": "hibrid",
+          "registered_year": 2019,
+          "maturity_class": "semitardiv",
+          "recommended_zones": [
+            "toate zonele favorabile culturii florii-soarelui din România, cu excepția celor infestate cu rasele noi, mai virulente, de lupoaie"
+          ],
+          "traits": "sistem erbicid Express-Sun (rezistent la erbicide sulfonilureice); rezistență genetică la mană (Plasmopara halstedii); tolerant la Phomopsis și Sclerotinia; tolerant la lupoaie rasele F-G; autofertilitate 70%; ulei 50-52%; potențial 3800-4000 kg/ha; densitate neirigat 55-58 mii plante/ha"
+        },
+        {
+          "name": "Performer",
+          "breeder": "INCDA Fundulea",
+          "type": "hibrid",
+          "registered_year": 1998,
+          "maturity_class": "semitardiv",
+          "recommended_zones": [
+            "toate zonele de cultură a florii-soarelui, cu excepția celor infestate cu lupoaie"
+          ],
+          "traits": "hibrid convențional (fără sistem erbicid); fără rezistență la lupoaie; mediu rezistent la Botrytis, tolerant la Sclerotinia, rezistent la cădere; foarte bună plasticitate ecologică; ulei 52-53%; potențial 3700-4000 kg/ha"
+        }
+      ]
+    },
+    {
+      "id": "rapita_toamna",
+      "name_ro": "Rapiță de toamnă",
+      "name_en": "Winter rapeseed",
+      "scientific_name": "Brassica napus",
+      "group": "oleaginoase_industriale",
+      "sowing_regime": "toamna",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["nisipos", "argilos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "exposure": "ferita_de_vant",
+        "precipitation": {
+          "season_need_mm": {
+            "min": 450,
+            "optimal": 650
+          },
+          "critical_period": "răsărire – formarea rozetei (septembrie-octombrie) și înflorire – fructificare (aprilie-mai)",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "optimal_growth_c": {
+            "min": 15,
+            "max": 22
+          },
+          "frost_tolerance_c_min": -15,
+          "heat_critical_c": 30
+        },
+        "altitude_m": {
+          "min": 0,
+          "max": 700
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "sudul țării",
+            "from": "09-05",
+            "to": "09-15"
+          },
+          {
+            "zone": "estul, vestul și nordul țării",
+            "from": "09-01",
+            "to": "09-10"
+          },
+          {
+            "zone": "Câmpia Română și Câmpia Banatului",
+            "from": "09-01",
+            "to": "09-10"
+          },
+          {
+            "zone": "restul țării (Transilvania, Moldova, nord)",
+            "from": "08-25",
+            "to": "09-05"
+          },
+          {
+            "zone": "national (recomandare hibrizi actuali)",
+            "from": "08-20",
+            "to": "08-31"
+          }
+        ],
+        "sowing_condition": "pat germinativ așezat, cu umiditate pentru răsărire; plantele să acumuleze 800-900 °C temperaturi active și să formeze rozetă de 6-8 frunze până la intrarea în iarnă",
+        "emergence_days": {
+          "min": 5,
+          "max": 10
+        },
+        "flowering_period": "aprilie – mai",
+        "harvest_window": {
+          "from": "06-20",
+          "to": "07-15"
+        },
+        "days_to_maturity": {
+          "min": 270,
+          "max": 300
+        }
+      },
+      "rotation": {
+        "good_preceding": ["grau_toamna", "orz_toamna", "mazare", "trifoi"],
+        "bad_preceding": ["soia", "floarea_soarelui", "rapita_toamna"],
+        "years_before_repeat": 3
+      },
+      "notes": "Rapița este alternativa de toamnă la grâu, dar cu rezistență slabă la secetă (Samuil 2007): riscul principal în zona neirigată este seceta din august-septembrie care compromite răsărirea și formarea rozetei, apoi înghețurile fără zăpadă sub -15…-18 °C și înghețurile târzii la înflorire. Zone ecologice (Samuil 2007): I – vestul și estul podișului Transilvaniei și zone colinare adăpostite (răsărire și iernare fără pierderi); II – câmpia de sud, în condiții de irigare pentru răsărire uniformă. Suprafața națională a oscilat 353-641 mii ha în 2019-2023 tocmai din cauza toamnelor secetoase (MADR/INS).",
+      "varieties": [
+        {
+          "name": "PT315",
+          "breeder": "Pioneer / Corteva Agriscience",
+          "type": "hibrid",
+          "registered_year": 2023,
+          "drought_tolerance": "ridicata",
+          "traits": "formează un număr mare de silicve (aceeași bază genetică cu PT314, care face silicve mai mari); stabilitate; producții raportate de fermieri 5.280-6.400 kg/ha; conținut glucosinolați max. 18 µmol/g (obs. 43 ISTIS)"
+        },
+        {
+          "name": "DK Exception",
+          "breeder": "Dekalb / Bayer",
+          "type": "hibrid",
+          "registered_year": 2020,
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "toate zonele de cultură din România, pe toate tipurile de sol"
+          ],
+          "traits": "toleranță la scuturarea silicvelor; toleranță la ger, reluare bună a vegetației primăvara; valorificare eficientă a azotului; dublă protecție la Phoma; declarat cel mai vândut hibrid de rapiță din România la momentul articolului; densitate 35-45 plante/m²"
+        },
+        {
+          "name": "LG Architect",
+          "breeder": "Limagrain",
+          "type": "hibrid",
+          "registered_year": 2021,
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "medie",
+          "traits": "rezistență genetică la TuYV (virusul îngălbenirii napului); rezistență excelentă la scuturarea silicvelor; toleranță foarte bună la iernare; toleranță la Phoma; talie înaltă, ramificare puternică; potențial >5,5 t/ha; MMB 5,4-5,6 g; densitate 35-55 semințe/m²; cel mai cultivat hibrid de rapiță din Europa mai mulți ani consecutiv"
+        },
+        {
+          "name": "LG Ambassador",
+          "breeder": "Limagrain",
+          "type": "hibrid",
+          "registered_year": 2021,
+          "maturity_class": "semitimpuriu",
+          "traits": "caracter N-Flex (valorifică eficient rezerve moderate de azot din sol); rezistență genetică la TuYV; rezistență excelentă la scuturarea silicvelor; rezistență genetică la Phoma (gena Rlm7); toleranță bună la iernare; vigoare mare la răsărire, pretabil la semănat târziu (sfârșit de septembrie); potențial >5,5 t/ha"
+        },
+        {
+          "name": "Umberto KWS",
+          "breeder": "KWS",
+          "type": "hibrid",
+          "registered_year": 2021,
+          "maturity_class": "semitardiv",
+          "drought_tolerance": "ridicata",
+          "traits": "rezistență poligenică aproape totală la Phoma lingam (gena RLM7-3); rezistență superioară la scuturare; capacitate foarte mare de ramificare, talie medie-înaltă, număr mare de semințe/silicvă; prezentat de KWS ca hibridul de rapiță cel mai vândut în România"
+        }
+      ]
+    },
+    {
+      "id": "soia",
+      "name_ro": "Soia",
+      "name_en": "Soybean",
+      "scientific_name": "Glycine max",
+      "group": "oleaginoase_industriale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos", "nisipos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "exposure": "indiferent",
+        "precipitation": {
+          "season_need_mm": {
+            "min": 500,
+            "optimal": 600
+          },
+          "critical_period": "apariția primelor flori – umplerea semințelor (10-15 iunie – 15-20 august)",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 7,
+          "optimal_growth_c": {
+            "min": 21,
+            "max": 25
+          },
+          "frost_tolerance_c_min": -2,
+          "heat_critical_c": 30
+        },
+        "altitude_m": {
+          "min": 0,
+          "max": 500
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "sudul țării",
+            "from": "04-01",
+            "to": "04-20"
+          },
+          {
+            "zone": "celelalte zone ale țării",
+            "from": "04-11",
+            "to": "04-30"
+          },
+          {
+            "zone": "sud și vest",
+            "from": "04-11",
+            "to": "04-20"
+          },
+          {
+            "zone": "celelalte zone",
+            "from": "04-21",
+            "to": "04-30"
+          }
+        ],
+        "sowing_condition": "temperatura minimă de germinare de 7-8 °C în sol la adâncimea de semănat, la ora 7 dimineața, cu vremea în curs de încălzire (temperatura medie a aerului 14-15 °C)",
+        "emergence_days": {
+          "min": 7,
+          "max": 14
+        },
+        "flowering_period": "iunie – iulie (primele flori 10-15 iunie)",
+        "harvest_window": {
+          "from": "09-01",
+          "to": "10-10"
+        },
+        "days_to_maturity": {
+          "min": 100,
+          "max": 150
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "grau_toamna",
+          "orz_toamna",
+          "porumb",
+          "sfecla_zahar"
+        ],
+        "bad_preceding": [
+          "floarea_soarelui",
+          "rapita_toamna",
+          "mazare",
+          "fasole",
+          "lucerna",
+          "trifoi"
+        ],
+        "years_before_repeat": 1
+      },
+      "notes": "Zonarea Ion 2010 (ΣTBA, prag 10 °C): zona I 1.600-1.750 °C – sudul Câmpiei Române și Dobrogea, soiuri târzii/semitârzii numai irigat; zona II 1.400-1.600 °C – Câmpia de Vest (Banat, Crișana), irigat și neirigat; zona III 1.400-1.600 °C – nordul Câmpiei Române; zona IV 1.200-1.400 °C – estul Moldovei și câmpia de NV; zona V 1.100-1.250 °C – V și SV Transilvaniei (luncile Mureșului, Târnavelor, Someșului) și NE Moldovei, soiuri timpurii/foarte timpurii. În sudul neirigat soia este riscantă: perioada critică (10-15 iunie – 15-20 august) coincide cu seceta de vară. Bacterizarea cu Bradyrhizobium fixează până la 220 kg N/ha; soia lasă 80-120 kg N/ha pentru cultura următoare (Ion 2010). Eligibilă la sprijin cuplat PD-09 cu producție minimă 1.300 kg/ha din sămânță certificată și contract de valorificare (CFRO).",
+      "varieties": [
+        {
+          "name": "Florina F",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2019,
+          "maturity_class": "semitimpuriu (grupa 0), 100-110 zile",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "sudul, sud-estul și vestul țării",
+            "Dobrogea",
+            "centrul și sudul Moldovei"
+          ],
+          "traits": "creștere nedeterminată; rezistență foarte bună la cădere și scuturare; rezistență bună la mană (Peronospora manshurica), arsura bacteriană și fuzarioză; proteină 39-41,5%, ulei 22,8-23%; a depășit martorii Perla cu 10% și Onix cu 8%; max. 5088 kg/ha neirigat; inserția primelor păstăi 15-17 cm"
+        },
+        {
+          "name": "Ovidiu F",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2018,
+          "maturity_class": "timpuriu (grupa 0), 100-110 zile",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "sudul, sud-estul și vestul țării",
+            "Dobrogea",
+            "centrul și sudul Moldovei"
+          ],
+          "traits": "creștere determinată; rezistență foarte bună la cădere și scuturare; rezistență bună la mană, arsura bacteriană și fuzarioză; proteină 39-41,8%, ulei 21-22,6%; a depășit Perla cu 10% și Onix cu 7%; max. 5765 kg/ha neirigat; hil galben"
+        },
+        {
+          "name": "Felix",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2005,
+          "maturity_class": "timpuriu (grupa 00), 122 zile",
+          "recommended_zones": ["Transilvania", "Moldova", "Câmpia de Vest"],
+          "traits": "pretabilitate bună la recoltatul mecanizat; proteine 41,5%, grăsimi 20,2%; hil deschis la culoare; potențial 4100 kg/ha; stabilitate pronunțată a producției în 10 ani de testare la Turda (2007-2016)"
+        },
+        {
+          "name": "Onix",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2002,
+          "maturity_class": "timpuriu (grupa 00), 123 zile",
+          "recommended_zones": ["Transilvania", "Moldova", "Câmpia de Vest"],
+          "traits": "pretabilitate foarte bună la recoltatul mecanizat; proteine 40,1%, grăsimi 21%; potențial 3900 kg/ha; soi martor în rețeaua oficială ISTIS; stabilitate pronunțată a producției"
+        },
+        {
+          "name": "Ilinca TD",
+          "breeder": "SCDA Turda",
+          "type": "soi",
+          "registered_year": 2015,
+          "maturity_class": "timpuriu (grupa 00)",
+          "recommended_zones": ["Transilvania", "Moldova", "Câmpia de Vest"],
+          "traits": "producție medie 2656 kg/ha în 10 ani la Turda (2007-2016), 105% față de martorul Onix; printre soiurile Turda cu cel mai mare progres genetic pentru producție"
+        }
+      ]
+    },
+    {
+      "id": "sfecla_zahar",
+      "name_ro": "Sfeclă de zahăr",
+      "name_en": "Sugar beet",
+      "scientific_name": "Beta vulgaris",
+      "group": "oleaginoase_industriale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos", "nisipos"],
+          "ph_range": {
+            "min": 6.5,
+            "max": 8
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "exposure": "indiferent",
+        "precipitation": {
+          "season_need_mm": {
+            "min": 300,
+            "optimal": 500
+          },
+          "critical_period": "iunie – august (faza a II-a: creșterea frunzelor și îngroșarea rădăcinii, ~60% din consumul total de apă; hotărâtoare precipitațiile din iulie-august)",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 3,
+          "optimal_growth_c": {
+            "min": 16,
+            "max": 19
+          },
+          "frost_tolerance_c_min": -3,
+          "heat_critical_c": 30
+        },
+        "altitude_m": {
+          "min": 100,
+          "max": 700
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "Țara Bârsei / Brașov (INCDCSZ, experiențe 2008-2010)",
+            "from": "04-01",
+            "to": "04-15"
+          },
+          {
+            "zone": "national (zone tradiționale)",
+            "from": "03-20",
+            "to": "03-25"
+          },
+          {
+            "zone": "sud (Câmpia Română)",
+            "from": "03-10",
+            "to": "03-31"
+          }
+        ],
+        "sowing_condition": "temperatura solului de 4-5 °C la adâncimea de semănat (2-4 cm), menținută 3 zile consecutiv, cu tendință de creștere; semănat cât mai timpuriu pentru 'răsărire explozivă'",
+        "emergence_days": {
+          "min": 10,
+          "max": 30
+        },
+        "flowering_period": "nu înflorește în anul I (plantă bienală); temperaturile sub 4 °C în faza cotiledonală induc lăstari floriferi în anul I",
+        "harvest_window": {
+          "from": "09-15",
+          "to": "10-15"
+        },
+        "days_to_maturity": {
+          "min": 170,
+          "max": 180
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "grau_toamna",
+          "orz_toamna",
+          "orzoaica_primavara",
+          "trifoi",
+          "mazare"
+        ],
+        "bad_preceding": [
+          "porumb",
+          "floarea_soarelui",
+          "rapita_toamna",
+          "sfecla_zahar",
+          "ovaz",
+          "canepa"
+        ],
+        "years_before_repeat": 4
+      },
+      "notes": "Zonare (ACSZ Bod, după INCDCSZ): foarte favorabilă 1 – SE Câmpiei Transilvaniei, nordul Moldovei, zona Roman; foarte favorabilă 2 – Câmpia Someșului, Valea Mureșului, Târnavelor, Lunca Oltului, Țara Bârsei; favorabilă 1 – Câmpia Română (Mizil, N Mostiștei, Corabia, Giurgiu), Podișul Sucevei, luncile Siretului și Sucevei, Sf. Gheorghe – Tg. Secuiesc; favorabilă 3 – soluri degradate, numai irigat. Sursele agronomice ACSZ Bod și Revista Ferma nu sunt pe lista de surse primare, de aceea multe frunze sunt verified:false deși valorile coincid cu tratatele de fitotehnie. Cultura este viabilă economic doar cu contract de fabrică și sprijin cuplat PD-16 (min. 26.400 kg/ha); în 2022 suprafața a scăzut la 8.888 ha și a revenit la 22.922 ha în 2024 (MADR/INS). Densitate țintă la recoltare 80-100 mii plante/ha; distanță 45 cm între rânduri (ACSZ Bod, INCDCSZ).",
+      "varieties": [
+        {
+          "name": "Sandpiper Smart",
+          "breeder": "SESVanderHave",
+          "type": "hibrid",
+          "drought_tolerance": "medie",
+          "traits": "CONVISO SMART (toleranță la erbicid ALS, Conviso One); tip NZ (normal-zaharat); potențial mare al producției de rădăcini; pretabil la recoltare de la mijlocul campaniei până la sfârșit"
+        },
+        {
+          "name": "Kamzik Smart",
+          "breeder": "SESVanderHave",
+          "type": "hibrid",
+          "traits": "CONVISO SMART (toleranță la erbicid ALS); tip NZ; foarte bună toleranță la Cercospora; bună toleranță la temperaturi ridicate; pretabil la recoltare de la mijlocul campaniei până la sfârșit"
+        },
+        {
+          "name": "Smart Rossada KWS",
+          "breeder": "KWS",
+          "type": "hibrid",
+          "registered_year": 2021,
+          "traits": "CONVISO SMART (toleranță la erbicid cu inhibare ALS); toleranță la Cercospora și Rizomania (ALS/CR RZ/NZ); tip industrial normal-zaharat; potențial ridicat pentru producții mari de rădăcini cu conținut mediu-mare de zahăr"
+        },
+        {
+          "name": "Smart Materia KWS",
+          "breeder": "KWS",
+          "type": "hibrid",
+          "registered_year": 2024,
+          "traits": "CONVISO SMART (toleranță la erbicid cu inhibare ALS); toleranță la nematozi (recomandat în asolamente cu infestare nematodică); toleranță sporită la Rizomania; tolerant la Cercospora, Ramularia, rugini și putregaiuri; tip normal-zaharat; producții mari de rădăcini cu zahăr mediu spre mare"
+        },
+        {
+          "name": "Tesla",
+          "breeder": "Strube",
+          "type": "hibrid",
+          "traits": "tip N/Z; rezistență la Rizomania; toleranță foarte bună la Cercospora; dezvoltare rapidă în primele faze de vegetație (permite reducerea tratamentelor fungicide); producție de zahăr ridicată; recoltare septembrie-noiembrie"
+        }
+      ]
+    },
+    {
+      "id": "in_ulei",
+      "name_ro": "In pentru ulei",
+      "name_en": "Oil flax (linseed)",
+      "scientific_name": "Linum usitatissimum",
+      "group": "oleaginoase_industriale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos", "nisipos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7.2
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "exposure": "indiferent",
+        "precipitation": {
+          "season_need_mm": {
+            "min": 150,
+            "optimal": 200
+          },
+          "critical_period": "creșterea rapidă a tulpinii (brădișor) – înflorire (mai – iunie); lipsa apei la apariția bobocilor florali pierde 15-20% din recoltă",
+          "drought_tolerance": "medie"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "optimal_growth_c": {
+            "min": 18,
+            "max": 22
+          },
+          "frost_tolerance_c_min": -4,
+          "heat_critical_c": 30
+        },
+        "altitude_m": {
+          "min": 0,
+          "max": 400
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "national (imediat după cerealele păioase și mazăre, înaintea sfeclei și florii-soarelui)",
+            "from": "03-21",
+            "to": "04-05"
+          }
+        ],
+        "sowing_condition": "temperatura de 4-5 °C în sol la 5 cm adâncime, constantă 4-5 zile",
+        "emergence_days": {
+          "min": 7,
+          "max": 14
+        },
+        "flowering_period": "iunie (înflorirea durează 15-40 zile)",
+        "harvest_window": {
+          "from": "07-01",
+          "to": "07-31"
+        },
+        "days_to_maturity": {
+          "min": 85,
+          "max": 115
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "grau_toamna",
+          "orz_toamna",
+          "mazare",
+          "porumb",
+          "sfecla_zahar"
+        ],
+        "bad_preceding": [
+          "floarea_soarelui",
+          "sorg",
+          "ovaz",
+          "in_ulei",
+          "canepa"
+        ],
+        "years_before_repeat": 6
+      },
+      "notes": "Zonare (Samuil 2007, după Bârnaure 1991): foarte favorabilă – silvostepa vestică și sudică (jumătatea de vest a Banatului, sudul Munteniei, centrul și sudul Olteniei, SE Dobrogei, cca 200 mm în vegetație); favorabilă – Câmpia Crișurilor și Banatului, nordul Câmpiei Române, subcolinar Oltenia/Muntenia, stepa din sud, Dobrogea, silvostepa Moldovei (Lunca Siretului, Câmpia Jijiei și Bahluiului, Prut, Bârlad). Soiurile românești sunt create la ICDA Fundulea (Lirina, Cristina, Floriana etc.). Cultura este marginală azi: MADR nu are pagină, INS nu raportează separat, nu am găsit cost/ha românesc și nici serie de producții 2019-2024 – omise. Nu este eligibilă la sprijin cuplat PS 2023-2027 (lista PD-09…PD-20 nu conține inul).",
+      "varieties": [
+        {
+          "name": "Lirina",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 1998,
+          "drought_tolerance": "ridicata",
+          "traits": "in pentru ulei cu sămânță castanie; potențial 1,6-2,4 t/ha sămânță; ulei 43,5-46,7%; rezistență la boli; înregistrat și în Germania (1997); soi martor în testările INCDA 2014-2018"
+        },
+        {
+          "name": "Paltin",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "semitimpuriu",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "zonele favorabile culturii inului pentru ulei"
+          ],
+          "traits": "sămânță maro, MMB medie; talie medie; ulei 42,2%; producție medie de sămânță în rețeaua ISTIS 2717 kg/ha"
+        },
+        {
+          "name": "Simbol",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "semitardiv",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "zonele favorabile culturii inului pentru ulei"
+          ],
+          "traits": "sămânță galbenă (tip pentru uleiuri speciale), MMB medie spre mare; talie scurtă spre medie; ulei 42,3%; producție medie în rețeaua ISTIS 2384 kg/ha"
+        },
+        {
+          "name": "Opal F",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2021,
+          "maturity_class": "semitardiv",
+          "drought_tolerance": "medie",
+          "recommended_zones": [
+            "zonele favorabile culturii inului pentru ulei"
+          ],
+          "traits": "sămânță maro, MMB medie; talie medie; ulei 42,6%; producție medie de sămânță în perioada de testare 2506 kg/ha"
+        },
+        {
+          "name": "Coral F",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2022
+        }
+      ]
+    },
+    {
+      "id": "canepa",
+      "name_ro": "Cânepă industrială",
+      "name_en": "Industrial hemp",
+      "scientific_name": "Cannabis sativa",
+      "group": "oleaginoase_industriale",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["nisipos", "argilos"],
+          "ph_range": {
+            "min": 6.8,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "exposure": "indiferent",
+        "precipitation": {
+          "season_need_mm": {
+            "min": 250,
+            "optimal": 400
+          },
+          "critical_period": "butonizare (diferențierea sexelor) – înflorire, 40-50 zile începând la ~30 zile de la răsărire (iunie – iulie); consumă 2/3 din necesarul de apă",
+          "drought_tolerance": "medie"
+        },
+        "temperature": {
+          "germination_soil_c_min": 2,
+          "optimal_growth_c": {
+            "min": 18,
+            "max": 25
+          },
+          "frost_tolerance_c_min": -2,
+          "heat_critical_c": 32
+        },
+        "altitude_m": {
+          "min": 100,
+          "max": 600
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "national (condiție termică, fără date calendaristice în sursă)",
+            "from": "04-01",
+            "to": "04-30"
+          },
+          {
+            "zone": "Neamț (SCDA Secuieni, exemplu de fermă)",
+            "from": "04-15",
+            "to": "04-15"
+          }
+        ],
+        "sowing_condition": "temperatura solului de 7-8 °C la 5-7 cm adâncime, cu tendință de încălzire (constantă 4-5 zile)",
+        "emergence_days": {
+          "min": 5,
+          "max": 10
+        },
+        "flowering_period": "iulie – august (înflorire eșalonată; plantele mascule scutură polenul în iulie-august, femelele mai continuă 30-40 zile)",
+        "harvest_window": {
+          "from": "08-20",
+          "to": "09-15"
+        },
+        "days_to_maturity": {
+          "min": 100,
+          "max": 150
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "lucerna",
+          "trifoi",
+          "mazare",
+          "fasole",
+          "soia",
+          "rapita_toamna",
+          "grau_toamna",
+          "orz_toamna"
+        ],
+        "bad_preceding": ["canepa", "floarea_soarelui"],
+        "years_before_repeat": 3
+      },
+      "notes": "Cultura necesită autorizație de cultivare de la DAJ (Legea 339/2005, HG 1915/2006) și soiuri cu THC < 0,2% (MADR). Zonare (Samuil 2007): foarte favorabilă – Câmpia de Vest (Someș, Er, Crișuri, Mureș, Timiș, Bârzava), lunca Mureșului, văile Târnavelor, Arieșului, Someșului, Moldovei; favorabilă – Câmpia Transilvaniei, Podișul Târnavelor, depresiunile Sibiu, Alba Iulia, Turda, Țara Bârsei, Sf. Gheorghe, Tg. Secuiesc, podișurile Sucevei și Bârladului, Câmpia Moldovei, nordul Câmpiei Române; stepa din sud și sud-est: nerecomandată. Pentru semințe, cele mai bune zone: Câmpia de Vest și NV, văile Mureșului și Someșului, Câmpia Jijiei. Producția INS 'cânepă pentru fibră' este exprimată în tulpini; seria de suprafețe este mică (306-1.688 ha în 2015-2023), deci mediile sunt volatile. Soiuri SCDA Lovrin: Lovrin 110, Armanca, Silvana, Teodora; SCDA Secuieni: Dacia Secuieni, Secuieni Jubileu. Sprijin cuplat PD-12 condiționat de min. 500 kg semințe/ha și/sau 5.000 kg tulpini uscate/ha.",
+      "varieties": [
+        {
+          "name": "Zenit",
+          "breeder": "SCDA Secuieni",
+          "type": "soi",
+          "registered_year": 2000,
+          "recommended_zones": ["Centrul și Nordul Moldovei"],
+          "traits": "soi monoic specific pentru producția de sămânță; perioada de vegetație 90-110 zile (fibră) / 120-125 zile (sămânță); talie 2-2,5 m (tulpini) / 2-3,5 m (sămânță); rezistent la temperaturi scăzute, cădere, lupoaie și fuzarioză; THC <0,1%; 8-9 t/ha tulpini, 25-26% fibră, 900-1200 kg/ha sămânță; MMB 19-23 g"
+        },
+        {
+          "name": "Dacia Secuieni",
+          "breeder": "SCDA Secuieni",
+          "type": "soi",
+          "registered_year": 2012,
+          "maturity_class": "tardiv",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": ["Moldova", "Transilvania"],
+          "traits": "soi monoic specific pentru tulpini și fibre; vegetație 115-120 zile (fibră) / 145-160 zile (sămânță); talie 1,8-2,8 m (tulpini) / 3-4,5 m (sămânță); 8400-11800 kg/ha tulpini, 31-32% fibră, 1000-1200 kg/ha sămânță; THC 0,0134%"
+        },
+        {
+          "name": "Lovrin 110",
+          "breeder": "SCDA Lovrin",
+          "type": "soi",
+          "registered_year": 2007,
+          "traits": "cânepă dioică pentru fibră și sămânță; THC sub 0,2%; plasticitate ecologică ridicată, producții stabile cu tehnologie adecvată; primul soi de succes al laboratorului Lovrin, cultivat și în străinătate"
+        },
+        {
+          "name": "Armanca",
+          "breeder": "SCDA Lovrin",
+          "type": "soi",
+          "registered_year": 2010,
+          "traits": "cânepă dioică cu utilizare mixtă, fibră și sămânță; THC sub 0,2%; plasticitate ecologică ridicată"
+        },
+        {
+          "name": "Teodora",
+          "breeder": "SCDA Lovrin",
+          "type": "soi",
+          "registered_year": 2019,
+          "traits": "cânepă dioică specifică pentru fibră (producție mică de sămânță); talie foarte înaltă 4-5 m; cca 20 t/ha tulpini și cca 5 t/ha fibră (declarația amelioratorului Valeriu Tabără); THC sub 0,2%; creată din combinarea mai multor soiuri, 2 ani de testare ISTIS"
+        }
+      ]
+    },
+    {
+      "id": "mazare",
+      "name_ro": "Mazăre de câmp (boabe)",
+      "name_en": "Field pea",
+      "scientific_name": "Pisum sativum",
+      "group": "leguminoase_furajere",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos", "nisipos"],
+          "ph_range": {
+            "min": 6.7,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "critical_period": "înflorire – formarea boabelor (mai-iunie); necesar 120-140 mm în mai-iunie",
+          "drought_tolerance": "medie"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "optimal_growth_c": {
+            "min": 14,
+            "max": 18
+          },
+          "frost_tolerance_c_min": -6,
+          "heat_critical_c": 30
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "sud",
+            "from": "03-01",
+            "to": "03-15"
+          },
+          {
+            "zone": "celelalte zone din țară",
+            "from": "03-16",
+            "to": "03-31"
+          }
+        ],
+        "sowing_condition": "temperatura solului la 6-8 cm de 1-2 °C (3-4 °C la soiurile cu bob zbârcit), în prima urgență",
+        "emergence_days": {
+          "min": 6,
+          "max": 9
+        },
+        "flowering_period": "mai-iunie"
+      },
+      "rotation": {
+        "good_preceding": [
+          "porumb",
+          "sfecla_zahar",
+          "floarea_soarelui",
+          "grau_toamna",
+          "orz_toamna"
+        ],
+        "bad_preceding": [
+          "mazare",
+          "fasole",
+          "soia",
+          "naut",
+          "linte",
+          "lucerna",
+          "trifoi"
+        ],
+        "years_before_repeat": 3
+      },
+      "notes": "Medii naționale INS: 2108 kg/ha (2021), 1600 kg/ha (2022). Necesar termic 1350-1800 °C pe vegetație. Zonare (Bîlteanu 1983 în Samuil 2007): foarte favorabilă Câmpia de Vest, centrul și NV Banatului; favorabilă I sudul Câmpiei Române (fără Bărăgan și nisipurile Olteniei), Câmpia Transilvaniei, Valea Mureșului și Târnavelor, Depresiunea Sibiului, Țara Bârsei, Câmpia Crișurilor, NV țării, Depresiunea Jijiei-Bahlui; puțin favorabilă regiunile premontane, subcarpatice, nisipurile din Lunca Dunării și Siretului. Recoltare la 70% păstăi galbene, în două faze sau direct la soiurile afila. Fereastra de recoltare și durata în zile nu au fost găsite într-o sursă primară (omise). Mazărea de toamnă (soiuri de toamnă) se seamănă 21.08-10.09 și rezistă la -16…-17 °C fără zăpadă, -20 °C cu zăpadă (presă, Saaten-Union, agrointel.ro 2016). Costul pe hectar nu a fost găsit într-o sursă românească (omis).",
+      "varieties": [
+        {
+          "name": "Rodica",
+          "breeder": "SCDA Teleorman",
+          "type": "soi",
+          "registered_year": 2017,
+          "maturity_class": "semitimpuriu-mijlociu (76-94 zile, tip afila, soi de primăvară)",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "Câmpia Română (sudul României)",
+            "toate zonele favorabile mazării de câmp"
+          ],
+          "traits": "tip afila (pretabil recoltării mecanizate); talie 58-88 cm; rezistență bună la cădere și boli; conținut ridicat de proteină brută; producție 3138-4084 kg/ha în rețeaua ISTIS 2014-2016 (medie 3467 kg/ha, +71 kg/ha față de Nicoleta)"
+        },
+        {
+          "name": "Anastasia F",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "mijlociu (soi de primăvară, tip afila)",
+          "drought_tolerance": "medie",
+          "recommended_zones": ["toate zonele favorabile mazării de câmp"],
+          "traits": "tip afila; rezistență bună la scuturare și cădere; toleranță la secetă și boli; proteină brută 23,7%; producție medie 2833 kg/ha în rețeaua ISTIS; boabe și furaj"
+        },
+        {
+          "name": "Ștefania F",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "mijlociu spre târziu (soi de primăvară, tip afila)",
+          "drought_tolerance": "medie",
+          "recommended_zones": ["toate zonele favorabile mazării de câmp"],
+          "traits": "tip afila; foliaj verde-albăstrui; rezistență bună la scuturare și cădere; toleranță la secetă și boli; proteină brută 24,5%"
+        },
+        {
+          "name": "Nicoleta",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2013,
+          "maturity_class": "soi de primăvară, tip afila",
+          "recommended_zones": ["toate zonele favorabile mazării de câmp"],
+          "traits": "tip afila; soi martor în testarea ISTIS a mazării de câmp; producție medie 3396 kg/ha în rețeaua ISTIS 2014-2016 (maxim 4571 kg/ha la Inand)"
+        },
+        {
+          "name": "Ghittia F",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "timpuriu (soi de toamnă, tip afila)",
+          "recommended_zones": ["toate zonele favorabile mazării de câmp"],
+          "traits": "mazăre de toamnă, tip afila; rezistență bună la iernare, toleranță la cădere; înflorire foarte timpurie; proteină brută 24,2%; producție medie 3125 kg/ha în rețeaua ISTIS; boabe și furaj. Soiurile de mazăre de toamnă Fundulea au fost create ca răspuns la secetele frecvente de primăvară (evită seceta prin semănat toamna), dar toleranța la secetă nu este declarată explicit pentru acest soi"
+        }
+      ]
+    },
+    {
+      "id": "fasole",
+      "name_ro": "Fasole de câmp (boabe)",
+      "name_en": "Dry bean (field bean)",
+      "scientific_name": "Phaseolus vulgaris",
+      "group": "leguminoase_furajere",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos", "nisipos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "exposure": "sudica",
+        "precipitation": {
+          "critical_period": "înflorire-fecundare până la formarea păstăilor și boabelor (iunie-iulie)",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 10,
+          "optimal_growth_c": {
+            "min": 20,
+            "max": 25
+          },
+          "frost_tolerance_c_min": -1,
+          "heat_critical_c": 30
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "national (zone de câmpie)",
+            "from": "04-11",
+            "to": "04-30"
+          },
+          {
+            "zone": "zonele mai reci ale țării",
+            "from": "05-01",
+            "to": "05-10"
+          },
+          {
+            "zone": "Câmpia Română, Dobrogea, Câmpia de Vest",
+            "from": "04-10",
+            "to": "04-25"
+          },
+          {
+            "zone": "centrul Moldovei și Câmpia Transilvaniei",
+            "from": "04-15",
+            "to": "04-30"
+          },
+          {
+            "zone": "zonele nordice și depresiunile reci",
+            "from": "05-10",
+            "to": "05-15"
+          }
+        ],
+        "sowing_condition": "temperatura solului la 5-6 cm de 8-10 °C, cu tendință de creștere",
+        "emergence_days": {
+          "min": 10,
+          "max": 12
+        },
+        "flowering_period": "la 38-45 zile de la răsărire (soiuri timpurii și semitimpurii), încă 35-43 zile până la maturitate",
+        "harvest_window": {
+          "from": "08-01",
+          "to": "08-31"
+        },
+        "days_to_maturity": {
+          "min": 70,
+          "max": 110
+        }
+      },
+      "rotation": {
+        "good_preceding": [
+          "grau_toamna",
+          "orz_toamna",
+          "sfecla_zahar",
+          "porumb"
+        ],
+        "bad_preceding": [
+          "floarea_soarelui",
+          "rapita_toamna",
+          "in_ulei",
+          "soia",
+          "mazare",
+          "fasole",
+          "naut",
+          "linte",
+          "lucerna",
+          "trifoi"
+        ],
+        "years_before_repeat": 4
+      },
+      "notes": "Medii naționale INS: 1457 kg/ha (2021), 1104 kg/ha (2022). Necesar termic 1500-2200 °C (suma temperaturilor >10 °C). Zonare (Bîlteanu 1991 în Samuil 2007): foarte favorabilă o parte din Câmpia de Vest (în jurul Aradului, văile Mureșului, Timișului, Crișurilor, Someșului) și luncile Mureșului și Târnavelor; favorabilă cea mai mare parte a arabilului din Muntenia, Oltenia, Moldova, Transilvania; puțin favorabilă centrul și nordul Dobrogei, regiunile submontane, nisipurile, sărăturile. În sud și sud-est merge și în cultură succesivă după orz, la irigat. Irigare: 2-3 udări a 500-600 m³/ha în perioada critică. Fereastra de recoltare este o estimare dintr-o singură fermă (verified:false).",
+      "varieties": [
+        {
+          "name": "Lechința",
+          "breeder": "SCDL Iernut (Stațiunea de Cercetare-Dezvoltare pentru Legumicultură Iernut, jud. Mureș)",
+          "type": "soi",
+          "registered_year": 2011,
+          "recommended_zones": [
+            "Transilvania (Câmpia Transilvaniei, zona Mureș/Bistrița)"
+          ],
+          "traits": "soi românesc de fasole de câmp (boabe); marcat 'ex' în coloana de observații ISTIS; unul dintre cele două soiuri de fasole de câmp ale SCDL Iernut, reînscris în 2023",
+          "maturity_class": "extratimpuriu"
+        },
+        {
+          "name": "Maira",
+          "breeder": "SCDL Iernut",
+          "type": "soi",
+          "registered_year": 2022,
+          "recommended_zones": ["Transilvania"],
+          "traits": "cel mai nou soi românesc de fasole de câmp înregistrat (2022); marcat 'td' în coloana de observații ISTIS",
+          "maturity_class": "târziu"
+        },
+        {
+          "name": "Algil",
+          "breeder": "USV Iași (USAMV 'Ion Ionescu de la Brad' Iași)",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "târziu",
+          "recommended_zones": ["Moldova"],
+          "traits": "tip de creștere pitic; flori albe; păstaie mijlocie cu filament pergamentos; MMB mică; sămânță albă; destinat consumului proaspăt și industrializării"
+        },
+        {
+          "name": "Doina",
+          "breeder": "SCDL Buzău",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "târziu",
+          "recommended_zones": ["Câmpia Română (zona Buzău)"],
+          "traits": "tip de creștere pitic; stindard alb-roz; păstaie mijlocie cu filament pergamentos; MMB mijlocie; sămânță albă; destinat consumului proaspăt și industrializării"
+        },
+        {
+          "name": "Great Northern",
+          "breeder": "SC Holland Farming Agro SRL (menținător în România; tip american de fasole albă)",
+          "type": "soi",
+          "registered_year": 2017,
+          "traits": "fasole albă tip Great Northern; genitor al soiului timpuriu Ami (INCDA Fundulea, 1991); marcat 'ex' în coloana de observații ISTIS",
+          "maturity_class": "extratimpuriu"
+        }
+      ]
+    },
+    {
+      "id": "naut",
+      "name_ro": "Năut",
+      "name_en": "Chickpea",
+      "scientific_name": "Cicer arietinum",
+      "group": "leguminoase_furajere",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos"],
+          "ph_range": {
+            "min": 6.8,
+            "max": 8
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "drought_tolerance": "ridicata"
+        },
+        "temperature": {
+          "germination_soil_c_min": 3,
+          "frost_tolerance_c_min": -6
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "national (zona de cultură: sud, Dobrogea, vest)",
+            "from": "02-20",
+            "to": "03-15"
+          }
+        ],
+        "sowing_condition": "temperatura solului la 5-6 cm de 2-4 °C, în prima urgență",
+        "days_to_maturity": {
+          "min": 78,
+          "max": 81
+        }
+      },
+      "rotation": {
+        "bad_preceding": ["naut", "linte", "fasole", "mazare", "soia"],
+        "years_before_repeat": 4
+      },
+      "notes": "Soiuri românești în Catalogul ISTIS 2023 (Cicer arietinum): Burnas (2004), Rodin (2004), Valah 1 (2020), Splendor (2023) – menținător SCDA Teleorman; Kuky (2020) – alt menținător (sursă: ISTIS 2023, verificat). Zone recomandate (presă): Dobrogea, Câmpia Română, Câmpia de Vest, sudul Câmpiei Moldovei; județele Tulcea, Brăila, Buzău, Ialomița, Călărași, Giurgiu, Teleorman, Olt, Dolj. Adâncime semănat 4-7 cm, 80-120 kg/ha, 40-50 boabe germinabile/m². Păstăi indehiscente, recoltare directă cu combina la peste 70% păstăi îngălbenite; luna recoltării nu a fost găsită explicit (omisă). Nu s-a găsit o sursă primară (USAMV/INCDA) accesibilă online pentru cerințele agronomice: toate valorile de mai sus sunt din presă agricolă românească. Cost/ha negăsit.",
+      "varieties": [
+        {
+          "name": "Burnas",
+          "breeder": "SCDA Teleorman",
+          "type": "soi",
+          "registered_year": 2004,
+          "recommended_zones": [
+            "Câmpia Burnasului",
+            "Câmpia Boianului",
+            "sudul Câmpiei Române"
+          ],
+          "traits": "soi românesc de năut creat la SCDA Teleorman, brevetat; folosit ca soi de referință în testări alături de Rodin"
+        },
+        {
+          "name": "Rodin",
+          "breeder": "SCDA Teleorman",
+          "type": "soi",
+          "registered_year": 2004,
+          "recommended_zones": ["sudul Câmpiei Române (Teleorman)"],
+          "traits": "soi românesc de năut creat la SCDA Teleorman, brevetat 2004; folosit în testări comparative alături de Burnas și soiuri străine (Hakan, Jumbo, Macarena, Pascia)"
+        },
+        {
+          "name": "Valah 1",
+          "breeder": "SCDA Teleorman",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "timpuriu",
+          "traits": "plantă de înălțime mijlocie, port semierect; flori albe; predominant două semințe în păstaie; sămânță mică, brun-gălbuie deschis, rotundă spre ascuțită; înflorire foarte timpurie; destinat consumului proaspăt și industrializării"
+        },
+        {
+          "name": "Splendor",
+          "breeder": "SCDA Teleorman",
+          "type": "soi",
+          "registered_year": 2023,
+          "traits": "cel mai nou soi românesc de năut înregistrat; creat la SCDA Teleorman",
+          "maturity_class": "timpuriu"
+        },
+        {
+          "name": "Kuky",
+          "breeder": "USAMV București",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "timpuriu",
+          "traits": "plantă de înălțime mijlocie, port semierect; flori albe; una-două semințe în păstaie; sămânță mică, brun-gălbuie deschis; destinat consumului proaspăt și industrializării"
+        }
+      ]
+    },
+    {
+      "id": "linte",
+      "name_ro": "Linte",
+      "name_en": "Lentil",
+      "scientific_name": "Lens culinaris",
+      "group": "leguminoase_furajere",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "drainage": {
+          "waterlogging_tolerance": "scazuta"
+        },
+        "precipitation": {
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 4,
+          "frost_tolerance_c_min": -6
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "national",
+            "from": "03-01",
+            "to": "03-31"
+          }
+        ],
+        "flowering_period": "mai (cca 7 săptămâni de la răsărire)"
+      },
+      "rotation": {
+        "good_preceding": [
+          "porumb",
+          "sfecla_zahar",
+          "grau_toamna",
+          "orz_toamna"
+        ],
+        "bad_preceding": ["mazare", "fasole", "naut", "soia", "linte"]
+      },
+      "notes": "Zone menționate în presă: centrul și nordul Moldovei, Depresiunea Bârsei, Câmpia Vinga (Banat). Catalogul ISTIS 2023 nu conține nicio intrare pentru Lens culinaris (verificat în textul catalogului): nu există soiuri românești înregistrate. Suma de grade 1500-1800 °C; la înflorire-fructificare temperatura medie zilnică nu ar trebui să depășească 20 °C (botanistii.ro). Adâncime 3-5 cm, 80-100 kg/ha. Preț orientativ 12 lei/kg (agrointel.ro). Nu s-a găsit o sursă primară românească (USAMV/INCDA) accesibilă online; sol/pH, fereastra de recoltare, durata vegetației, costul/ha au fost omise.",
+      "varieties": []
+    },
+    {
+      "id": "lucerna",
+      "name_ro": "Lucernă",
+      "name_en": "Alfalfa (lucerne)",
+      "scientific_name": "Medicago sativa",
+      "group": "leguminoase_furajere",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["cernoziom", "lutos"],
+          "unsuitable_classes": ["argilos"],
+          "ph_range": {
+            "min": 6.5,
+            "max": 7.3
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta",
+          "requires_drained_soil": true
+        },
+        "precipitation": {
+          "season_need_mm": {
+            "min": 500,
+            "optimal": 600
+          },
+          "drought_tolerance": "ridicata"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "frost_tolerance_c_min": -25
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "sud (câmpie), primăvara",
+            "from": "03-01",
+            "to": "03-15"
+          },
+          {
+            "zone": "celelalte zone / colinar, primăvara",
+            "from": "03-16",
+            "to": "04-10"
+          },
+          {
+            "zone": "sud, irigat, sfârșit de vară",
+            "from": "08-25",
+            "to": "09-05"
+          },
+          {
+            "zone": "zone colinare, sfârșit de vară",
+            "from": "08-15",
+            "to": "08-25"
+          }
+        ],
+        "sowing_condition": "primăvara: temperatura solului la 0-5 cm de 1-2 °C (foarte timpuriu); vara: 850-1100 °C acumulate de la semănat până la intrarea în iarnă, cu umiditate asigurată"
+      },
+      "rotation": {
+        "good_preceding": [
+          "grau_toamna",
+          "orz_toamna",
+          "orzoaica_primavara",
+          "ovaz"
+        ],
+        "bad_preceding": ["sorg", "lucerna"],
+        "years_before_repeat": 4
+      },
+      "notes": "Plantă perenă: trăiește 8-10 ani, producții economice în primii 3-5 ani (blog curs); agromonitor: 4 ani. Producții exprimate în t/ha substanță uscată. INS 2023: furaje perene (agregat) 13665 kg/ha (2021), 12190 kg/ha (2022) masă verde. Zone (blog curs): Câmpia Dunării, Câmpia Banatului, centrul Câmpiei Transilvaniei, NV și NE țării, luncile râurilor din stepă, silvostepă și zona nemorală. Briefingul organizatorului citează sprijinul MADR pentru culturi rezistente la secetă (sorg, lucernă): schema concretă identificată este PD-10 sprijin cuplat pentru venit – lucernă (PS 2023-2027), 121.783 ha planificate, condiție: sămânță certificată, producție minimă 15 t/ha masă verde sau 3,75 t/ha fân, valorificată către crescători de animale. Nu s-a putut accesa online un curs USAMV / material INCDA pentru lucernă: valorile agronomice sunt din presă și dintr-un text de curs republicat pe blog fără autor. Recoltare: coasa I: între sfârșitul îmbobocirii și mijlocul înfloririi în anul I, apoi între începutul îmbobocirii și începutul înfloririi; 2-4 coase/an neirigat, 4-6 irigat (sursa: Blog 'Producerea și conservarea furajelor' (2013), cap. VIII §8.1 Lucerna albastră, text de curs cu autor neprecizat, http://producerea-si-conservarea-furajelor.blogspot.com/2013/06/capitolul-viii-leguminoase-perene.html; Agromonitor, L. Rînchiță, 'Tehnologia de cultivare a lucernei', https://www.agromonitor.ro/tehnologia-de-cultivare-a-lucernei-2/ — 3-4 coase neirigat, 4-5 irigat; date calendaristice pentru coasa I nu au fost găsite).",
+      "varieties": [
+        {
+          "name": "Mihaela",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2009,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "Câmpia Dunării",
+            "Dobrogea",
+            "sud-vestul Moldovei",
+            "centrul Transilvaniei",
+            "Câmpia Banatului"
+          ],
+          "traits": "soi extins în cultură; 92 t/ha masă verde, 18,3 t/ha s.u., 20,90% proteină brută, digestibilitate 73%; toleranță bună la veștejirea fuzariană; durata de exploatare 3-5 ani"
+        },
+        {
+          "name": "Sandra",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2003,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "Câmpia Dunării",
+            "Dobrogea",
+            "sud-vestul Moldovei",
+            "centrul Transilvaniei",
+            "Câmpia Banatului",
+            "zone de podiș"
+          ],
+          "traits": "soi sintetic din germoplasmă franceză (Concorde, Alize, Vertus) x Adonis/Selena/Sigma; 88 t/ha masă verde, 17,5 t/ha s.u., 19,35% proteină brută; 12-15 t/ha s.u. tehnologie clasică, 16-19 t/ha intensivă; exploatare 4-5 ani"
+        },
+        {
+          "name": "Anastasia",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "mijlociu ca precocitate",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": ["zonele favorabile lucernei din întreaga țară"],
+          "traits": "soi sintetic; creștere rapidă primăvara, regenerare rapidă după coasă; rezistență la cădere foarte bună; rezistent la antracnoză și Verticillium; iernare bună spre foarte bună; proteină brută 19,40% (ISTIS) / 20-21% la îmbobocire; 18,1 t/ha s.u. în rețeaua ISTIS; +7,2-14,5% furaj față de Daniela și Catinca"
+        },
+        {
+          "name": "Dobrogea",
+          "breeder": "SC Patru Agro SRL cu USAMV București (Departamentul Plante Furajere)",
+          "type": "soi",
+          "registered_year": 2019,
+          "drought_tolerance": "ridicata",
+          "recommended_zones": ["Dobrogea", "zone de câmpie secetoase"],
+          "traits": "rezistență la cădere notată 1 (excelent); capacitate de regenerare superioară; soi românesc privat din programul Patru Agro / USAMV București"
+        },
+        {
+          "name": "Teodora",
+          "breeder": "INCDA Fundulea",
+          "type": "soi",
+          "registered_year": 2014,
+          "maturity_class": "semiprecoce",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "Câmpia Dunării",
+            "Dobrogea",
+            "sud-vestul Moldovei",
+            "centrul Transilvaniei",
+            "Câmpia Banatului"
+          ],
+          "traits": "soi sintetic din germoplasmă românească și străină; creștere rapidă primăvara, regenerare rapidă; iernare foarte bună; +6,6-6,8% furaj față de Magnat; 93 t/ha masă verde, 19,1 t/ha s.u., 20,30% proteină brută; competitiv în amestec cu golomăț și trifoi de Alexandria"
+        }
+      ]
+    },
+    {
+      "id": "trifoi",
+      "name_ro": "Trifoi roșu",
+      "name_en": "Red clover",
+      "scientific_name": "Trifolium pratense",
+      "group": "leguminoase_furajere",
+      "sowing_regime": "primavara",
+      "requirements": {
+        "soil": {
+          "suitable_classes": ["lutos"],
+          "unsuitable_classes": ["nisipos"],
+          "ph_range": {
+            "min": 6,
+            "max": 7.5
+          }
+        },
+        "drainage": {
+          "waterlogging_tolerance": "scazuta"
+        },
+        "precipitation": {
+          "season_need_mm": {
+            "min": 600
+          },
+          "critical_period": "îmbobocire",
+          "drought_tolerance": "scazuta"
+        },
+        "temperature": {
+          "germination_soil_c_min": 1,
+          "optimal_growth_c": {
+            "min": 15,
+            "max": 27
+          },
+          "heat_critical_c": 32
+        }
+      },
+      "calendar": {
+        "sowing_windows": [
+          {
+            "zone": "national (primăvara devreme)",
+            "from": "03-05",
+            "to": "03-25"
+          },
+          {
+            "zone": "zone colinare umede sau irigat (sfârșit de vară)",
+            "from": "08-20",
+            "to": "09-05"
+          }
+        ]
+      },
+      "rotation": {
+        "good_preceding": [
+          "porumb",
+          "sfecla_zahar",
+          "grau_toamna",
+          "orz_toamna"
+        ],
+        "bad_preceding": [
+          "mazare",
+          "fasole",
+          "soia",
+          "naut",
+          "linte",
+          "lucerna",
+          "trifoi"
+        ],
+        "years_before_repeat": 3
+      },
+      "notes": "Plantă perenă, 2-3 ani în exploatare (blog curs; presă: 3-4 ani la soiul Respect). Producții exprimate în t/ha substanță uscată. Zone favorabile (blog curs): regiunile subcarpatice ale Transilvaniei, Olteniei, Munteniei și Moldovei, Podișul Transilvaniei, Maramureș, NE și NV țării, Banat; istoric principala furajeră din Transilvania și Bucovina (Revista Ferma). Suprafață 123,7 mii ha în 1999. Rezistă bine la ger sub strat de zăpadă (fără prag numeric găsit – omis); altitudine negăsită (omis). Necesar termic: 800-900 °C până la înflorire. Adâncime 1,5-2 cm (soluri grele) – 2,5-3 cm (ușoare), 18-20 kg/ha. Sămânță certificată ~39 lei/kg în 2025 (samanta.ro); cost total/ha negăsit (omis). Catalogul ISTIS 2023 are secțiune Trifoi roșu – Trifolium pratense (soiuri românești: Apollo Tetra, Napoca Tetra, Select, Dacia Tetra menționate în presă). Nu s-a putut accesa online un curs USAMV: valorile sunt din presă și dintr-un text de curs republicat pe blog fără autor. Recoltare: coasa I între îmbobocire și începutul înfloririi (în anul I, pe parcursul înfloririi); de obicei două coase și o otavă; ultima coasă până la mijlocul lui octombrie (sursa: Blog 'Producerea și conservarea furajelor' (2013), cap. VIII §8.2 Trifoiul roșu, text de curs cu autor neprecizat, http://producerea-si-conservarea-furajelor.blogspot.com/2013/06/82-trifoiul-rosu-trifolium-pratense-l.html; Gazeta de Agricultură, 'Cultura de trifoi roșu', https://gazetadeagricultura.info/trifoi/cultura-de-trifoi-rosu — date calendaristice pentru coasa I nu au fost găsite).",
+      "varieties": [
+        {
+          "name": "David Liv",
+          "breeder": "SCDA Livada",
+          "type": "soi",
+          "registered_year": 2015,
+          "maturity_class": "diploid",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "zonele colinare umede",
+            "soluri acide și moderat acide (nord-vestul Transilvaniei)"
+          ],
+          "traits": "soi sintetic diploid (polycross, half-sib), 78% germoplasmă românească; +8,9% masă verde, +12,1% s.u., +10,6% sămânță față de Rotrif; proteină brută 18,62%; 10-14 t/ha s.u., 450-550 kg/ha sămânță; înlocuiește Rotrif în programul de producere de sămânță din 2017"
+        },
+        {
+          "name": "Rotrif",
+          "breeder": "SCDA Livada",
+          "type": "soi",
+          "registered_year": 1999,
+          "maturity_class": "precoce, diploid",
+          "drought_tolerance": "ridicata",
+          "recommended_zones": [
+            "zonele colinare umede",
+            "nord-vestul Transilvaniei"
+          ],
+          "traits": "tulpini înalte, fără perozitate; flori roșu-roz; regenerare foarte bună după cosire; rezistență bună la cădere; perenitate foarte bună; proteină brută 16,5-17,5%; 14,9 t/ha s.u.; 400-600 kg/ha sămânță; semănat toamna (intensiv) sau primăvara (clasic), cultură pură sau amestec cu graminee"
+        },
+        {
+          "name": "Livada 10",
+          "breeder": "SCDA Livada",
+          "type": "soi",
+          "registered_year": 2020,
+          "maturity_class": "perioadă de vegetație mijlocie, diploid",
+          "drought_tolerance": "medie",
+          "recommended_zones": ["zona colinară din întreaga țară"],
+          "traits": "vigoare de creștere primăvara bună spre foarte bună; regenerare bună spre foarte bună; iernare bună spre foarte bună; rezistență foarte bună la cădere; proteină brută 15,90%; 14,5 t/ha s.u. în rețeaua ISTIS"
+        },
+        {
+          "name": "Someșan",
+          "breeder": "SCDA Livada",
+          "type": "soi",
+          "registered_year": 2024,
+          "traits": "soi nou de trifoi roșu pentru furajarea animalelor, cu introducere în producție preconizată din 2026"
+        },
+        {
+          "name": "Livezeanu",
+          "breeder": "SCDA Livada",
+          "type": "soi",
+          "registered_year": 2024,
+          "traits": "soi nou de trifoi roșu pentru furajarea animalelor, cu introducere în producție preconizată din 2026"
+        }
+      ]
+    }
+  ]
+}

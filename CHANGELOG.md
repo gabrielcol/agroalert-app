@@ -3,6 +3,37 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 22:50 (EEST)** — `feat/weather-brief-foundation` — Foundation: Weather Brief
+  and recommendation data model
+  ([`docs/issues/0003-weather-brief-recommendation-data-model.md`](docs/issues/0003-weather-brief-recommendation-data-model.md)).
+  The shared substrate issues 0004-0006 build on, nothing touching a screen. Prisma gains
+  `FieldProfile` (anonymous, cuid id in the wizard URL), `WeatherCell` (Open-Meteo cache
+  keyed by the 0.1° cell, unique on `latCell, lngCell`, aggregated JSON only),
+  `CropRecommendation` (result + the Weather Brief snapshot it was given) and
+  `VarietyRecommendation`, migration `20260912194116_weather_brief_foundation`. The frozen
+  Zod contracts: `src/lib/weather/schema.ts` (`climateProfileSchema`, `currentSeasonSchema`,
+  `forecastSchema` — exactly 16 days, 7 trusted — `seasonalOutlookSchema` — weeks 3-7 as
+  anomalies, `confidence: "low"` — and `weatherBriefSchema`), `src/lib/agro/field-profile.ts`
+  (Soil Class, land buckets with their hectare ranges, `fieldProfileInputSchema`, the
+  0.1° `weatherCellFor`) and `src/lib/agro/recommendation-schema.ts` (top-3 Crop
+  Recommendation with fit / reasons / risks / window / varieties / confidence plus the
+  excluded list; Variety Recommendation ranking; the stored-record shapes). Crop ids are
+  validated against the Crop Dictionary: `scripts/build-crop-dictionary.ts`
+  (`bun run build:crop-dictionary`) strips every `{value, source, verified}` wrapper and the
+  `economics` block from `resources/culturi/crop-dictionary.json` into the committed
+  `src/lib/agro/crop-dictionary.compact.json` (428 KB → 113 KB, 22 crops), read through
+  `src/lib/agro/crop-dictionary.ts`. tRPC surface with stub bodies returning fixtures:
+  `fieldProfile.create` / `fieldProfile.get` (real, Prisma-backed), `geocode.search`,
+  `weather.brief`, `recommendation.crops`, `recommendation.varieties`; every procedure
+  declares `.output()` against the contracts. Env: `ANTHROPIC_API_KEY` (required) and
+  `AI_MODEL` (default `claude-sonnet-5`) in `src/env.ts` / `.env.example` — `.env` now
+  needs `ANTHROPIC_API_KEY` for `bun dev` and the e2e web server. i18n reserves
+  `agro.teren.soil`, `agro.loading.steps.location`, `agro.cultura.recommendation` and
+  `agro.soi.ranking` in RO/EN. Tests: strip script (nested leaf, missing field,
+  `varieties[]`), compact dictionary, Field Profile input, Weather Brief and recommendation
+  round-trips and rejections, and one router test per procedure with a fake db; Vitest
+  green (129 tests, 22 files). Playwright: none — exempt under rule 3, this issue has no
+  UI surface. ADR 0003 and the ADR 0001 amendment landed on `main` with the issue.
 - **2026-09-12 22:19 (EEST)** — `feat/sticky-header-cta-bar` — Sticky header and sticky
   CTA bar ([`docs/issues/0002-sticky-header-and-cta-bar.md`](docs/issues/0002-sticky-header-and-cta-bar.md)).
   The phone chrome stops scrolling away. `PhoneHeader` becomes `sticky top-0 z-20` on an

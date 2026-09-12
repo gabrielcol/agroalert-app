@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: feat/weather-brief-foundation
 created: 2026-09-12
 ---

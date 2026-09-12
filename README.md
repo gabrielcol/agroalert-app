@@ -57,27 +57,29 @@ procedure → Prisma → shadcn UI).
 
 ## Scripts
 
-| Command               | What it does                       |
-| --------------------- | ---------------------------------- |
-| `bun dev`             | Dev server (Turbopack)             |
-| `bun run build`       | Production build (validates env)   |
-| `bun run typecheck`   | `tsc --noEmit`                     |
-| `bun run lint`        | ESLint                             |
-| `bun run format`      | Prettier write                     |
-| `bun run test`        | Vitest unit tests                  |
-| `bun run test:e2e`    | Playwright e2e (boots the app)     |
-| `bun run db:migrate`  | `prisma migrate dev`               |
-| `bun run db:seed`     | Idempotent seed                    |
-| `bun run db:studio`   | Prisma Studio                      |
-| `bun run create-user` | `<email> <password> [role] [name]` |
-| `bun run set-role`    | `<email> <role>`                   |
+| Command                         | What it does                                                                                         |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `bun dev`                       | Dev server (Turbopack)                                                                               |
+| `bun run build`                 | Production build (validates env)                                                                     |
+| `bun run typecheck`             | `tsc --noEmit`                                                                                       |
+| `bun run lint`                  | ESLint                                                                                               |
+| `bun run format`                | Prettier write                                                                                       |
+| `bun run test`                  | Vitest unit tests                                                                                    |
+| `bun run test:e2e`              | Playwright e2e (boots the app)                                                                       |
+| `bun run db:migrate`            | `prisma migrate dev`                                                                                 |
+| `bun run db:seed`               | Idempotent seed                                                                                      |
+| `bun run db:studio`             | Prisma Studio                                                                                        |
+| `bun run create-user`           | `<email> <password> [role] [name]`                                                                   |
+| `bun run set-role`              | `<email> <role>`                                                                                     |
+| `bun run build:crop-dictionary` | Regenerate `src/lib/agro/crop-dictionary.compact.json` from `resources/culturi/crop-dictionary.json` |
 
 A pre-commit hook (Husky + lint-staged) runs ESLint + Prettier on staged files.
 
 ## Project structure
 
 ```
-prisma/schema.prisma      Data model (auth models + Post, AuditLog, SystemConfig)
+prisma/schema.prisma      Data model (auth models + Post, AuditLog, SystemConfig,
+                          FieldProfile, WeatherCell, CropRecommendation, VarietyRecommendation)
 prisma/seed-data.ts       Idempotent seed logic (unit-tested)
 src/
   env.ts                  Typed, validated environment variables
@@ -89,6 +91,8 @@ src/
     audit.ts              Append-only audit writer + field diff
     rate-limit.ts         In-process fixed-window limiter for hot mutations
     i18n/                 Dictionaries, provider, useT()
+    agro/                 Field Profile + recommendation contracts, compact Crop Dictionary
+    weather/              Weather Brief contract (Zod) + fixture
   server/trpc/            Context, routers, protectedProcedure, permissionProcedure
   trpc/                   Transport wiring across the RSC boundary
   app/
@@ -98,7 +102,7 @@ src/
     (auth)/               sign-in / sign-up (disabled notice)
     (admin)/              signed-in shell: dashboard, users, audit, settings
   components/             shadcn ui/, admin shell, auth, posts, shared
-scripts/                  create-user, set-role (bun:sqlite ops helpers)
+scripts/                  create-user, set-role (bun:sqlite ops helpers), build-crop-dictionary
 test/, e2e/               Vitest helpers, Playwright specs
 ```
 

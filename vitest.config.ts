@@ -27,6 +27,8 @@ export default defineConfig({
       DATABASE_URL: "file:./dev.db",
       BETTER_AUTH_SECRET: "test-secret-do-not-use-in-prod-0123456789",
       BETTER_AUTH_URL: "http://localhost:3000",
+      ANTHROPIC_API_KEY: "test-key-not-used",
+      AI_MODEL: "claude-sonnet-5",
     },
     // Playwright specs live in e2e/ and run via `bun run test:e2e`.
     exclude: ["**/node_modules/**", "**/e2e/**", "**/.next/**"],

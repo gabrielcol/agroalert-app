@@ -15,6 +15,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
+    "build:crop-dictionary": "bun run scripts/build-crop-dictionary.ts",
     "set-role": "bun run scripts/set-role.ts",
     "create-user": "bun run scripts/create-user.ts",
     "test": "vitest run",

@@ -72,11 +72,21 @@ export const en = {
         large: "10+ ha",
       },
       irrigation: { label: "Can you irrigate?", yes: "Yes, I can", no: "No" },
+      // Soil Class (issue 0004 wires the selector)
+      soil: {
+        label: "What kind of soil do you have?",
+        cernoziom: "Chernozem (black earth)",
+        lutos: "Loam",
+        argilos: "Clay",
+        nisipos: "Sandy",
+        unknown: "I don't know",
+      },
     },
     loading: {
       title: "Preparing your recommendation",
       subtitle: "A few seconds",
       steps: {
+        location: "Finding your land",
         history: "Pulling weather data from past years",
         forecast: "Pulling the forecast for the period ahead",
         crops: "Checking which crops suit you",
@@ -90,6 +100,21 @@ export const en = {
       subtitle:
         "Based on the weather in your area and your answers. Pick a crop.",
       recommended: "Recommended",
+      // Crop Recommendation cards (issue 0006 renders them)
+      recommendation: {
+        fit: "Fit {n}%",
+        reasons: "Why",
+        risks: "Watch out for",
+        window: "Sowing window: {from} – {to}",
+        others: "Other crops",
+        excluded: "Set aside this time",
+        confidence: {
+          low: "Low confidence",
+          medium: "Fair confidence",
+          high: "High confidence",
+        },
+        retry: "We couldn't read the weather. Try again.",
+      },
       crops: {
         grau: {
           name: "Winter wheat",
@@ -128,6 +153,13 @@ export const en = {
       subtitle:
         "The varieties best suited to the weather and soil in your area.",
       cta: "See the plan",
+      // Variety Recommendation ranking (issue 0006 renders it)
+      ranking: {
+        rank: "#{n}",
+        fit: "Fit {n}%",
+        reasons: "Why",
+        empty: "No registered variety is listed for this crop.",
+      },
       varieties: {
         glosa: {
           name: "Glosa",
