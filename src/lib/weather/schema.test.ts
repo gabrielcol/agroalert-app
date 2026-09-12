@@ -44,11 +44,22 @@ describe("Weather Brief contract", () => {
     ).toBe(false);
   });
 
-  it("requires exactly sixteen forecast days and seven trusted days", () => {
+  it("takes seven to sixteen forecast days and exactly seven trusted days", () => {
     const forecast = forecastFixture();
+    const withDays = (n: number) => ({
+      ...forecast,
+      days: forecast.days.slice(0, n),
+    });
+    // The UTC-anchored horizon can cut the last local day (issue 0009).
+    expect(forecastSchema.safeParse(withDays(16)).success).toBe(true);
+    expect(forecastSchema.safeParse(withDays(15)).success).toBe(true);
+    expect(forecastSchema.safeParse(withDays(7)).success).toBe(true);
+    expect(forecastSchema.safeParse(withDays(6)).success).toBe(false);
     expect(
-      forecastSchema.safeParse({ ...forecast, days: forecast.days.slice(0, 7) })
-        .success,
+      forecastSchema.safeParse({
+        ...forecast,
+        days: [...forecast.days, forecast.days[15]],
+      }).success,
     ).toBe(false);
     expect(
       forecastSchema.safeParse({ ...forecast, trustedDays: 16 }).success,

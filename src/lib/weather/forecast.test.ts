@@ -55,6 +55,83 @@ describe("buildForecast on the recorded response", () => {
   });
 });
 
+/**
+ * Open-Meteo's horizon is UTC-anchored while the request is made in
+ * Europe/Bucharest, so between local midnight and ~03:00 the 16th local day
+ * comes back with every core value null (issue 0009).
+ */
+const CORE_FIELDS = [
+  "temperature_2m_max",
+  "temperature_2m_min",
+  "precipitation_sum",
+  "et0_fao_evapotranspiration",
+] as const;
+
+/** A copy of the recorded response with `fields` nulled on the given days. */
+function withNulls(
+  days: number[],
+  fields: readonly string[] = CORE_FIELDS,
+): ForecastResponse {
+  const start = res.daily.time.indexOf("2026-09-12");
+  const daily: Record<string, unknown> = { ...res.daily };
+  for (const field of fields) {
+    const series = [...((daily[field] as (number | null)[] | undefined) ?? [])];
+    for (const k of days) series[start + k] = null;
+    daily[field] = series;
+  }
+  return { daily, hourly: res.hourly } as ForecastResponse;
+}
+
+describe("buildForecast past the model horizon", () => {
+  it("drops a trailing day whose core values are all null", () => {
+    const forecast = buildForecast(withNulls([15]), "2026-09-12", issuedAt);
+    expect(forecast.days).toHaveLength(15);
+    expect(forecast.days[0].date).toBe("2026-09-12");
+    expect(forecast.days[14].date).toBe("2026-09-26");
+    expect(forecastSchema.safeParse(forecast).success).toBe(true);
+  });
+
+  it("drops several trailing null days while seven complete ones remain", () => {
+    const forecast = buildForecast(
+      withNulls([7, 8, 9, 10, 11, 12, 13, 14, 15]),
+      "2026-09-12",
+      issuedAt,
+    );
+    expect(forecast.days).toHaveLength(7);
+    expect(forecast.days.at(-1)!.date).toBe("2026-09-18");
+    expect(forecastSchema.safeParse(forecast).success).toBe(true);
+  });
+
+  it("refuses an interior gap — a null day followed by a filled one", () => {
+    expect(() =>
+      buildForecast(withNulls([10]), "2026-09-12", issuedAt),
+    ).toThrow(/gap in the daily series on 2026-09-22/);
+    expect(() =>
+      buildForecast(withNulls([2, 3]), "2026-09-12", issuedAt),
+    ).toThrow(/gap in the daily series on 2026-09-14/);
+  });
+
+  it("refuses fewer complete days than the trusted window", () => {
+    expect(() =>
+      buildForecast(
+        withNulls([6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
+        "2026-09-12",
+        issuedAt,
+      ),
+    ).toThrow(/only 6 complete days from 2026-09-12, need 7/);
+  });
+
+  it("still refuses a half-filled day — that is missing data, not a horizon", () => {
+    expect(() =>
+      buildForecast(
+        withNulls([15], ["precipitation_sum"]),
+        "2026-09-12",
+        issuedAt,
+      ),
+    ).toThrow(/missing daily values on 2026-09-27/);
+  });
+});
+
 describe("buildForecast failures", () => {
   it("refuses a response that does not cover 16 days from today", () => {
     expect(() => buildForecast(res, "2026-09-20", issuedAt)).toThrow(/16 days/);

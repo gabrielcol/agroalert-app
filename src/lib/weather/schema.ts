@@ -147,7 +147,7 @@ export const currentSeasonSchema = z.object({
 export type CurrentSeason = z.infer<typeof currentSeasonSchema>;
 
 // ---------------------------------------------------------------------------
-// Forecast — 16 daily rows
+// Forecast — up to 16 daily rows
 // ---------------------------------------------------------------------------
 
 export const forecastDaySchema = z.object({
@@ -176,7 +176,15 @@ export const forecastSchema = z.object({
   /** ISO 8601 date-time the forecast was fetched */
   issuedAt: z.string().datetime({ offset: true }),
   trustedDays: z.literal(TRUSTED_FORECAST_DAYS),
-  days: z.array(forecastDaySchema).length(FORECAST_DAYS),
+  /**
+   * Up to 16 days, but the model horizon is UTC-anchored: around local
+   * midnight the last local day does not exist yet and is dropped, so the
+   * trusted part is the floor (issue 0009).
+   */
+  days: z
+    .array(forecastDaySchema)
+    .min(TRUSTED_FORECAST_DAYS)
+    .max(FORECAST_DAYS),
 });
 export type Forecast = z.infer<typeof forecastSchema>;
 

@@ -3,6 +3,29 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 00:18 (EEST)** — `fix/forecast-trailing-null-days` — Forecast tolerates
+  trailing null days past the Open-Meteo horizon
+  ([`docs/issues/0009-forecast-trailing-null-days.md`](docs/issues/0009-forecast-trailing-null-days.md)).
+  `recommendation.crops` answered `WEATHER_UNAVAILABLE` for every field between local
+  midnight and ~03:00 (EEST): the forecast is requested with `forecast_days=16` and
+  `timezone=Europe/Bucharest`, but Open-Meteo's horizon is anchored to UTC, so in that
+  window the 16th local day comes back with null `temperature_2m_max`,
+  `temperature_2m_min`, `precipitation_sum` and `et0_fao_evapotranspiration` (only the
+  climatological `precipitation_probability_max` is filled in). `buildForecast` now treats
+  a trailing row whose four core values are all null as beyond the horizon and drops it;
+  a null row followed by a filled one is still a gap (`gap in the daily series on <date>`)
+  and fewer than `TRUSTED_FORECAST_DAYS = 7` complete days still fails, as does a
+  half-filled row (`missing daily values on <date>`). `forecastSchema.days` goes from
+  `.length(16)` to `.min(7).max(16)`; the `forecast` JSON column shape is otherwise
+  unchanged and no other consumer assumed a fixed length. The tRPC fetch handler gained an
+  `onError` that `console.error`s the path, the code, the message and the whole `cause`
+  chain (name, message, plus the `endpoint`/`status` a `WeatherUnavailableError` carries),
+  so the short codes the routers return are no longer all an operator sees. Tests: five new
+  Vitest cases for `buildForecast` (trailing null dropped → 15 days, nine trailing nulls →
+  the 7 trusted days, interior gap, too few complete days, half-filled row) and the
+  contract test now pins 7…16 days. Playwright **not extended** — a data-shape edge case
+  with no new runtime surface, covered by unit tests (AGENTS.md rule 3 exemption); the
+  suite was not run (pre-deploy only).
 - **2026-09-13 00:05 (EEST)** — `feat/crop-calendar-timeline` — Crop Calendar timeline and
   Sowing Date
   ([`docs/issues/0008-crop-calendar-timeline-sowing-date.md`](docs/issues/0008-crop-calendar-timeline-sowing-date.md)).
