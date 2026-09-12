@@ -133,7 +133,7 @@ test("at phone size the header and the plan CTA stay on screen", async ({
   expect(scrollHeight).toBeGreaterThan(height);
 
   // Top of the page: both are already on screen, unscrolled.
-  await expect(page.evaluate(() => window.scrollY)).resolves.toBe(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
   const headerTop = await box(header);
   expect(headerTop.y).toBeGreaterThanOrEqual(0);
   expect(headerTop.y + headerTop.height).toBeLessThanOrEqual(height);

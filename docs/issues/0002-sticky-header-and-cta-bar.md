@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: feat/sticky-header-cta-bar
 created: 2026-09-12
 ---

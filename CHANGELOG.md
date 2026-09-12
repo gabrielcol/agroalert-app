@@ -3,6 +3,44 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 22:19 (EEST)** — `feat/sticky-header-cta-bar` — Sticky header and sticky
+  CTA bar ([`docs/issues/0002-sticky-header-and-cta-bar.md`](docs/issues/0002-sticky-header-and-cta-bar.md)).
+  The phone chrome stops scrolling away. `PhoneHeader` becomes `sticky top-0 z-20` on an
+  opaque `bg-background` (it already had the bottom hairline), and a new shared
+  `StickyBar` (`src/components/agro/sticky-bar.tsx`) closes every screen: solid
+  `bg-background`, `border-t` hairline, the same `px-5` gutter as `Screen`, 14px of
+  vertical padding and `pb-[calc(14px+env(safe-area-inset-bottom))]` under it. The bar is
+  an ordinary flex sibling at the end of the phone column rather than a fixed overlay, so
+  the content scrolls **to** it and is never hidden behind it — verified at a 390×700
+  viewport: on `/plan/rezumat` (scroll height 1554) the header stays at y=0 and the bar at
+  y=611 both unscrolled and at the bottom of the scroll, with 53px between the last card
+  and the button. All five public screens use it: the dashboard's dashed "Adaugă o cultură
+  nouă" button (styling untouched, only its `mt-3.5` dropped), the `PrimaryCta` of teren /
+  cultura / soi (replacing the `flex-1` spacer + CTA at the end of `Screen`), and the
+  summary's subscribe CTA — which leaves its `PlanCard`, the card keeping its heading and
+  body, so the action is reachable without scrolling past four plan cards; after
+  subscribing the bar grows to hold the disabled "Abonat" button and, under it, the link
+  back to the dashboard. The loading screen has no action and gets no bar. `PrimaryCta`
+  drops its `mt-[22px]` (the bar owns the spacing) and `Screen`'s bottom padding goes
+  `30px` → `18px` for the same reason. `src/app/layout.tsx` gains
+  `export const viewport: Viewport = { viewportFit: "cover" }` — without it
+  `env(safe-area-inset-bottom)` always reports 0 and the home-indicator padding would be
+  dead code. Tests: `src/components/agro/sticky-bar.test.tsx` (children, sticky /
+  `bottom-0` / `z-20`, the solid bar + hairline + gutter, the safe-area padding class,
+  caller classes) and `src/components/agro/phone-header.test.tsx` (sticky, opaque, keeps
+  its hairline, still renders title + dots), written before the implementation; Vitest is
+  green (80 tests, 13 files). `e2e/agro.spec.ts` gains a phone-viewport test
+  (390×600) asserting via `boundingBox()` that the header and the summary CTA are on
+  screen unscrolled **and** at the bottom of the scroll, that the last card clears the bar,
+  and that the "Abonat" state plus the back link fit — **written, not run**, per AGENTS.md
+  rule 3 (e2e runs pre-deploy).
+
+  Branch note: `feat/sticky-header-cta-bar` is cut from `feat/wizard-content-refinements`,
+  **deliberately stacked on that unmerged branch** (user's decision, against rule 10),
+  because the sticky bar rearranges exactly the screens issue 0001 just rewrote. Its PR
+  targets `feat/wizard-content-refinements`; once 0001 merges, this branch must be rebased
+  or retargeted onto `main`.
+
 - **2026-09-12 22:12 (EEST)** — `main` — Issue 0002: sticky header and CTA bar
   ([`docs/issues/0002-sticky-header-and-cta-bar.md`](docs/issues/0002-sticky-header-and-cta-bar.md)).
   Opened the ticket for making `PhoneHeader` sticky at the top and adding a shared
