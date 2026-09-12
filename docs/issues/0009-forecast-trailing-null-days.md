@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: fix/forecast-trailing-null-days
 created: 2026-09-13
 ---

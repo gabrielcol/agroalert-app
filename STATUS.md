@@ -4,6 +4,10 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0009 (forecast trailing-null days past the Open-Meteo horizon) is **Done**: merged
+  into local `main` (1759157, **not pushed**). Gate green: typecheck, lint, prettier, Vitest
+  (44 files / 279 tests). Playwright not extended. The tRPC route now logs the error cause
+  chain, and `weather_cell` finally has rows.
 - Issue 0008 (Crop Calendar timeline + Sowing Date) is **Done**: merged into local `main`
   (a7424bf, **not pushed**) from `feat/crop-calendar-timeline`. Gate green on the branch:
   typecheck, lint, prettier, Vitest (44 files / 274 tests). Playwright specs were written
@@ -47,6 +51,10 @@ _Updated: 2026-09-13_
 
 ## Gotchas
 
+- Open-Meteo's forecast horizon is UTC-anchored: with `timezone=Europe/Bucharest` and
+  `forecast_days=16`, the 16th local day is all-null between local midnight and ~03:00.
+  `buildForecast` drops trailing null days (min 7, max 16); `forecastSchema.days` is a
+  range, not `.length(16)`. Asking for 17 days does not help.
 - `AI_MODEL` must be a Sonnet- or Opus-class id: the recommendation forces `tool_choice`,
   which Fable/Mythos ids reject with 400. Default is `claude-sonnet-5`.
 - `ANTHROPIC_API_KEY` is optional at boot (so `bun dev` and Playwright start without it)
