@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Progress
 branch: feat/sticky-header-cta-bar
 created: 2026-09-12
 ---
