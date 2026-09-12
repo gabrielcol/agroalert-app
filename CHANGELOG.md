@@ -3,6 +3,12 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 01:05 (EEST)** — `fix/e2e-wizard-weather-mocks` — The pre-deploy Playwright
+  run failed one spec: the full-wizard test in `e2e/agro.spec.ts` never answered the new
+  `weather.climate` / `weather.forecast` queries, so the loader waited forever on
+  `/plan/teren`. Both procedures are now mocked in `mockWizard`. Suite result after the fix:
+  25 passed. Test-only change, no runtime surface.
+
 - **2026-09-13 00:40 (EEST)** — `feat/loading-screen-real-steps` — Every loading step is
   driven by a real call, and only one is on screen
   ([`docs/issues/0011-loading-screen-real-steps.md`](docs/issues/0011-loading-screen-real-steps.md)).
