@@ -3,6 +3,38 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 01:15 (EEST)** — `feat/start-screen-logos` — Start screen with a mock
+  loading bar, and the real AgroPlan artwork everywhere the app used to show the
+  whitelabel `Sprout` glyph
+  ([`docs/issues/0014-start-screen-and-png-logos.md`](docs/issues/0014-start-screen-and-png-logos.md)).
+  `/` now renders `HomeScreen` (`src/components/agro/home-screen.tsx`), which shows
+  `StartScreen` (`src/components/agro/start-screen.tsx`) — the cream lockup on the
+  artwork's forest green `#1F4D2A`, a cream/amber progress bar filling over
+  `DURATION_MS = 2000`ms via `motion/react`, and a `role="status"` line — and swaps in
+  `DashboardScreen` from a single `setTimeout` at `DURATION_MS + 250`. `useReducedMotion()`
+  shortens it to 600ms with the fill already at 100%. `ready` starts `false` on both sides
+  of the RSC boundary, so there is nothing for hydration to disagree about; `/plan/*` and
+  the admin/auth areas mount their own screens and never see the splash. Note the splash
+  uses the literal hex from the artwork rather than `--brand`: `--brand`
+  (`oklch(0.53 0.115 152)`) is a lighter green tuned for text and glyphs on the app
+  background, and the splash keeps the forest green in both themes. `Brand`
+  (`src/components/shared/brand.tsx`) was rewritten around `next/image`: a
+  `variant: "light" | "dark"` picks `/logos/logo-600.png` or `/logos/logo-dark-600.png`,
+  `imageClassName` constrains the height, `showTagline` is unchanged, and the `Sprout`
+  tile + text wordmark and the `iconClassName` prop are gone (the phone header, the
+  sidebar, the auth panel and the auth layout were updated). `preload` is used rather than
+  `priority`, which Next 16 deprecates. `AuthBrandPanel` renders the dark lockup under
+  `dark:hidden` and the light one under `hidden dark:flex`, because its `bg-primary` ground
+  inverts between themes. Assets: `logo-600.png` (600×227, 24 KB) and `logo-dark-600.png`
+  (600×227, 24 KB) downscaled from the ~1 MB originals, which stay committed;
+  `src/app/icon.png` (512×512, transparent) is the calendar-sprout mark cut from `logo.png`
+  at its alpha bounding box and padded to a square with ~8% margin, replacing the deleted
+  `src/app/favicon.ico`. `app.name` is now "AgroPlan" in both dictionaries, and
+  `agro.splash.loading` was added for the screen-reader line. Tests:
+  `src/components/agro/start-screen.test.tsx` (fake timers: `onDone` fires once, after
+  `DURATION_MS + 250`) and `src/components/shared/brand.test.tsx` (alt text, variant src,
+  tagline). `e2e/start-screen.spec.ts` was written but **not run** — Playwright runs
+  pre-deploy only.
 - **2026-09-13 01:10 (EEST)** — `feat/ai-call-log` — Every call to the Anthropic API now
   leaves one persisted row
   ([`docs/issues/0013-ai-call-log.md`](docs/issues/0013-ai-call-log.md)). The two Claude

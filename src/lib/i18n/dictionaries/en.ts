@@ -3,7 +3,7 @@
 
 export const en = {
   app: {
-    name: "AgroAlert",
+    name: "AgroPlan",
     tagline: "Sowing plans and weather alerts for your crops",
   },
   common: {
@@ -87,6 +87,11 @@ export const en = {
         nisipos: "Sandy",
         unknown: "I don't know",
       },
+    },
+    // The start screen: a mock progress bar on the brand green before the
+    // dashboard takes over (issue 0014).
+    splash: {
+      loading: "Loading your plans…",
     },
     loading: {
       title: "Preparing your recommendation",
