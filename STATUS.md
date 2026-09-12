@@ -25,7 +25,9 @@
   naming the real inputs (~4 s) instead of four about a 7-day forecast. `CONTEXT.md`
   trades the Alert Channel row for Alert Subscription. Issue 0001, status `In Review`.
   **Its PR is still not open — `gh` is not authenticated (`gh auth login`).**
-- **The e2e specs on both branches are updated but have never been run** — see the
+- e2e: `feat/wizard-content-refinements`'s five agro specs were run once in a throwaway
+  worktree during review — **4 passed** (the other suites need a migrated `dev.db`). **The
+  new phone-viewport spec on `feat/sticky-header-cta-bar` has never been run** — see the
   pre-deploy rule below.
 - `main` carries the tracker commit and both issue files (0001, 0002).
 
@@ -36,8 +38,8 @@
   session scratchpad as `pr-body-0002.md`). Wait ~10 min for CodeRabbit on each, address
   feedback. Never auto-merge.
 - The earlier `feat/agroalert-design-shell` PR, if still open, needs the same treatment.
-- Before any deploy: `E2E_PORT=3100 bun run test:e2e` and fix whatever the suite catches
-  (this branch's spec changes have never executed).
+- Before any deploy: `E2E_PORT=3100 bun run test:e2e` against a migrated `dev.db`, and fix
+  whatever the suite catches (the sticky-bar phone-viewport spec has never executed).
 - Decide the real auth story for farmers (phone-number sign-in? none?) and un-hide or
   replace the better-auth flow accordingly.
 - Give the wizard real data flow: carry the chosen Crop into step 3's title and the Plan

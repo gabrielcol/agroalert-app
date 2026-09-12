@@ -30,7 +30,8 @@ describe("StickyBar", () => {
 
   it("is a solid bar with a top hairline and the Screen gutter", () => {
     const { container } = render(<StickyBar>x</StickyBar>);
-    // Opaque in both themes: the content scrolls underneath it.
+    // Opaque in both themes: while the page scrolls, whatever passes behind
+    // the bar's own strip must not show through.
     expect(bar(container)).toHaveClass("bg-background", "border-t", "px-5");
   });
 
