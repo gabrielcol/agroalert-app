@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: feat/weather-brief-integration
 created: 2026-09-12
 ---
@@ -83,31 +83,56 @@ as the last of the three lands.
 
 ## Acceptance criteria
 
-- [ ] `getRecommendationService()` builds its `WeatherBriefSource` from the real
+- [x] `getRecommendationService()` builds its `WeatherBriefSource` from the real
       `getWeatherBrief` (issue 0005) instead of `fixtureWeatherBriefSource`; no code path
       reaches the fixture Weather Brief outside of tests that explicitly ask for it.
-- [ ] A thrown `FieldProfileNotFoundError` from `getWeatherBrief` surfaces as a tRPC
+- [x] A thrown `FieldProfileNotFoundError` from `getWeatherBrief` surfaces as a tRPC
       `NOT_FOUND`; a thrown `WeatherUnavailableError` from `getWeatherBrief` surfaces as
       the existing `SERVICE_UNAVAILABLE` / `RECOMMENDATION_ERRORS.weather` mapping —
       verified against the correct (0005) `WeatherUnavailableError` class, not 0006's.
-- [ ] `e2e/agro.spec.ts`'s wizard walk-through mocks `geocode.search`,
+- [x] `e2e/agro.spec.ts`'s wizard walk-through mocks `geocode.search`,
       `fieldProfile.create`, `recommendation.crops` and `recommendation.varieties` via
       `page.route` and makes no live Open-Meteo or Anthropic call.
-- [ ] The walk-through follows the real URL contract at every step: `/plan/teren` →
+- [x] The walk-through follows the real URL contract at every step: `/plan/teren` →
       `/plan/cultura?profile=<id>` → `/plan/soi?profile=<id>&rec=<id>&crop=<id>` →
       `/plan/rezumat?profile=<id>&rec=<id>&crop=<id>&variety=<name>`.
-- [ ] `.env.example`'s `ANTHROPIC_API_KEY` / `AI_MODEL` comment matches `src/env.ts`'s
+- [x] `.env.example`'s `ANTHROPIC_API_KEY` / `AI_MODEL` comment matches `src/env.ts`'s
       actual behavior (optional at boot, required at recommendation time).
-- [ ] `README.md` documents `ANTHROPIC_API_KEY` and `AI_MODEL`.
-- [ ] `CHANGELOG.md` contains every entry from issues 0003-0006 unchanged, in
-      chronological (newest-first) order, with no gaps.
+- [x] `README.md` documents `ANTHROPIC_API_KEY` and `AI_MODEL`.
+- [x] `CHANGELOG.md` contains every entry from issues 0003-0006 unchanged, in
+      chronological (newest-first) order, with no gaps (verified after the three merges;
+      only this issue's entry was added).
 - [ ] A manual end-to-end run against real Open-Meteo (real `ANTHROPIC_API_KEY`, no
-      mocks) has been performed once locally and its result is recorded below.
-- [ ] Vitest and Playwright both pass locally before the PR opens.
+      mocks) has been performed once locally and its result is recorded below. **Partially
+      done**: the Open-Meteo leg is verified (see below); the Anthropic leg is pending a
+      real key, which was not available in the environment that ran this issue.
+- [x] Vitest and Playwright both pass locally before the PR opens (Vitest 38 files /
+      233 tests; Playwright 24 passed with `E2E_PORT=3100`).
 
 ## Manual verification result
 
-_To be filled in when the manual Open-Meteo run is performed._
+**2026-09-12, Open-Meteo leg (no mocks), performed with a throwaway script calling
+`getWeatherBrief` directly against the local SQLite database** for a Field Profile at
+lat 44.6 / lng 27.1:
+
+- First call: 4.3 s, `weatherBriefSchema` valid. Climate Profile `ERA5-Land/ERA5`,
+  span 2016–2025, 12 monthly normals, 10 year rows (September normal: tMean 19.7 °C,
+  precip 38.1 mm, ET0 115.8 mm, water balance −77.7 mm). Current Season 2026 through
+  2026-09-07, 9 months, 30 daily rows. Forecast 16 days, 7 trusted, day 0 = 2026-09-12
+  (tMax 29.7, soil 0–9 cm 23.4 °C / 0.082 m³/m³). Seasonal Outlook EC46 weeks 3–7:
+  colder, warmer, warmer, warmer, warmer.
+- Second call: 2 ms, byte-identical brief, served from the single `WeatherCell` row
+  (cell 44.6 / 27.1, climate and forecast fetched at the same instant).
+
+**Anthropic leg: pending.** No `ANTHROPIC_API_KEY` was set locally, so the wizard was not
+walked against the live model. To finish: set the key in `.env`, run `bun dev`, open
+`/plan/teren`, enter a village, and confirm cultura and soi render model output; record
+the result here.
+
+**Bug found by the Playwright run and fixed on this branch:** `next.config.ts` sent
+`Permissions-Policy: geolocation=()`, which disabled the teren step's locate button in
+every browser ("Geolocation has been disabled in this document by permissions policy").
+Now `geolocation=(self)`.
 
 ## Tests required
 

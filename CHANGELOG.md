@@ -3,6 +3,29 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-12 23:34 (EEST)** — `feat/weather-brief-integration` — Weather Brief
+  integration: real seam, e2e walk-through, docs
+  ([`docs/issues/0007-weather-brief-integration.md`](docs/issues/0007-weather-brief-integration.md)).
+  The recommendation now reads real weather: `getRecommendationService()` builds its
+  `WeatherBriefSource` with `createOpenMeteoWeatherBriefSource({ db })`, which calls
+  issue 0005's `getWeatherBrief(profile.id, { db })`; the fixture source stays as a test
+  double only. The service anchors the model call on the brief's own `today` and maps the
+  weather module's errors explicitly: its `WeatherUnavailableError` (a different class
+  with the same name as the AI module's, imported under an alias) becomes the
+  recommendation's `WeatherUnavailableError` with the cause kept, `FieldProfileNotFoundError`
+  passes through and the router answers `NOT_FOUND`. Docs: `.env.example` and README say
+  `ANTHROPIC_API_KEY` is optional at boot and required at recommendation time, and that
+  `AI_MODEL` must be Sonnet- or Opus-class. Bug found by the e2e run and fixed: the global
+  `Permissions-Policy` header sent `geolocation=()`, which disabled the teren step's locate
+  button in every browser; it is now `geolocation=(self)`. `e2e/agro.spec.ts` walks the
+  four steps against tRPC mocked via `page.route` (geocode, Field Profile, both
+  recommendations; `mockRecommendation` gained an optional superjson `meta`) and follows
+  the real URL contract; the cultura/soi retry specs target the shadcn alert since Next's
+  route announcer is also `role=alert`. Tests: seam and service mapping unit tests, a
+  router NOT_FOUND case; Vitest 38 files / 233 tests green; the full Playwright suite was
+  run (`E2E_PORT=3100`): 24 passed. Live smoke test against Open-Meteo (no mocks, lat
+  44.6 / lng 27.1): a valid Weather Brief in 4.3 s, second call 2 ms from the
+  `WeatherCell` cache; the Anthropic leg is pending a real key (none set locally).
 - **2026-09-12 23:20 (EEST)** — `feat/crop-variety-recommendation` — Crop and Variety
   Recommendation: Claude call, cultura and soi steps
   ([`docs/issues/0006-crop-variety-recommendation-ai-call.md`](docs/issues/0006-crop-variety-recommendation-ai-call.md)).

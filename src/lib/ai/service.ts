@@ -5,6 +5,11 @@ import type {
   CropRecommendation,
   VarietyRecommendation,
 } from "@/lib/agro/recommendation-schema";
+import { db } from "@/lib/db";
+import {
+  FieldProfileNotFoundError,
+  WeatherUnavailableError as OpenMeteoUnavailableError,
+} from "@/lib/weather";
 import { TIMEZONE, type WeatherBrief } from "@/lib/weather/schema";
 import { createAnthropicClient } from "./client";
 import { WeatherUnavailableError } from "./errors";
@@ -14,7 +19,7 @@ import {
   type MessagesClient,
 } from "./recommend";
 import {
-  fixtureWeatherBriefSource,
+  createOpenMeteoWeatherBriefSource,
   type WeatherBriefSource,
 } from "./weather-brief-source";
 
@@ -64,6 +69,15 @@ export function createRecommendationService(
       try {
         brief = await deps.weatherBriefSource(profile, today);
       } catch (cause) {
+        // The profile vanished between the router's lookup and the brief:
+        // that is NOT_FOUND, not a weather outage. The weather module's own
+        // WeatherUnavailableError is a different class with the same name
+        // as ours (hence the alias); it and anything unexpected become an
+        // unavailable brief (ADR 0003: no degraded recommendation).
+        if (cause instanceof FieldProfileNotFoundError) throw cause;
+        if (cause instanceof OpenMeteoUnavailableError) {
+          throw new WeatherUnavailableError(cause);
+        }
         throw new WeatherUnavailableError(cause);
       }
       const client = deps.createClient();
@@ -72,7 +86,9 @@ export function createRecommendationService(
         model: deps.model,
         profile,
         brief,
-        today,
+        // Anchor on the brief's own day so the candidate rule, the forecast
+        // and the stored snapshot agree even when the call spans midnight.
+        today: brief.today,
       });
       return { brief, result, modelId: deps.model };
     },
@@ -99,7 +115,7 @@ let current: RecommendationService | null = null;
 export function getRecommendationService(): RecommendationService {
   return (current ??= createRecommendationService({
     createClient: createAnthropicClient,
-    weatherBriefSource: fixtureWeatherBriefSource,
+    weatherBriefSource: createOpenMeteoWeatherBriefSource({ db }),
     model: env.AI_MODEL,
     today: todayInBucharest,
   }));

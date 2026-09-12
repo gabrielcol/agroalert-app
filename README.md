@@ -158,6 +158,13 @@ See `.env.example`. Validated at boot by `src/env.ts` (imported in
 To enable GitHub OAuth, set `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`; the
 provider is auto-enabled when both are present.
 
+The Crop / Variety Recommendation calls Anthropic. `ANTHROPIC_API_KEY` is
+optional at boot — `bun dev`, `next build` and the Playwright web server start
+without it — and required the moment a recommendation is requested; without it
+the wizard shows its retry screen. `AI_MODEL` (default `claude-sonnet-5`) must
+be a Sonnet- or Opus-class id: the call forces tool use, which Fable/Mythos ids
+reject. Weather data comes from Open-Meteo without a key.
+
 ## Renaming
 
 The visible name is one string per dictionary (`app.name` in

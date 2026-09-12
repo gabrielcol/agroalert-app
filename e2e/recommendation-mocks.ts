@@ -223,7 +223,12 @@ export const VARIETY_RECOMMENDATION = {
 const DATE_META = { values: { createdAt: ["Date"] } };
 
 export type ProcedureMock =
-  | { ok: true; data: unknown }
+  | {
+      ok: true;
+      data: unknown;
+      /** superjson meta; defaults to a top-level `createdAt` Date, `null` for none. */
+      meta?: Json | null;
+    }
   | { ok: false; message: string; code?: string; httpStatus?: number };
 
 /**
@@ -245,7 +250,10 @@ export async function mockRecommendation(
 
     const body = handled.map((mock) => {
       if (!mock) throw new Error("unreachable");
-      if (mock.ok) return envelope(mock.data, DATE_META);
+      if (mock.ok) {
+        const meta = mock.meta === undefined ? DATE_META : mock.meta;
+        return envelope(mock.data, meta ?? undefined);
+      }
       return errorEnvelope(
         mock.message,
         mock.code ?? "INTERNAL_SERVER_ERROR",

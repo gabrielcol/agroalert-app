@@ -74,7 +74,8 @@ test("shows the retry screen when the recommendation fails, and recovers on retr
   });
   await page.goto("/plan/cultura?profile=fp_e2e");
 
-  const alert = page.getByRole("alert");
+  // Next's route announcer is also role=alert; the retry card is the shadcn one.
+  const alert = page.locator('[role="alert"][data-slot="alert"]');
   await expect(alert).toContainText("Nu am putut citi vremea");
   await expect(page.getByRole("button", { pressed: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Continuă" })).toBeDisabled();
@@ -83,7 +84,7 @@ test("shows the retry screen when the recommendation fails, and recovers on retr
   await expect(
     page.getByRole("button", { name: /Grâu de toamnă/ }),
   ).toBeVisible();
-  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(alert).toHaveCount(0);
 });
 
 test("without a profile in the URL it returns to the teren step", async ({

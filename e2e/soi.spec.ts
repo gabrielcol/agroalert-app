@@ -54,7 +54,8 @@ test("shows the retry screen when the ranking fails", async ({ page }) => {
   });
   await page.goto(URL);
 
-  const alert = page.getByRole("alert");
+  // Next's route announcer is also role=alert; the retry card is the shadcn one.
+  const alert = page.locator('[role="alert"][data-slot="alert"]');
   await expect(alert).toContainText("Nu am putut pregăti recomandarea");
   await expect(
     alert.getByRole("button", { name: "Încearcă din nou" }),
