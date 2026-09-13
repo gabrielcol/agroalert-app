@@ -4,6 +4,22 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0018 (AI call timeout, one output retry, self-explaining logs) is **implemented on
+  `fix/ai-call-timeout-and-retry`**, not merged. The Anthropic client is now built with
+  `timeout: 60_000` / `maxRetries: 1`; each step retries **once** on an `AiOutputError` by
+  feeding the failed turn plus the Zod issues back as `is_error` tool_results (cached
+  prefix untouched); `max_tokens` truncation is a new `AiOutputTruncatedError` and is not
+  retried, nor are API throws. One `ai_call` row per API call still holds, numbered by the
+  new `attempt` column (migration `20260913073205_ai_call_attempt`, applied with `sqlite3`
+  and its `_prisma_migrations` row inserted by hand because `dev.db` was locked;
+  `prisma migrate status` is clean — run `bun run db:migrate` on any other local DB).
+  `src/lib/ai/service.ts` emits one `[recommendation] {...}` line per step. Gate **green**:
+  typecheck, lint, prettier, Vitest (51 files / 328 tests). `e2e/ai-retry.spec.ts` written,
+  **not run**. PR pending `gh auth login` (rule 5); the issue file is In Review. Note: the
+  plan called this issue 0017, but 0017 was already taken — it is **0018**.
+  Deploy follow-up: set `AI_MODEL=claude-haiku-4-5` in the container env, then after the
+  next failure read the `[recommendation]` lines and the `ai_call` rows (`durationMs`,
+  `attempt`, `errorName`) to finally pin the cause.
 - Issue 0017 (start screen shown once per browser session: `sessionStorage` flag
   `agro.startScreenSeen` read through a hydration-safe external store in
   `src/lib/agro/start-screen-storage.ts`; `HomeScreen` skips the splash when set,

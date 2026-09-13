@@ -2,7 +2,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createCaller } from "@/server/trpc/root";
-import { AiOutputError, WeatherUnavailableError } from "@/lib/ai/errors";
+import {
+  AiOutputError,
+  AiOutputTruncatedError,
+  WeatherUnavailableError,
+} from "@/lib/ai/errors";
 import {
   setRecommendationService,
   type RecommendationService,
@@ -193,6 +197,22 @@ describe("recommendation.crops", () => {
     const db = fakeDb({ profile: profileRow });
     fakeService({
       crops: vi.fn().mockRejectedValue(new AiOutputError("bad shape")),
+    });
+    const caller = createCaller(makeCtx(db, null));
+    await expect(
+      caller.recommendation.crops({ fieldProfileId: "fp1" }),
+    ).rejects.toMatchObject({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "AI_INVALID_OUTPUT",
+    });
+  });
+
+  it("maps a max_tokens truncation to the same AI_INVALID_OUTPUT (issue 0018)", async () => {
+    const db = fakeDb({ profile: profileRow });
+    fakeService({
+      crops: vi
+        .fn()
+        .mockRejectedValue(new AiOutputTruncatedError("recommend_crops")),
     });
     const caller = createCaller(makeCtx(db, null));
     await expect(

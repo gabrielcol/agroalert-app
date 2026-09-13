@@ -18,6 +18,7 @@ const record: AiCallRecord = {
   cacheReadInputTokens: 900,
   cacheCreationInputTokens: null,
   durationMs: 42,
+  attempt: 1,
   status: "ok",
   errorName: null,
   errorMessage: null,
@@ -52,6 +53,17 @@ describe("createPrismaAiCallLogger", () => {
         status: "ok",
         rawResponse: { id: "msg_1" },
       }),
+    });
+  });
+
+  it("persists which attempt of the step the row is (issue 0018)", async () => {
+    const create = vi.fn().mockResolvedValue({ id: "call_2" });
+    const logger = createPrismaAiCallLogger({ aiCall: { create } });
+
+    await logger({ ...record, attempt: 2, status: "error" });
+
+    expect(create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ attempt: 2, status: "error" }),
     });
   });
 
