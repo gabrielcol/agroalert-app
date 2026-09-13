@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: fix/start-screen-once-per-session
 created: 2026-09-13
 ---

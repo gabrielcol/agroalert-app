@@ -4,6 +4,12 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0017 (start screen shown once per browser session: `sessionStorage` flag
+  `agro.startScreenSeen` read through a hydration-safe external store in
+  `src/lib/agro/start-screen-storage.ts`; `HomeScreen` skips the splash when set,
+  regardless of auth) is **Done**: merged into `main` as e524390 on 2026-09-13. Gate green;
+  the new e2e case in `e2e/start-screen.spec.ts` (same-context revisit shows no splash,
+  new context shows it again) was written but not run — run it before the next deploy.
 - Issue 0010 (AgroPlan branding: product name everywhere, green/amber theme tokens on the
   logo's own hues, `agroplan` package/Docker names) is **Done**: merged into `main` on
   2026-09-13. Resolved against issue 0014: the PNG logos and `src/app/icon.png` from 0014
