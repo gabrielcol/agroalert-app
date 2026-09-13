@@ -1,0 +1,22 @@
+{
+  "id": "crops-dabuleni-nisipos-irrigated",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Nisipos, irrigated, Oltenia sands, mid-September",
+  "brief": "dabuleni",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Dăbuleni",
+    "lat": 43.8,
+    "lng": 24.083,
+    "landBucket": "medium",
+    "irrigation": true,
+    "soilClass": "nisipos"
+  },
+  "rationale": "The Oltenia sand belt is the real identity of this location. grau_toamna, orz_toamna and rapita_toamna all list nisipos in unsuitable_classes and are excluded. secara lists nisipos first in its suitable_classes and is asserted into the top. triticale also lists nisipos as suitable, so it is left free; with irrigation on, secara's drought_tolerance ridicata does not separate it from triticale's medie, so no ordering is asserted.",
+  "expect": {
+    "mustInclude": ["secara"],
+    "mustExclude": ["grau_toamna", "orz_toamna", "rapita_toamna"]
+  }
+}

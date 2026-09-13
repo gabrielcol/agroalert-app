@@ -1,0 +1,21 @@
+{
+  "id": "crops-reviga-cernoziom-irrigated",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Cernoziom, irrigated, Bărăgan plain, mid-September",
+  "brief": "reviga",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Reviga",
+    "lat": 44.7,
+    "lng": 27.1,
+    "landBucket": "medium",
+    "irrigation": true,
+    "soilClass": "cernoziom"
+  },
+  "rationale": "All five candidates on 2026-09-13 list cernoziom under requirements.soil.suitable_classes, so nothing is excluded on soil. grau_toamna is asserted into the top because cernoziom is suitable for it, its Bărăgan window (10-11 → 10-20, INCDA Fundulea guidance) opens well inside the 46-day horizon, and its drought tolerance is medie — better than rapita_toamna's scazuta. Nothing in the dictionary separates grau_toamna, orz_toamna, secara and triticale on an irrigated cernoziom with 48.3 mm of forecast rain and only 1 drought year in 10, so no ordering is asserted: this case is deliberately the loosest one in the grid.",
+  "expect": {
+    "mustInclude": ["grau_toamna"]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "crops-podu-iloaiei-lutos-dryland-dry",
+  "kind": "crops",
+  "category": "stress",
+  "title": "Lutos, no irrigation, dry forecast on the Moldavian plain, mid-September",
+  "brief": "podu-iloaiei",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Podu Iloaiei",
+    "lat": 47.217,
+    "lng": 27.267,
+    "landBucket": "large",
+    "irrigation": false,
+    "soilClass": "lutos"
+  },
+  "rationale": "Lutos is suitable for every candidate, so grau_toamna is asserted into the top on soil plus its 'zona colinară, nordul țării' window (09-25 → 10-05). rapita_toamna is excluded on the calendar — the 'estul, vestul și nordul țării' window (09-01 → 09-10) and the Moldova window (08-25 → 09-05) both closed before the case date — and the brief would not support it anyway: 9.4 mm of forecast rain over 16 days against a crop whose critical period is September-October establishment and whose drought_tolerance is scazuta. The ordering is the drought one: secara ridicata above orz_toamna medie, on a dryland parcel with 9.4 mm forecast rain and a -4.7 mm last-month precipitation anomaly.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "mustExclude": ["rapita_toamna"],
+    "fitOrder": [["secara", "orz_toamna"]]
+  }
+}

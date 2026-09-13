@@ -1,0 +1,27 @@
+{
+  "id": "varieties-cobadin-triticale-dryland",
+  "kind": "varieties",
+  "category": "stress",
+  "title": "Triticale varieties, cernoziom, no irrigation, small holding in Dobrogea",
+  "brief": "cobadin",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Cobadin",
+    "lat": 44.083,
+    "lng": 28.217,
+    "landBucket": "small",
+    "irrigation": false,
+    "soilClass": "cernoziom"
+  },
+  "cropId": "triticale",
+  "rationale": "Triticale is the crop with enough varieties to rank on a Dobrogea case (secara has a single variety, Suceveana, so a variety case for it would assert nothing). FDL Caltrit and FDL Ascendent are the two with drought_tolerance ridicata; Zaraza, Utrifun and Tulnic are medie. The parcel is dryland in the Dobrogea steppe — 2 drought-flagged years in 10, a -8.4 mm last-month precipitation anomaly, 552 mm annual normal — so one of the two must lead and each must outrank a medie one. Both leaders also name 'câmpia din sud și vest' among their recommended zones, and FDL Ascendent names 'soluri fertile din câmpia de sud și vest', which matches a cernoziom parcel.",
+  "expect": {
+    "topAny": ["FDL Caltrit", "FDL Ascendent"],
+    "varietyOrder": [
+      ["FDL Caltrit", "Zaraza"],
+      ["FDL Ascendent", "Utrifun"],
+      ["FDL Caltrit", "Tulnic"]
+    ]
+  }
+}

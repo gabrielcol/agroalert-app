@@ -1,0 +1,27 @@
+{
+  "id": "varieties-dabuleni-rapita-toamna-dryland",
+  "kind": "varieties",
+  "category": "stress",
+  "title": "Winter rapeseed varieties, nisipos, no irrigation, Oltenia sands",
+  "brief": "dabuleni",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Dăbuleni",
+    "lat": 43.8,
+    "lng": 24.083,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "nisipos"
+  },
+  "cropId": "rapita_toamna",
+  "rationale": "The crop-level cases exclude rapita_toamna on sand; this case is the farmer overriding that and asking which hybrid to sow anyway. On the driest brief in the set (10.8 mm forecast rain, soil moisture 0.114 m³/m³, +3.8 °C anomaly, 2 drought years in 10) and no irrigation, the three hybrids with drought_tolerance ridicata — DK Exception, PT315, Umberto KWS — must outrank the medie one, LG Architect, and one of them must lead. DK Exception is additionally recommended for 'toate zonele de cultură din România, pe toate tipurile de sol', which is the only soil-type statement in the rapeseed variety list. LG Ambassador has no drought_tolerance field in the dictionary and is therefore left completely unconstrained.",
+  "expect": {
+    "topAny": ["DK Exception", "PT315", "Umberto KWS"],
+    "varietyOrder": [
+      ["DK Exception", "LG Architect"],
+      ["PT315", "LG Architect"],
+      ["Umberto KWS", "LG Architect"]
+    ]
+  }
+}

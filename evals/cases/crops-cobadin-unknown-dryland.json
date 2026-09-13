@@ -1,0 +1,22 @@
+{
+  "id": "crops-cobadin-unknown-dryland",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Soil unknown, no irrigation, Dobrogea, mid-September",
+  "brief": "cobadin",
+  "today": "2026-09-13",
+  "lowData": true,
+  "profile": {
+    "villageName": "Cobadin",
+    "lat": 44.083,
+    "lng": 28.217,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "unknown"
+  },
+  "rationale": "Soil is unknown, so nothing is excluded on soil and lowData caps confidence at medium. The one ordering that survives is the water one: secara has drought_tolerance ridicata, rapita_toamna scazuta, the parcel is dryland, Cobadin shows 2 drought-flagged years in 10 and a -8.4 mm last-month precipitation anomaly, and rapița's first critical period is September-October establishment. rapița is not excluded: its southern window (09-05 → 09-15) is still open on the case date and Dobrogea's 552 mm annual normal clears its 450 mm season need.",
+  "expect": {
+    "fitOrder": [["secara", "rapita_toamna"]],
+    "maxConfidence": "medium"
+  }
+}

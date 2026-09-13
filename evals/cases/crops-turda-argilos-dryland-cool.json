@@ -1,0 +1,21 @@
+{
+  "id": "crops-turda-argilos-dryland-cool",
+  "kind": "crops",
+  "category": "stress",
+  "title": "Argilos, no irrigation, cold Transylvanian plateau, mid-September",
+  "brief": "turda",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Turda",
+    "lat": 46.567,
+    "lng": 23.783,
+    "landBucket": "large",
+    "irrigation": false,
+    "soilClass": "argilos"
+  },
+  "rationale": "Heavy clay on the coldest site. argilos is in unsuitable_classes for grau_toamna, orz_toamna and rapita_toamna, and rapita_toamna is excluded twice over because its Transylvania window (08-25 → 09-05) closed before the case date. Only secara and triticale survive, and nothing orders them here: secara has frost_tolerance_c_min -20 while the compact dictionary gives triticale no requirements.temperature block at all, so the cold argument that works in the cernoziom Turda case cannot be applied to this pair. The case is deliberately left with the soil exclusion alone.",
+  "expect": {
+    "mustExclude": ["grau_toamna", "orz_toamna", "rapita_toamna"]
+  }
+}

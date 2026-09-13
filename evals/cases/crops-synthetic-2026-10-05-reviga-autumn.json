@@ -1,0 +1,21 @@
+{
+  "id": "crops-synthetic-2026-10-05-reviga-autumn",
+  "kind": "crops",
+  "category": "date",
+  "title": "Cernoziom, no irrigation, Bărăgan plain, early October (synthetic brief)",
+  "brief": "synthetic-2026-10-05",
+  "today": "2026-10-05",
+  "lowData": false,
+  "profile": {
+    "villageName": "Reviga",
+    "lat": 44.7,
+    "lng": 27.1,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "cernoziom"
+  },
+  "rationale": "Only four crops are candidates on 2026-10-05 — grau_toamna, orz_toamna, secara, triticale — so rapita_toamna is out by the candidate rule alone (invariant 2) rather than by any case constraint. Cernoziom is suitable for all four, and the forecast trend of this synthetic brief may not be used, so the single supportable assertion is that grau_toamna is in the top: the case date sits inside its southern window (10-01 → 10-10) with the Bărăgan window (10-11 → 10-20) opening six days later, and cernoziom is in its suitable_classes. No ordering is asserted; nothing in the dictionary separates these four on an unirrigated cernoziom.",
+  "expect": {
+    "mustInclude": ["grau_toamna"]
+  }
+}

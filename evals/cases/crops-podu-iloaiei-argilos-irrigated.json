@@ -1,0 +1,21 @@
+{
+  "id": "crops-podu-iloaiei-argilos-irrigated",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Argilos, irrigated, Moldavian plain, mid-September",
+  "brief": "podu-iloaiei",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Podu Iloaiei",
+    "lat": 47.217,
+    "lng": 27.267,
+    "landBucket": "small",
+    "irrigation": true,
+    "soilClass": "argilos"
+  },
+  "rationale": "grau_toamna, orz_toamna and rapita_toamna all list argilos in requirements.soil.unsuitable_classes, so none of them may be recommended for this parcel. rapita_toamna is doubly excluded: its 'estul, vestul și nordul țării' window (09-01 → 09-10) closed before the case date. That leaves secara and triticale, neither of which lists argilos as unsuitable — but neither lists it as suitable either, so no ordering between them is asserted, and irrigation removes the drought lever that separates them elsewhere.",
+  "expect": {
+    "mustExclude": ["grau_toamna", "orz_toamna", "rapita_toamna"]
+  }
+}

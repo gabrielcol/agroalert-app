@@ -1,0 +1,22 @@
+{
+  "id": "crops-turda-lutos-dryland",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Lutos, no irrigation, Transylvanian plateau, mid-September",
+  "brief": "turda",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Turda",
+    "lat": 46.567,
+    "lng": 23.783,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "lutos"
+  },
+  "rationale": "Lutos is suitable for every candidate, so grau_toamna is asserted into the top on soil suitability plus its 'zona colinară, nordul țării' window 09-25 → 10-05. rapita_toamna is excluded on the calendar: its Transylvania window ('restul țării (Transilvania, Moldova, nord)') is 08-25 → 09-05 and closed eight days before the case date, and the only window still open on 2026-09-13 is the southern one (09-05 → 09-15). Turda's day-0 tMax of 17.3 °C sits inside rapița's optimal_growth_c 15-22, so the exclusion rests on the sowing calendar alone, not on temperature.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "mustExclude": ["rapita_toamna"]
+  }
+}

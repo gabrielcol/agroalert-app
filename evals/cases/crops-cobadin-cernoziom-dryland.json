@@ -1,0 +1,22 @@
+{
+  "id": "crops-cobadin-cernoziom-dryland",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Cernoziom, no irrigation, Dobrogea, mid-September",
+  "brief": "cobadin",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Cobadin",
+    "lat": 44.083,
+    "lng": 28.217,
+    "landBucket": "large",
+    "irrigation": false,
+    "soilClass": "cernoziom"
+  },
+  "rationale": "Cernoziom is suitable for every candidate, so there is no soil exclusion. The ordering rests on water: rapita_toamna has drought_tolerance scazuta and its first critical period is 'răsărire – formarea rozetei (septembrie-octombrie)', i.e. exactly the weeks this case covers, while grau_toamna is medie. Cobadin has no irrigation, 2 drought-flagged years in 10, a last-month precipitation anomaly of -8.4 mm and a 552 mm annual normal, the driest of the six captured sites after Reviga. That is enough to rank wheat above rapeseed but not enough to exclude rapeseed: 552 mm still clears rapița's season_need_mm.min of 450.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "fitOrder": [["grau_toamna", "rapita_toamna"]]
+  }
+}

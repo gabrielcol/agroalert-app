@@ -1,0 +1,22 @@
+{
+  "id": "crops-lovrin-lutos-irrigated",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Lutos, irrigated, Banat plain, mid-September",
+  "brief": "lovrin",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Lovrin",
+    "lat": 45.967,
+    "lng": 20.767,
+    "landBucket": "large",
+    "irrigation": true,
+    "soilClass": "lutos"
+  },
+  "rationale": "Lutos is in suitable_classes for all five candidates, so grau_toamna is a safe top pick (lutos suitable, Bărăgan/south window 10-01 → 10-20 inside the horizon). rapita_toamna is excluded on the calendar, not on the soil: its windows for this zone — 'Câmpia Română și Câmpia Banatului' 09-01 → 09-10 and 'estul, vestul și nordul țării' 09-01 → 09-10 — both closed before 2026-09-13, and the national hybrid window 08-20 → 08-31 closed too. The only rapeseed window still open on the case date is 'sudul țării' 09-05 → 09-15, and Lovrin (Timiș, Banat) is not in the south.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "mustExclude": ["rapita_toamna"]
+  }
+}
