@@ -144,6 +144,8 @@ export const ro: Dictionary = {
         rank: "#{n}",
         fit: "Potrivire {n}%",
         reasons: "De ce",
+        // Shown while the variety model call is in flight (issue 0022).
+        loading: "Se încarcă soiurile…",
         empty: "Nu există soi înregistrat pentru această cultură.",
       },
     },

@@ -144,6 +144,8 @@ export const en = {
         rank: "#{n}",
         fit: "Fit {n}%",
         reasons: "Why",
+        // Shown while the variety model call is in flight (issue 0022).
+        loading: "Loading varieties…",
         empty: "No registered variety is listed for this crop.",
       },
     },

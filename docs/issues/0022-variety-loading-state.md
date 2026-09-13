@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: fix/variety-loading-state
 created: 2026-09-13
 ---

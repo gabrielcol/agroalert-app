@@ -3,6 +3,24 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 12:10 (EEST)** — `fix/variety-loading-state` — The varieties step **says it
+  is working**
+  ([`docs/issues/0022-variety-loading-state.md`](docs/issues/0022-variety-loading-state.md)).
+  Picking a crop fires `recommendation.varieties`, a ~17–20 s model call, and step 3 showed
+  only three grey placeholder cards — no spinner, no words — so the wait read as a broken
+  screen. `RecommendationSkeleton` in `src/components/agro/recommendation-state.tsx` takes
+  an optional `message`: when given, it renders the loading screen's spinning
+  `LoaderCircle` plus a `role="status" aria-live="polite"` line above the cards (the
+  spinner is `aria-hidden`). `src/components/agro/soi-screen.tsx` passes
+  `s.ranking.loading`, driven by the query's own `isPending` — no local state — so the line
+  clears the moment the ranking lands and the retry screen still renders alone on failure.
+  New key `agro.soi.ranking.loading` in both dictionaries ("Se încarcă soiurile…" /
+  "Loading varieties…"). The crops step and the dashboard skeleton are untouched (the
+  message is opt-in). Tests: `src/components/agro/soi-screen.test.tsx` (pending → resolved,
+  and error clears it) and `e2e/variety-loading.spec.ts`, which needed a `delayMs` on
+  `ProcedureMock` in `e2e/recommendation-mocks.ts` to hold a batch back. Playwright **not
+  run** on this branch (AGENTS.md rule 3 — the suite runs before a deploy).
+
 - **2026-09-13 11:32 (EEST)** — `fix/haiku-crops-step` — The crops step on Haiku is
   **half the output, forgiving to parse, and readable when it fails**
   ([`docs/issues/0020-haiku-crops-step-speed-and-validation.md`](docs/issues/0020-haiku-crops-step-speed-and-validation.md)).
