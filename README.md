@@ -172,9 +172,11 @@ provider is auto-enabled when both are present.
 The Crop / Variety Recommendation calls Anthropic. `ANTHROPIC_API_KEY` is
 optional at boot — `bun dev`, `next build` and the Playwright web server start
 without it — and required the moment a recommendation is requested; without it
-the wizard shows its retry screen. `AI_MODEL` (default `claude-sonnet-5`) must
-be a Sonnet- or Opus-class id: the call forces tool use, which Fable/Mythos ids
-reject. Weather data comes from Open-Meteo without a key.
+the wizard shows its retry screen. `AI_MODEL` (default `claude-sonnet-5`) may be
+`claude-haiku-4-5` (verified live: crops ≈ 20 s, varieties ≈ 17 s) or a Sonnet- /
+Opus-class id; it must not be a Fable/Mythos id, which reject the forced tool use
+and the strict tool schema the calls rely on. Weather data comes from Open-Meteo
+without a key.
 
 Each Anthropic request is bounded at **60 s** with **one SDK retry** for
 transport failures, and each recommendation step retries **once more** on its

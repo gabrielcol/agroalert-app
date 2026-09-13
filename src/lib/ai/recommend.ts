@@ -1,6 +1,11 @@
 import type Anthropic from "@anthropic-ai/sdk";
 
-import { varietyNames, type CropId } from "@/lib/agro/crop-dictionary";
+import {
+  cropDictionary,
+  isCropId,
+  varietyNames,
+  type CropId,
+} from "@/lib/agro/crop-dictionary";
 import type { FieldProfile } from "@/lib/agro/field-profile";
 import {
   cropRecommendationSchema,
@@ -9,7 +14,12 @@ import {
   type VarietyRecommendation,
 } from "@/lib/agro/recommendation-schema";
 import type { WeatherBrief } from "@/lib/weather/schema";
-import { candidateCropIds } from "./candidates";
+import {
+  CANDIDATE_HORIZON_DAYS,
+  candidateCropIds,
+  formatDayRo,
+  nextSowingWindow,
+} from "./candidates";
 import { usageOf, type AiCallLogger } from "./call-log";
 import { AiOutputError, AiOutputTruncatedError } from "./errors";
 import {
@@ -21,6 +31,8 @@ import {
   CROP_TOOL_NAME,
   RECOMMENDATION_TOOLS,
   VARIETY_TOOL_NAME,
+  normalizeCropInput,
+  normalizeVarietyInput,
   parseToolInput,
 } from "./tools";
 
@@ -51,6 +63,11 @@ export type AttemptTrace = {
   stopReason: string | null;
   /** null when the attempt succeeded. */
   errorName: string | null;
+  /**
+   * The validation issues of an `AiOutputError`, as truncated JSON, so the
+   * log line says *what* failed (issue 0020); null otherwise.
+   */
+  issues: string | null;
 };
 
 export type RecommendInput = {
@@ -68,8 +85,12 @@ export type RecommendInput = {
 /** What a call answers: the validated result plus its `ai_call` row id. */
 export type Logged<T> = { result: T; aiCallId: string | null };
 
-/** Room for 3 crops with reasons plus ~20 exclusions; well under the cap. */
-const MAX_TOKENS = 8000;
+/**
+ * Far more than the answer needs (3 crops with reasons plus a handful of
+ * exclusions is 2-3k tokens): insurance against a truncation, which is not
+ * retried (issue 0020). The 60 s client timeout still bounds the call.
+ */
+const MAX_TOKENS = 16000;
 
 type LoggedCreateArgs<T> = {
   client: MessagesClient;
@@ -116,11 +137,16 @@ async function loggedCreate<T>(args: LoggedCreateArgs<T>): Promise<Logged<T>> {
       durationMs,
       stopReason: message.stop_reason ?? null,
       errorName: null,
+      issues: null,
     });
     return { result: value, aiCallId: logged?.id ?? null };
   } catch (error) {
     const durationMs = Math.round(performance.now() - startedAt);
     const errorName = error instanceof Error ? error.name : typeof error;
+    const issues =
+      error instanceof AiOutputError && error.issues !== undefined
+        ? describeIssues(error, MAX_LOGGED_ISSUES_CHARS)
+        : null;
     const usage = message
       ? usageOf(message)
       : {
@@ -139,7 +165,14 @@ async function loggedCreate<T>(args: LoggedCreateArgs<T>): Promise<Logged<T>> {
       attempt: args.attempt,
       status: "error",
       errorName,
-      errorMessage: error instanceof Error ? error.message : String(error),
+      // The issues ride along in the row too, so the failure is readable
+      // without opening `rawResponse` (issue 0020).
+      errorMessage:
+        error instanceof Error
+          ? issues === null
+            ? error.message
+            : `${error.message} Issues: ${issues}`
+          : String(error),
       rawResponse: message,
     });
     args.onAttempt?.({
@@ -147,6 +180,7 @@ async function loggedCreate<T>(args: LoggedCreateArgs<T>): Promise<Logged<T>> {
       durationMs,
       stopReason: message?.stop_reason ?? null,
       errorName,
+      issues,
     });
     throw error;
   }
@@ -154,9 +188,14 @@ async function loggedCreate<T>(args: LoggedCreateArgs<T>): Promise<Logged<T>> {
 
 /** The validation issues never grow the correction turn past this. */
 const MAX_ISSUES_CHARS = 4000;
+/** ...and never grow a log line or an `ai_call.errorMessage` past this. */
+const MAX_LOGGED_ISSUES_CHARS = 1500;
 
-/** The failed output as text the model can act on, bounded in size. */
-function describeIssues(error: AiOutputError): string {
+/** The failed output as text the model (or an operator) can act on, bounded in size. */
+function describeIssues(
+  error: AiOutputError,
+  limit: number = MAX_ISSUES_CHARS,
+): string {
   let json: string | undefined;
   try {
     json = JSON.stringify(error.issues ?? { message: error.message });
@@ -164,9 +203,7 @@ function describeIssues(error: AiOutputError): string {
     json = undefined;
   }
   const text = json ?? error.message;
-  return text.length > MAX_ISSUES_CHARS
-    ? `${text.slice(0, MAX_ISSUES_CHARS)}…(truncated)`
-    : text;
+  return text.length > limit ? `${text.slice(0, limit)}…(truncated)` : text;
 }
 
 /**
@@ -342,6 +379,48 @@ export function enforceCandidateRule(
   return { top, excluded };
 }
 
+/** The server-written reason for a crop the model was not asked about. */
+export function excludedReasonFor(cropId: CropId, today: string): string {
+  const crop = cropDictionary.crops.find((c) => c.id === cropId);
+  const next = crop ? nextSowingWindow(crop, today) : null;
+  if (next === null) {
+    return "Fereastra de semănat nu este deschisă în perioada următoare.";
+  }
+  return (
+    `Fereastra de semănat nu este deschisă acum și nu se deschide în următoarele ` +
+    `${CANDIDATE_HORIZON_DAYS} de zile; următoarea începe pe ${formatDayRo(next.from)}.`
+  );
+}
+
+/**
+ * The model only writes `excluded` reasons for the candidates it leaves out
+ * (issue 0020: that is what made the Haiku call slow). Every other dictionary
+ * crop is added here, once, in dictionary order, with a reason naming its
+ * next sowing window, so the stored contract and the cultura screen keep
+ * seeing the complete list. A candidate the model neither ranked nor
+ * excluded gets a plain "not in the top three" reason.
+ */
+export function completeExcluded(
+  result: CropRecommendation,
+  today: string,
+): CropRecommendation {
+  const candidates = new Set(candidateCropIds(today));
+  const mentioned = new Set<string>([
+    ...result.top.map((c) => c.cropId),
+    ...result.excluded.map((e) => e.cropId),
+  ]);
+  const filled = cropDictionary.crops
+    .map((c) => c.id)
+    .filter((id): id is CropId => isCropId(id) && !mentioned.has(id))
+    .map((cropId) => ({
+      cropId,
+      reason: candidates.has(cropId)
+        ? "Nu a intrat în primele recomandări pentru această parcelă."
+        : excludedReasonFor(cropId, today),
+    }));
+  return { top: result.top, excluded: [...result.excluded, ...filled] };
+}
+
 export async function recommendCrops(
   input: RecommendInput,
 ): Promise<Logged<CropRecommendation>> {
@@ -372,9 +451,13 @@ export async function recommendCrops(
         message,
         CROP_TOOL_NAME,
         cropRecommendationSchema,
+        normalizeCropInput,
       );
       if (!parsed.ok) throw toolError(parsed, CROP_TOOL_NAME);
-      return enforceCandidateRule(parsed.value, input.today);
+      return completeExcluded(
+        enforceCandidateRule(parsed.value, input.today),
+        input.today,
+      );
     },
   });
 }
@@ -435,6 +518,7 @@ export async function rankVarieties(
         message,
         VARIETY_TOOL_NAME,
         varietyRecommendationSchema,
+        normalizeVarietyInput,
       );
       if (!parsed.ok) throw toolError(parsed, VARIETY_TOOL_NAME);
       return enforceVarietyCoverage(parsed.value, input.cropId);

@@ -21,11 +21,11 @@ const INSTRUCTIONS = `You are an agronomy advisor for Romanian field farmers. Yo
 
 Rules:
 - Recommend only crop ids that exist in the Crop Dictionary. Never invent crops or varieties.
-- Candidacy: a crop may be in the top list only if one of its sowing windows is open on today's date or opens within the outlook horizon. The user message names the candidate crops and their concrete windows; every other crop goes under "excluded" with a one-sentence reason (usually naming its next window).
+- Candidacy: a crop may be in the top list only if one of its sowing windows is open on today's date or opens within the outlook horizon. The user message names the candidate crops and their concrete windows. Under "excluded" list only the candidate crops you leave out of the top list, one short reason each; every non-candidate crop is excluded automatically, so do not list it.
 - Weigh, in order: soil class fit, the sowing window against the forecast (soil temperature, rain before and after sowing), water availability (irrigation, current-season anomalies, the ten-year normals and drought years), frost and heat risk for the crop's calendar, and the farmer's surface.
 - The Seasonal Outlook is an area tendency with low confidence; use it only to shade risks, never as a local forecast. The first seven forecast days are the trusted part.
 - The Weather Brief is aggregated; do not claim a precision it lacks.
-- Write every reason and risk in Romanian, in plain farmer language, one short sentence each, concrete (name the month, the soil, the anomaly). Reasons say why this crop fits this parcel now; risks say what could go wrong.
+- Write every reason and risk in Romanian, in plain farmer language, one sentence of at most 15 words each, concrete (name the month, the soil, the anomaly). Give 2-3 reasons and 1-2 risks per crop, no more. Reasons say why this crop fits this parcel now; risks say what could go wrong.
 - "fit" is 0-100. "confidence" reflects how well the data supports the call.
 - Record the answer by calling the requested tool exactly once. Do not answer in prose.`;
 
@@ -75,7 +75,7 @@ export function describeCandidates(today: string): {
   const text =
     `Candidate crops on ${today} (window open now or opening within ${CANDIDATE_HORIZON_DAYS} days):\n` +
     (lines.length ? lines.join("\n") : "- none") +
-    `\nEvery other crop id must appear under "excluded".`;
+    `\nUnder "excluded" list only the candidates you leave out of the top list; the other crops are excluded automatically, do not list them.`;
   return { candidateIds, text };
 }
 
@@ -90,7 +90,7 @@ export function buildCropUserMessage(input: {
     describeProfile(input.profile),
     candidates,
     `Weather Brief (JSON):\n${JSON.stringify(input.brief)}`,
-    `Call the ${CROP_TOOL_NAME} tool with the top 3 candidate crops for this parcel and the excluded list.`,
+    `Call the ${CROP_TOOL_NAME} tool with the top 3 candidate crops for this parcel. Under "excluded" put only the candidate crops you left out (one short sentence each) — nothing else.`,
   ].join("\n\n");
   return { role: "user", content: [{ type: "text", text }] };
 }

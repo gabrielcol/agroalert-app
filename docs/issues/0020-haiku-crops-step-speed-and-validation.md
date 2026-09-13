@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: In Review
 branch: fix/haiku-crops-step
 created: 2026-09-13
 ---
@@ -51,7 +51,9 @@ Decisions (agreed with the user, 2026-09-13):
   0018 correction retry handles it).
 - **Schema hints.** Field descriptions on the recommendation schema reach the tool's
   JSON schema. `strict: true` only if verified live against Haiku; otherwise descriptions
-  only, stated in the changelog.
+  only, stated in the changelog. **Outcome:** verified live on 2026-09-13 against
+  `claude-haiku-4-5` with the frozen Reviga brief — strict accepted, output validated
+  first try, crops 18–22 s warm (35 s cold, paying the cache write), varieties 17 s.
 - **`max_tokens` 8000 → 16000**; the 60 s per-attempt timeout stays.
 - **Diagnosable failures.** The Zod issues (JSON, truncated) go in the
   `[recommendation]` line (`issues`, `null` when none) and in `ai_call.errorMessage`.
@@ -59,20 +61,20 @@ Decisions (agreed with the user, 2026-09-13):
 
 ## Acceptance criteria
 
-- [ ] The crops user turn and the tool description ask for `excluded` entries only for
+- [x] The crops user turn and the tool description ask for `excluded` entries only for
       candidate crops left out of the top list; non-candidate crops are no longer requested.
-- [ ] After the model answers, every dictionary crop not in `top` appears in `excluded`
+- [x] After the model answers, every dictionary crop not in `top` appears in `excluded`
       exactly once: the model's entries first, then the candidate-rule demotions, then the
       server-filled non-candidates with a Romanian reason naming the next sowing window.
-- [ ] `parseToolInput` normalises the crops payload before Zod: non-integer / out-of-range
+- [x] `parseToolInput` normalises the crops payload before Zod: non-integer / out-of-range
       `fit`, over-long `reasons` / `risks` / `recommendedVarietyIds`, more than 3 `top`
       entries and missing `risks` / `recommendedVarietyIds` all parse; an unknown
       `cropId` still fails. The varieties payload gets the same `fit` / `reasons` care.
-- [ ] The generated tool JSON schema carries a `description` per field.
-- [ ] `max_tokens` is 16000 on both calls.
-- [ ] The `[recommendation]` line carries `issues` (per-attempt truncated Zod issues, or
+- [x] The generated tool JSON schema carries a `description` per field.
+- [x] `max_tokens` is 16000 on both calls.
+- [x] The `[recommendation]` line carries `issues` (per-attempt truncated Zod issues, or
       `null`), and `ai_call.errorMessage` of an `AiOutputError` row includes the issues.
-- [ ] Unit tests cover the normalisation, the server-filled `excluded` list and the log
+- [x] Unit tests cover the normalisation, the server-filled `excluded` list and the log
       line; one Playwright spec is written (not run — pre-deploy suite).
-- [ ] README, `.env.example` and STATUS say `AI_MODEL` may be `claude-haiku-4-5` or a
+- [x] README, `.env.example` and STATUS say `AI_MODEL` may be `claude-haiku-4-5` or a
       Sonnet/Opus id; CHANGELOG entry with datetime and branch.

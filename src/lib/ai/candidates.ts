@@ -89,3 +89,50 @@ export function candidateCropIds(
     )
     .map((crop) => crop.id);
 }
+
+/** Romanian month names, for the farmer-facing exclusion reasons. */
+const MONTHS_RO = [
+  "ianuarie",
+  "februarie",
+  "martie",
+  "aprilie",
+  "mai",
+  "iunie",
+  "iulie",
+  "august",
+  "septembrie",
+  "octombrie",
+  "noiembrie",
+  "decembrie",
+] as const;
+
+/** `YYYY-MM-DD` → "12 aprilie". */
+export function formatDayRo(date: string): string {
+  const day = Number(date.slice(8, 10));
+  const month = MONTHS_RO[Number(date.slice(5, 7)) - 1] ?? "";
+  return `${day} ${month}`;
+}
+
+/**
+ * The next sowing window of a crop that opens strictly after `today` (the
+ * earliest `from` across zones), or null when the dictionary lists none.
+ * Used for the server-written exclusion reasons (issue 0020).
+ */
+export function nextSowingWindow(
+  crop: CropLike,
+  today: string,
+): { from: string; to: string; zone: string } | null {
+  const start = utc(today);
+  let best: { from: number; to: number; zone: string } | null = null;
+  for (const window of crop.calendar?.sowing_windows ?? []) {
+    for (const occ of occurrences(window, today)) {
+      if (occ.from <= start) continue;
+      if (best === null || occ.from < best.from) {
+        best = { ...occ, zone: window.zone };
+      }
+    }
+  }
+  return best === null
+    ? null
+    : { from: iso(best.from), to: iso(best.to), zone: best.zone };
+}

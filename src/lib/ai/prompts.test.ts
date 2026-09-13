@@ -36,12 +36,14 @@ describe("prompts", () => {
     expect(buildSystem()[1].text).toBe(system[1].text);
   });
 
-  it("names the candidates and tells the model to exclude the rest", () => {
+  it("names the candidates and asks for exclusions only among them (issue 0020)", () => {
     const { candidateIds, text } = describeCandidates("2026-09-12");
     expect(candidateIds).toContain("grau_toamna");
     expect(candidateIds).not.toContain("porumb");
     expect(text).toContain("- grau_toamna:");
-    expect(text).toContain('must appear under "excluded"');
+    expect(text).toContain("only the candidates you leave out");
+    expect(text).toContain("excluded automatically");
+    expect(text).not.toContain("Every other crop id");
   });
 
   it("puts today, the profile as ranges and the brief in the user turn", () => {
