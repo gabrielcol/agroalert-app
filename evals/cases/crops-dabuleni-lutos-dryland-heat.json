@@ -1,0 +1,25 @@
+{
+  "id": "crops-dabuleni-lutos-dryland-heat",
+  "kind": "crops",
+  "category": "stress",
+  "title": "Lutos, no irrigation, hottest and driest brief, mid-September",
+  "brief": "dabuleni",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Dăbuleni",
+    "lat": 43.8,
+    "lng": 24.083,
+    "landBucket": "large",
+    "irrigation": false,
+    "soilClass": "lutos"
+  },
+  "rationale": "Good loam in the sand belt, so the soil lever is gone and only the weather is left. Dăbuleni's day-0 tMax is 23.6 °C, the warmest captured, with a +3.8 °C last-month temperature anomaly, 10.8 mm of forecast rain over 16 days, day-0 water balance -4.1 mm and soil moisture 0.114 m³/m³. Sowing rapeseed dryland into that is the case's target error: rapita_toamna is drought_tolerance scazuta with its critical period at September-October establishment, so wheat (medie) and rye (ridicata) both outrank it. grau_toamna is asserted into the top because lutos is in its suitable_classes and its southern windows run to 10-20.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "fitOrder": [
+      ["grau_toamna", "rapita_toamna"],
+      ["secara", "rapita_toamna"]
+    ]
+  }
+}

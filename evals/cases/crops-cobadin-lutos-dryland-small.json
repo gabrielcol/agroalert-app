@@ -1,0 +1,25 @@
+{
+  "id": "crops-cobadin-lutos-dryland-small",
+  "kind": "crops",
+  "category": "stress",
+  "title": "Lutos, no irrigation, small holding in Dobrogea, mid-September",
+  "brief": "cobadin",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Cobadin",
+    "lat": 44.083,
+    "lng": 28.217,
+    "landBucket": "small",
+    "irrigation": false,
+    "soilClass": "lutos"
+  },
+  "rationale": "A small unirrigated holding on good loam in the Dobrogea steppe. Lutos is suitable for every candidate, so grau_toamna is asserted into the top on soil plus its south/west window (10-01 → 10-10). Both orderings put rapita_toamna last of the three named crops: drought_tolerance scazuta against wheat's medie and rye's ridicata, no irrigation, 2 drought-flagged years in 10, a -8.4 mm last-month precipitation anomaly, and rapița's critical establishment period falling in exactly these weeks. rapița stays a legal pick — its southern window (09-05 → 09-15) is open on the case date and Dobrogea's 552 mm annual normal clears the 450 mm season need — so it is ordered, not excluded.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "fitOrder": [
+      ["grau_toamna", "rapita_toamna"],
+      ["secara", "rapita_toamna"]
+    ]
+  }
+}

@@ -72,6 +72,61 @@ retry")` in `src/lib/ai/recommend.test.ts` (both shapes, both steps, the tool_re
   `e2e/ai-retry.spec.ts` — **written but not run** (AGENTS.md rule 3: e2e runs pre-deploy).
   Note for the deploy: `dev.db` was locked, so the migration was applied with `sqlite3` and
   its `_prisma_migrations` row written by hand; `bunx prisma migrate status` is clean.
+- **2026-09-13 11:16 (EEST)** — `feat/ai-eval-dataset` — **Eval cases and README for the two
+  recommendation calls**
+  ([`docs/issues/0019-ai-eval-dataset.md`](docs/issues/0019-ai-eval-dataset.md)). Second half
+  of the eval dataset: the expectations. `evals/cases/` gains 26 hand-authored cases — 20
+  Crop Recommendation (10 `grid`, 3 `date`, 7 `stress`) and 6 Variety Recommendation —
+  each naming a Field Profile, a brief slug from `evals/briefs/` and a date, and each
+  carrying **constraint assertions** rather than a golden answer: `mustInclude`,
+  `mustExclude`, `fitOrder` pairs and an optional `maxConfidence` for crops; `topAny` and
+  `varietyOrder` for varieties. Every constraint is written from a number in the brief or a
+  field in `src/lib/agro/crop-dictionary.compact.json` — the same compact dictionary the
+  model sees — and each case's `rationale` quotes what it rests on. Three levers recur:
+  soil (`unsuitable_classes` excludes wheat, barley and rapeseed from `nisipos` and
+  `argilos` parcels), calendar zone (every `rapita_toamna` window still open on 2026-09-13
+  is labelled `sudul țării`, so rapeseed is out in the Banat, Transylvania and Moldova) and
+  water (`drought_tolerance` orders crops only where the brief actually shows a dry season —
+  Dăbuleni 10.8 mm, Podu Iloaiei 9.4 mm, Lovrin 3/10 drought years — never at wet Reviga).
+  The `date` cases lean on day-0 numbers only, because the synthetic briefs' 16-day drift is
+  a monotone cooling ramp. New `evals/README.md` documents the case schema, the four global
+  invariants (written once rather than repeated per case), how the constraints were derived,
+  a coverage table for all 26 cases, the checks a future runner should run before it calls
+  any model, a five-line sketch of that runner, the recapture procedure and the known gaps —
+  including that ADR 0002's source-quoting rule is not evaluable, since the compact
+  dictionary has `source` stripped. A throwaway validator (file name vs `id`, brief and date
+  agreement, profile against `fieldProfileSchema`, every id a candidate on the case date,
+  `mustInclude`/`mustExclude` disjoint and satisfiable, variety names real) was run over all
+  26 cases and passes; it is described in the README but not committed, as there is nothing
+  to hang it off yet. No runner and no model output are part of this task. No tests: data
+  and documentation only, nothing imports `evals/` (AGENTS.md rule 3 exemption); Playwright
+  not run.
+- **2026-09-13 10:52 (EEST)** — `feat/ai-eval-dataset` — **Frozen Weather Briefs for the AI
+  eval dataset**
+  ([`docs/issues/0019-ai-eval-dataset.md`](docs/issues/0019-ai-eval-dataset.md)). First half
+  of the hand-authored eval dataset for the two Claude calls: the inputs. New
+  `scripts/capture-eval-briefs.ts` (`bun run capture:eval-briefs`) runs the three `ensure*`
+  phases of `src/lib/weather/brief.ts` against a `null` cache and no database, so it builds
+  exactly the brief `getWeatherBrief` would, and writes nine files to `evals/briefs/`. Six
+  are **captured**: real Open-Meteo pulls made at 2026-09-13 for one anchor per agro-zone —
+  Reviga (Bărăgan plain), Cobadin (Dobrogea), Dăbuleni (Oltenia sands), Lovrin (Banat
+  plain), Turda (Transylvanian plateau), Podu Iloaiei (Moldavian plain). Three are
+  **synthetic** — 2026-03-05, 2026-10-05, 2026-08-20 — derived from `weatherBriefFixture`,
+  because a real brief can only exist for the day it was captured; their forecast and
+  `last30Days` temperatures, soil temperature and ET0 are re-based on the Climate Profile's
+  monthly normals for each day's own month, so a March brief reads like March, and each
+  file's `notes` records what was derived, what was left from the fixture and the one known
+  incoherence (the fixture's drift is a monotone cooling ramp, wrong-signed in spring).
+  Every brief is parsed through `weatherBriefSchema` before it is written; the script is
+  idempotent, spaces the ten-year archive pulls three seconds apart and retries a
+  rate-limited location once after a minute. Generated `evals/briefs/SUMMARY.md` carries the
+  per-brief numbers the cases are written from (day 0 tMax/tMin, total forecast rain,
+  last-month temperature and precipitation anomaly, drought-flagged years, outlook labels)
+  plus the `candidateCropIds` list for each of the four case dates. `CONTEXT.md` gained
+  **Eval Case**, **Captured Brief** and **Synthetic Brief**. No tests: the change has no
+  runtime surface — nothing imports `evals/`, and the script is excluded from `tsc`
+  (AGENTS.md rule 3 exemption). The cases and `evals/README.md` land next, on the same
+  branch.
 - **2026-09-13 03:50 (EEST)** — `fix/start-screen-once-per-session` — The AgroPlan splash
   now plays **once per browser session**
   ([`docs/issues/0017-start-screen-once-per-session.md`](docs/issues/0017-start-screen-once-per-session.md)).

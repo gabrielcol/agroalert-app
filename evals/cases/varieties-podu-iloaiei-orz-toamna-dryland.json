@@ -1,0 +1,27 @@
+{
+  "id": "varieties-podu-iloaiei-orz-toamna-dryland",
+  "kind": "varieties",
+  "category": "stress",
+  "title": "Winter barley varieties, argilos, no irrigation, dry Moldavian plain",
+  "brief": "podu-iloaiei",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Podu Iloaiei",
+    "lat": 47.217,
+    "lng": 27.267,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "argilos"
+  },
+  "cropId": "orz_toamna",
+  "rationale": "The farmer has already chosen the crop, so the Variety Recommendation ranks within it even though argilos is in orz_toamna's unsuitable_classes. The brief is dry — 9.4 mm of forecast rain over 16 days, a -4.7 mm last-month precipitation anomaly, no irrigation — and drought_tolerance splits the list cleanly: Iulian, Lucian and Ametist are ridicata, Smarald and Cardinal FD are medie, so one of the first three must lead and each named pair must respect that gap. Iulian carries the extra note 'mai bine adaptat la condiții nefavorabile de mediu'. Smarald's recommended_zones do include 'stepa Moldovei', which is why it is only ranked below Iulian rather than below all three.",
+  "expect": {
+    "topAny": ["Iulian", "Lucian", "Ametist"],
+    "varietyOrder": [
+      ["Iulian", "Smarald"],
+      ["Lucian", "Cardinal FD"],
+      ["Ametist", "Cardinal FD"]
+    ]
+  }
+}

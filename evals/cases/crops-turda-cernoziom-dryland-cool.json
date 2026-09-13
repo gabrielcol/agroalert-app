@@ -1,0 +1,26 @@
+{
+  "id": "crops-turda-cernoziom-dryland-cool",
+  "kind": "crops",
+  "category": "stress",
+  "title": "Cernoziom, no irrigation, coldest site in the set, mid-September",
+  "brief": "turda",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Turda",
+    "lat": 46.567,
+    "lng": 23.783,
+    "landBucket": "small",
+    "irrigation": false,
+    "soilClass": "cernoziom"
+  },
+  "rationale": "Turda is the cold case: day-0 tMax 17.3 °C (the lowest of the six captured briefs), 99.5 frost days per year on the ten-year mean and a coldest-month normal tMin of -4.2 °C, both the harshest in the set. Winter hardiness therefore separates the cereals: grau_toamna and secara both have frost_tolerance_c_min -20, orz_toamna only -15, so barley is ranked below both. grau_toamna is in the top on cernoziom suitability. rapita_toamna is excluded because its Transylvania window (08-25 → 09-05) closed before the case date and the only open window on 2026-09-13 is the southern one; its frost_tolerance_c_min of -15 is a second, weaker reason.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "mustExclude": ["rapita_toamna"],
+    "fitOrder": [
+      ["grau_toamna", "orz_toamna"],
+      ["secara", "orz_toamna"]
+    ]
+  }
+}

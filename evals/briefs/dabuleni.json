@@ -1,0 +1,1013 @@
+{
+  "kind": "captured",
+  "slug": "dabuleni",
+  "name": "Dăbuleni",
+  "county": "Dolj",
+  "zone": "Oltenia sands",
+  "capturedAt": "2026-09-13T07:52:13.914Z",
+  "source": "open-meteo",
+  "brief": {
+    "today": "2026-09-13",
+    "timezone": "Europe/Bucharest",
+    "units": "metric",
+    "location": {
+      "lat": 43.8,
+      "lng": 24.083
+    },
+    "climateProfile": {
+      "dataset": "ERA5-Land/ERA5",
+      "span": {
+        "fromYear": 2016,
+        "toYear": 2025
+      },
+      "monthlyNormals": [
+        {
+          "month": 1,
+          "tMean": 0.7,
+          "tMin": -2.6,
+          "tMax": 5,
+          "precipSum": 48.9,
+          "et0": 24.7,
+          "waterBalance": 24.2
+        },
+        {
+          "month": 2,
+          "tMean": 4,
+          "tMin": 0,
+          "tMax": 9.1,
+          "precipSum": 33.2,
+          "et0": 38.6,
+          "waterBalance": -5.4
+        },
+        {
+          "month": 3,
+          "tMean": 7.6,
+          "tMin": 3,
+          "tMax": 13.2,
+          "precipSum": 60.6,
+          "et0": 67.1,
+          "waterBalance": -6.5
+        },
+        {
+          "month": 4,
+          "tMean": 13,
+          "tMin": 7.7,
+          "tMax": 18.7,
+          "precipSum": 47.3,
+          "et0": 104.2,
+          "waterBalance": -56.9
+        },
+        {
+          "month": 5,
+          "tMean": 17.6,
+          "tMin": 12.5,
+          "tMax": 22.8,
+          "precipSum": 80,
+          "et0": 132.1,
+          "waterBalance": -52.1
+        },
+        {
+          "month": 6,
+          "tMean": 23.1,
+          "tMin": 17.7,
+          "tMax": 28.3,
+          "precipSum": 60.6,
+          "et0": 155.7,
+          "waterBalance": -95.1
+        },
+        {
+          "month": 7,
+          "tMean": 25.5,
+          "tMin": 19.6,
+          "tMax": 31,
+          "precipSum": 47.6,
+          "et0": 181.5,
+          "waterBalance": -133.9
+        },
+        {
+          "month": 8,
+          "tMean": 25.6,
+          "tMin": 19.8,
+          "tMax": 31.5,
+          "precipSum": 23.4,
+          "et0": 172.1,
+          "waterBalance": -148.7
+        },
+        {
+          "month": 9,
+          "tMean": 20.5,
+          "tMin": 15.2,
+          "tMax": 26.3,
+          "precipSum": 31.5,
+          "et0": 123,
+          "waterBalance": -91.5
+        },
+        {
+          "month": 10,
+          "tMean": 13.5,
+          "tMin": 8.9,
+          "tMax": 19.1,
+          "precipSum": 55.3,
+          "et0": 69.8,
+          "waterBalance": -14.5
+        },
+        {
+          "month": 11,
+          "tMean": 7.6,
+          "tMin": 4.4,
+          "tMax": 11.6,
+          "precipSum": 63,
+          "et0": 30.4,
+          "waterBalance": 32.6
+        },
+        {
+          "month": 12,
+          "tMean": 3.1,
+          "tMin": 0.2,
+          "tMax": 6.9,
+          "precipSum": 50.3,
+          "et0": 22.1,
+          "waterBalance": 28.2
+        }
+      ],
+      "frostHeat": {
+        "perYear": [
+          {
+            "year": 2016,
+            "lastSpringFrost": "2016-03-26",
+            "firstAutumnFrost": "2016-11-16",
+            "frostDays": 55,
+            "daysOver30": 51,
+            "daysOver35": 3
+          },
+          {
+            "year": 2017,
+            "lastSpringFrost": "2017-03-27",
+            "firstAutumnFrost": "2017-11-29",
+            "frostDays": 69,
+            "daysOver30": 56,
+            "daysOver35": 11
+          },
+          {
+            "year": 2018,
+            "lastSpringFrost": "2018-03-25",
+            "firstAutumnFrost": "2018-11-19",
+            "frostDays": 81,
+            "daysOver30": 34,
+            "daysOver35": 0
+          },
+          {
+            "year": 2019,
+            "lastSpringFrost": "2019-03-15",
+            "firstAutumnFrost": "2019-12-02",
+            "frostDays": 64,
+            "daysOver30": 55,
+            "daysOver35": 2
+          },
+          {
+            "year": 2020,
+            "lastSpringFrost": "2020-04-03",
+            "firstAutumnFrost": "2020-11-22",
+            "frostDays": 58,
+            "daysOver30": 53,
+            "daysOver35": 0
+          },
+          {
+            "year": 2021,
+            "lastSpringFrost": "2021-04-10",
+            "firstAutumnFrost": "2021-11-11",
+            "frostDays": 54,
+            "daysOver30": 53,
+            "daysOver35": 12
+          },
+          {
+            "year": 2022,
+            "lastSpringFrost": "2022-03-26",
+            "firstAutumnFrost": "2022-11-27",
+            "frostDays": 66,
+            "daysOver30": 56,
+            "daysOver35": 10
+          },
+          {
+            "year": 2023,
+            "lastSpringFrost": "2023-03-30",
+            "firstAutumnFrost": "2023-11-27",
+            "frostDays": 42,
+            "daysOver30": 58,
+            "daysOver35": 16
+          },
+          {
+            "year": 2024,
+            "lastSpringFrost": "2024-03-09",
+            "firstAutumnFrost": "2024-11-06",
+            "frostDays": 46,
+            "daysOver30": 85,
+            "daysOver35": 28
+          },
+          {
+            "year": 2025,
+            "lastSpringFrost": "2025-04-11",
+            "firstAutumnFrost": "2025-11-24",
+            "frostDays": 67,
+            "daysOver30": 63,
+            "daysOver35": 14
+          }
+        ],
+        "summary": {
+          "lastSpringFrostDoy": {
+            "mean": 86.8,
+            "spread": 32
+          },
+          "firstAutumnFrostDoy": {
+            "mean": 325.6,
+            "spread": 25
+          },
+          "frostDays": {
+            "mean": 60.2,
+            "spread": 39
+          },
+          "daysOver30": {
+            "mean": 56.4,
+            "spread": 51
+          },
+          "daysOver35": {
+            "mean": 9.6,
+            "spread": 28
+          }
+        }
+      },
+      "gdd": [
+        {
+          "month": 1,
+          "base5": 13.2,
+          "base10": 0.8
+        },
+        {
+          "month": 2,
+          "base5": 45.8,
+          "base10": 6.7
+        },
+        {
+          "month": 3,
+          "base5": 116.2,
+          "base10": 26.7
+        },
+        {
+          "month": 4,
+          "base5": 247,
+          "base10": 109.6
+        },
+        {
+          "month": 5,
+          "base5": 391,
+          "base10": 236
+        },
+        {
+          "month": 6,
+          "base5": 541,
+          "base10": 391
+        },
+        {
+          "month": 7,
+          "base5": 630,
+          "base10": 475
+        },
+        {
+          "month": 8,
+          "base5": 639.3,
+          "base10": 484.3
+        },
+        {
+          "month": 9,
+          "base5": 472.7,
+          "base10": 322.7
+        },
+        {
+          "month": 10,
+          "base5": 279.6,
+          "base10": 129.5
+        },
+        {
+          "month": 11,
+          "base5": 105.7,
+          "base10": 25.1
+        },
+        {
+          "month": 12,
+          "base5": 18.2,
+          "base10": 0.7
+        }
+      ],
+      "years": [
+        {
+          "year": 2016,
+          "annualPrecip": 723.4,
+          "summerPrecip": 114.2,
+          "driest60DayWindow": {
+            "from": "2016-07-18",
+            "to": "2016-09-15",
+            "precipSum": 38
+          },
+          "droughtFlag": false
+        },
+        {
+          "year": 2017,
+          "annualPrecip": 678,
+          "summerPrecip": 168.2,
+          "driest60DayWindow": {
+            "from": "2017-07-18",
+            "to": "2017-09-15",
+            "precipSum": 23.1
+          },
+          "droughtFlag": false
+        },
+        {
+          "year": 2018,
+          "annualPrecip": 667.4,
+          "summerPrecip": 234.5,
+          "driest60DayWindow": {
+            "from": "2018-08-02",
+            "to": "2018-09-30",
+            "precipSum": 11.1
+          },
+          "droughtFlag": false
+        },
+        {
+          "year": 2019,
+          "annualPrecip": 468,
+          "summerPrecip": 150.6,
+          "driest60DayWindow": {
+            "from": "2019-08-04",
+            "to": "2019-10-02",
+            "precipSum": 11.6
+          },
+          "droughtFlag": true
+        },
+        {
+          "year": 2020,
+          "annualPrecip": 580.1,
+          "summerPrecip": 142.3,
+          "driest60DayWindow": {
+            "from": "2020-07-28",
+            "to": "2020-09-25",
+            "precipSum": 31.2
+          },
+          "droughtFlag": false
+        },
+        {
+          "year": 2021,
+          "annualPrecip": 672,
+          "summerPrecip": 111.6,
+          "driest60DayWindow": {
+            "from": "2021-06-26",
+            "to": "2021-08-24",
+            "precipSum": 30.3
+          },
+          "droughtFlag": false
+        },
+        {
+          "year": 2022,
+          "annualPrecip": 464.5,
+          "summerPrecip": 81,
+          "driest60DayWindow": {
+            "from": "2022-01-25",
+            "to": "2022-03-25",
+            "precipSum": 29
+          },
+          "droughtFlag": true
+        },
+        {
+          "year": 2023,
+          "annualPrecip": 668.8,
+          "summerPrecip": 201.8,
+          "driest60DayWindow": {
+            "from": "2023-09-05",
+            "to": "2023-11-03",
+            "precipSum": 12.4
+          },
+          "droughtFlag": false
+        },
+        {
+          "year": 2024,
+          "annualPrecip": 562.9,
+          "summerPrecip": 80.4,
+          "driest60DayWindow": {
+            "from": "2024-09-30",
+            "to": "2024-11-28",
+            "precipSum": 30.1
+          },
+          "droughtFlag": false
+        },
+        {
+          "year": 2025,
+          "annualPrecip": 531.8,
+          "summerPrecip": 31.6,
+          "driest60DayWindow": {
+            "from": "2025-06-12",
+            "to": "2025-08-10",
+            "precipSum": 11.6
+          },
+          "droughtFlag": false
+        }
+      ]
+    },
+    "currentSeason": {
+      "year": 2026,
+      "throughDate": "2026-09-08",
+      "monthly": [
+        {
+          "month": 1,
+          "tMean": -0.7,
+          "precipSum": 58.6,
+          "et0": 16.6,
+          "waterBalance": 42,
+          "anomaly": {
+            "tMean": -1.4,
+            "precipSum": 9.7
+          }
+        },
+        {
+          "month": 2,
+          "tMean": 1.8,
+          "precipSum": 67.9,
+          "et0": 28,
+          "waterBalance": 39.9,
+          "anomaly": {
+            "tMean": -2.2,
+            "precipSum": 34.7
+          }
+        },
+        {
+          "month": 3,
+          "tMean": 7.4,
+          "precipSum": 29.4,
+          "et0": 66.1,
+          "waterBalance": -36.7,
+          "anomaly": {
+            "tMean": -0.2,
+            "precipSum": -31.2
+          }
+        },
+        {
+          "month": 4,
+          "tMean": 12.1,
+          "precipSum": 42.9,
+          "et0": 100.9,
+          "waterBalance": -58,
+          "anomaly": {
+            "tMean": -0.9,
+            "precipSum": -4.4
+          }
+        },
+        {
+          "month": 5,
+          "tMean": 17.2,
+          "precipSum": 69.8,
+          "et0": 138.1,
+          "waterBalance": -68.3,
+          "anomaly": {
+            "tMean": -0.4,
+            "precipSum": -10.2
+          }
+        },
+        {
+          "month": 6,
+          "tMean": 23.3,
+          "precipSum": 47.8,
+          "et0": 162.3,
+          "waterBalance": -114.5,
+          "anomaly": {
+            "tMean": 0.2,
+            "precipSum": -12.8
+          }
+        },
+        {
+          "month": 7,
+          "tMean": 24.2,
+          "precipSum": 31.9,
+          "et0": 179.3,
+          "waterBalance": -147.4,
+          "anomaly": {
+            "tMean": -1.3,
+            "precipSum": -15.7
+          }
+        },
+        {
+          "month": 8,
+          "tMean": 26,
+          "precipSum": 8.2,
+          "et0": 180.8,
+          "waterBalance": -172.6,
+          "anomaly": {
+            "tMean": 0.4,
+            "precipSum": -15.2
+          }
+        },
+        {
+          "month": 9,
+          "tMean": 24.3,
+          "precipSum": 0.1,
+          "et0": 42.2,
+          "waterBalance": -42.1,
+          "anomaly": {
+            "tMean": 3.8,
+            "precipSum": -8.3
+          }
+        }
+      ],
+      "last30Days": [
+        {
+          "date": "2026-08-10",
+          "tMax": 32.7,
+          "tMin": 20.7,
+          "precipSum": 0,
+          "et0": 6.44
+        },
+        {
+          "date": "2026-08-11",
+          "tMax": 34.7,
+          "tMin": 20,
+          "precipSum": 0,
+          "et0": 5.98
+        },
+        {
+          "date": "2026-08-12",
+          "tMax": 34.7,
+          "tMin": 21.1,
+          "precipSum": 0,
+          "et0": 6.18
+        },
+        {
+          "date": "2026-08-13",
+          "tMax": 28.7,
+          "tMin": 20.6,
+          "precipSum": 0,
+          "et0": 6.88
+        },
+        {
+          "date": "2026-08-14",
+          "tMax": 28,
+          "tMin": 19.6,
+          "precipSum": 0,
+          "et0": 6.06
+        },
+        {
+          "date": "2026-08-15",
+          "tMax": 28.8,
+          "tMin": 16.5,
+          "precipSum": 0,
+          "et0": 6.15
+        },
+        {
+          "date": "2026-08-16",
+          "tMax": 30.4,
+          "tMin": 16.4,
+          "precipSum": 0,
+          "et0": 5.8
+        },
+        {
+          "date": "2026-08-17",
+          "tMax": 32.7,
+          "tMin": 16.1,
+          "precipSum": 0,
+          "et0": 5.41
+        },
+        {
+          "date": "2026-08-18",
+          "tMax": 30.9,
+          "tMin": 17.7,
+          "precipSum": 0,
+          "et0": 6.87
+        },
+        {
+          "date": "2026-08-19",
+          "tMax": 31.9,
+          "tMin": 17.8,
+          "precipSum": 0,
+          "et0": 5.81
+        },
+        {
+          "date": "2026-08-20",
+          "tMax": 36.3,
+          "tMin": 17.8,
+          "precipSum": 0,
+          "et0": 6.23
+        },
+        {
+          "date": "2026-08-21",
+          "tMax": 37.3,
+          "tMin": 21.5,
+          "precipSum": 0,
+          "et0": 6.73
+        },
+        {
+          "date": "2026-08-22",
+          "tMax": 35,
+          "tMin": 21.4,
+          "precipSum": 0,
+          "et0": 6.18
+        },
+        {
+          "date": "2026-08-23",
+          "tMax": 32.9,
+          "tMin": 23.4,
+          "precipSum": 0,
+          "et0": 5.43
+        },
+        {
+          "date": "2026-08-24",
+          "tMax": 34,
+          "tMin": 21.2,
+          "precipSum": 0.9,
+          "et0": 5.1
+        },
+        {
+          "date": "2026-08-25",
+          "tMax": 33.9,
+          "tMin": 19.9,
+          "precipSum": 0.4,
+          "et0": 5.39
+        },
+        {
+          "date": "2026-08-26",
+          "tMax": 29.8,
+          "tMin": 19.7,
+          "precipSum": 2.2,
+          "et0": 4.72
+        },
+        {
+          "date": "2026-08-27",
+          "tMax": 29.9,
+          "tMin": 19.5,
+          "precipSum": 0.6,
+          "et0": 4.46
+        },
+        {
+          "date": "2026-08-28",
+          "tMax": 25.7,
+          "tMin": 17.7,
+          "precipSum": 0.9,
+          "et0": 4.04
+        },
+        {
+          "date": "2026-08-29",
+          "tMax": 28.5,
+          "tMin": 16,
+          "precipSum": 0,
+          "et0": 5.12
+        },
+        {
+          "date": "2026-08-30",
+          "tMax": 30.8,
+          "tMin": 18.5,
+          "precipSum": 2.1,
+          "et0": 4.81
+        },
+        {
+          "date": "2026-08-31",
+          "tMax": 33,
+          "tMin": 19.4,
+          "precipSum": 0,
+          "et0": 5.79
+        },
+        {
+          "date": "2026-09-01",
+          "tMax": 32.6,
+          "tMin": 19.6,
+          "precipSum": 0,
+          "et0": 5.3
+        },
+        {
+          "date": "2026-09-02",
+          "tMax": 32,
+          "tMin": 19.3,
+          "precipSum": 0,
+          "et0": 5.01
+        },
+        {
+          "date": "2026-09-03",
+          "tMax": 31.3,
+          "tMin": 18.4,
+          "precipSum": 0.1,
+          "et0": 4.6
+        },
+        {
+          "date": "2026-09-04",
+          "tMax": 31.5,
+          "tMin": 17.9,
+          "precipSum": 0,
+          "et0": 5.03
+        },
+        {
+          "date": "2026-09-05",
+          "tMax": 33.5,
+          "tMin": 17.3,
+          "precipSum": 0,
+          "et0": 5.18
+        },
+        {
+          "date": "2026-09-06",
+          "tMax": 30.3,
+          "tMin": 21.8,
+          "precipSum": 0,
+          "et0": 7.27
+        },
+        {
+          "date": "2026-09-07",
+          "tMax": 27.5,
+          "tMin": 15.3,
+          "precipSum": 0,
+          "et0": 4.94
+        },
+        {
+          "date": "2026-09-08",
+          "tMax": 28.8,
+          "tMin": 13.7,
+          "precipSum": 0,
+          "et0": 4.84
+        }
+      ]
+    },
+    "forecast": {
+      "issuedAt": "2026-09-13T07:52:13.914Z",
+      "trustedDays": 7,
+      "days": [
+        {
+          "date": "2026-09-13",
+          "tMax": 23.6,
+          "tMin": 15,
+          "precipSum": 0,
+          "precipProbability": 3,
+          "et0": 4.08,
+          "waterBalance": -4.1,
+          "soilTemp0_9cm": 20.9,
+          "soilMoisture0_9cm": 0.114,
+          "windGustsMax": 42.5,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-14",
+          "tMax": 24.3,
+          "tMin": 10.5,
+          "precipSum": 0,
+          "precipProbability": 0,
+          "et0": 3.35,
+          "waterBalance": -3.3,
+          "soilTemp0_9cm": 19.6,
+          "soilMoisture0_9cm": 0.114,
+          "windGustsMax": 20.5,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-15",
+          "tMax": 25.9,
+          "tMin": 14.2,
+          "precipSum": 0,
+          "precipProbability": 3,
+          "et0": 3.38,
+          "waterBalance": -3.4,
+          "soilTemp0_9cm": 19.8,
+          "soilMoisture0_9cm": 0.114,
+          "windGustsMax": 16.2,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-16",
+          "tMax": 27.4,
+          "tMin": 13.9,
+          "precipSum": 0,
+          "precipProbability": 0,
+          "et0": 3.69,
+          "waterBalance": -3.7,
+          "soilTemp0_9cm": 19.8,
+          "soilMoisture0_9cm": 0.114,
+          "windGustsMax": 13.7,
+          "snowfallSum": 0,
+          "weatherCode": 1
+        },
+        {
+          "date": "2026-09-17",
+          "tMax": 29.4,
+          "tMin": 14.7,
+          "precipSum": 0,
+          "precipProbability": 1,
+          "et0": 4.18,
+          "waterBalance": -4.2,
+          "soilTemp0_9cm": 21,
+          "soilMoisture0_9cm": 0.112,
+          "windGustsMax": 16.6,
+          "snowfallSum": 0,
+          "weatherCode": 1
+        },
+        {
+          "date": "2026-09-18",
+          "tMax": 30.8,
+          "tMin": 16.7,
+          "precipSum": 0,
+          "precipProbability": 10,
+          "et0": 4.96,
+          "waterBalance": -5,
+          "soilTemp0_9cm": 23.4,
+          "soilMoisture0_9cm": 0.081,
+          "windGustsMax": 38.5,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-19",
+          "tMax": 25.4,
+          "tMin": 18.8,
+          "precipSum": 0,
+          "precipProbability": 15,
+          "et0": 5.06,
+          "waterBalance": -5.1,
+          "soilTemp0_9cm": 23.3,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 50,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-20",
+          "tMax": 28.7,
+          "tMin": 15.9,
+          "precipSum": 0,
+          "precipProbability": 14,
+          "et0": 3.33,
+          "waterBalance": -3.3,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 32,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-21",
+          "tMax": 31.3,
+          "tMin": 17.9,
+          "precipSum": 0,
+          "precipProbability": 14,
+          "et0": 4.69,
+          "waterBalance": -4.7,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 30.6,
+          "snowfallSum": 0,
+          "weatherCode": 2
+        },
+        {
+          "date": "2026-09-22",
+          "tMax": 21.4,
+          "tMin": 13,
+          "precipSum": 10.8,
+          "precipProbability": 10,
+          "et0": 1.43,
+          "waterBalance": 9.4,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 49.3,
+          "snowfallSum": 0,
+          "weatherCode": 53
+        },
+        {
+          "date": "2026-09-23",
+          "tMax": 20.8,
+          "tMin": 11.8,
+          "precipSum": 0,
+          "precipProbability": 10,
+          "et0": 2.9,
+          "waterBalance": -2.9,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 34.9,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-24",
+          "tMax": 25.1,
+          "tMin": 12.4,
+          "precipSum": 0,
+          "precipProbability": 9,
+          "et0": 3.3,
+          "waterBalance": -3.3,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 22,
+          "snowfallSum": 0,
+          "weatherCode": 0
+        },
+        {
+          "date": "2026-09-25",
+          "tMax": 27.4,
+          "tMin": 14.8,
+          "precipSum": 0,
+          "precipProbability": 12,
+          "et0": 3.05,
+          "waterBalance": -3,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 20.2,
+          "snowfallSum": 0,
+          "weatherCode": 1
+        },
+        {
+          "date": "2026-09-26",
+          "tMax": 22,
+          "tMin": 17.8,
+          "precipSum": 0,
+          "precipProbability": 12,
+          "et0": 3.89,
+          "waterBalance": -3.9,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 41,
+          "snowfallSum": 0,
+          "weatherCode": 3
+        },
+        {
+          "date": "2026-09-27",
+          "tMax": 21.7,
+          "tMin": 12.8,
+          "precipSum": 0,
+          "precipProbability": 11,
+          "et0": 4.38,
+          "waterBalance": -4.4,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 38.5,
+          "snowfallSum": 0,
+          "weatherCode": 2
+        },
+        {
+          "date": "2026-09-28",
+          "tMax": 23.1,
+          "tMin": 8.6,
+          "precipSum": 0,
+          "precipProbability": 11,
+          "et0": 4.2,
+          "waterBalance": -4.2,
+          "soilTemp0_9cm": 20.1,
+          "soilMoisture0_9cm": 0.077,
+          "windGustsMax": 31,
+          "snowfallSum": 0,
+          "weatherCode": 0
+        }
+      ]
+    },
+    "seasonalOutlook": {
+      "dataset": "EC46",
+      "issuedAt": "2026-09-13T07:52:13.914Z",
+      "weeks": [
+        {
+          "week": 3,
+          "from": "2026-09-27",
+          "to": "2026-10-03",
+          "tempAnomaly": -0.9,
+          "precipAnomaly": 3.1,
+          "label": "colder",
+          "confidence": "low"
+        },
+        {
+          "week": 4,
+          "from": "2026-10-04",
+          "to": "2026-10-10",
+          "tempAnomaly": 5,
+          "precipAnomaly": -6.1,
+          "label": "warmer",
+          "confidence": "low"
+        },
+        {
+          "week": 5,
+          "from": "2026-10-11",
+          "to": "2026-10-17",
+          "tempAnomaly": 3.2,
+          "precipAnomaly": -1.9,
+          "label": "warmer",
+          "confidence": "low"
+        },
+        {
+          "week": 6,
+          "from": "2026-10-18",
+          "to": "2026-10-24",
+          "tempAnomaly": 0.9,
+          "precipAnomaly": -4.6,
+          "label": "warmer",
+          "confidence": "low"
+        },
+        {
+          "week": 7,
+          "from": "2026-10-25",
+          "to": "2026-10-31",
+          "tempAnomaly": 0,
+          "precipAnomaly": -2.5,
+          "label": "drier",
+          "confidence": "low"
+        }
+      ]
+    }
+  }
+}

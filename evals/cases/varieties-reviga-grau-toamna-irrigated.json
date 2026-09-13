@@ -1,0 +1,19 @@
+{
+  "id": "varieties-reviga-grau-toamna-irrigated",
+  "kind": "varieties",
+  "category": "grid",
+  "title": "Winter wheat varieties, cernoziom, irrigated, Bărăgan plain",
+  "brief": "reviga",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Reviga",
+    "lat": 44.7,
+    "lng": 27.1,
+    "landBucket": "medium",
+    "irrigation": true,
+    "soilClass": "cernoziom"
+  },
+  "cropId": "grau_toamna",
+  "rationale": "The dictionary gives all five winter-wheat varieties drought_tolerance ridicata, and every one of them covers this location: Izvor (sud, est), Glosa (sud, vest, est) and Otilia (vest, Câmpia Română, Dobrogea, Moldova) name the south or the Câmpia Română explicitly, while Ursita and Voinic are recommended for 'toate zonele de cultură a grâului din România'. With irrigation on and 48.3 mm of forecast rain, no drought or zone lever separates them, so this case asserts nothing beyond the variety invariants: all five names ranked, none invented, none omitted, fit strictly descending, Romanian reasons. It is the control case of the variety set — a case that would only fail on an invariant."
+}

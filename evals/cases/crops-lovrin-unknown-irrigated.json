@@ -1,0 +1,22 @@
+{
+  "id": "crops-lovrin-unknown-irrigated",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Soil unknown, irrigated, Banat plain, mid-September",
+  "brief": "lovrin",
+  "today": "2026-09-13",
+  "lowData": true,
+  "profile": {
+    "villageName": "Lovrin",
+    "lat": 45.967,
+    "lng": 20.767,
+    "landBucket": "small",
+    "irrigation": true,
+    "soilClass": "unknown"
+  },
+  "rationale": "With soilClass unknown no soil-based inclusion or exclusion is possible: this case exists to check that the model does not fabricate soil confidence. The only assertion left is the calendar one — rapita_toamna's Banat and west/north windows (09-01 → 09-10) and the national hybrid window (08-20 → 08-31) all closed before the case date. lowData is true, so confidence must not be high.",
+  "expect": {
+    "mustExclude": ["rapita_toamna"],
+    "maxConfidence": "medium"
+  }
+}

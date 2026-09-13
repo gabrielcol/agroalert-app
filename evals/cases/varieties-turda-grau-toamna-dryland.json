@@ -1,0 +1,27 @@
+{
+  "id": "varieties-turda-grau-toamna-dryland",
+  "kind": "varieties",
+  "category": "grid",
+  "title": "Winter wheat varieties, lutos, no irrigation, Transylvanian plateau",
+  "brief": "turda",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Turda",
+    "lat": 46.567,
+    "lng": 23.783,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "lutos"
+  },
+  "cropId": "grau_toamna",
+  "rationale": "Recommended zones are the whole lever here. Only Ursita and Voinic are listed for 'toate zonele de cultură a grâului din România'; Glosa is sud/vest/est, Izvor is sud/est plus 'zone cu frecvență mare a secetei', and Otilia is vest/Câmpia Română/Dobrogea/Moldova. None of those three names Transylvania, and Turda is on the Transylvanian plateau, so one of the two all-zone varieties must rank first and each must outrank a zone-restricted one. Drought tolerance cannot break the tie — all five are ridicata — and Turda is the wettest captured site (674 mm annual normal, 1 drought year in 10), so the dryland profile adds nothing.",
+  "expect": {
+    "topAny": ["Ursita", "Voinic"],
+    "varietyOrder": [
+      ["Ursita", "Glosa"],
+      ["Voinic", "Izvor"],
+      ["Ursita", "Otilia"]
+    ]
+  }
+}

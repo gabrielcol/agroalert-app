@@ -1,0 +1,26 @@
+{
+  "id": "crops-synthetic-2026-03-05-reviga-spring",
+  "kind": "crops",
+  "category": "date",
+  "title": "Cernoziom, no irrigation, Bărăgan plain, early March (synthetic brief)",
+  "brief": "synthetic-2026-03-05",
+  "today": "2026-03-05",
+  "lowData": false,
+  "profile": {
+    "villageName": "Reviga",
+    "lat": 44.7,
+    "lng": 27.1,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "cernoziom"
+  },
+  "rationale": "Fifteen crops are candidates on 2026-03-05. Day 0 soil temperature is 6.0 °C — the only forecast number this synthetic brief can be trusted on, because its 16-day drift is a monotone cooling ramp (see the brief's notes). porumb (germination_soil_c_min 8), soia (7) and fasole (10) all need warmer soil than the brief ever shows, and their earliest windows are 04-01, 04-01 and 04-10, so none of them may lead this answer. trifoi is excluded on water and soil: season_need_mm.min is 600 while Reviga's annual normal is 564 mm, its drought_tolerance is scazuta, the parcel is dryland, and its suitable_classes list only lutos. mazare is asserted into the top — its southern window 03-01 → 03-15 is open on the case date, cernoziom is suitable, germination_soil_c_min is 1 °C against the 6 °C measured, and drought_tolerance is medie. The two orderings are drought-tolerance ones on a dryland Bărăgan parcel: naut is ridicata against linte's scazuta, mazare is medie against grau_primavara's scazuta, and all four windows are open on the case date.",
+  "expect": {
+    "mustInclude": ["mazare"],
+    "mustExclude": ["porumb", "fasole", "soia", "trifoi"],
+    "fitOrder": [
+      ["naut", "linte"],
+      ["mazare", "grau_primavara"]
+    ]
+  }
+}

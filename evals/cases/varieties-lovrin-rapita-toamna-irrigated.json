@@ -1,0 +1,22 @@
+{
+  "id": "varieties-lovrin-rapita-toamna-irrigated",
+  "kind": "varieties",
+  "category": "grid",
+  "title": "Winter rapeseed varieties, lutos, irrigated, Banat plain",
+  "brief": "lovrin",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Lovrin",
+    "lat": 45.967,
+    "lng": 20.767,
+    "landBucket": "large",
+    "irrigation": true,
+    "soilClass": "lutos"
+  },
+  "cropId": "rapita_toamna",
+  "rationale": "Irrigation removes the drought lever, so the only remaining discriminator is maturity_class read against the calendar. Every rapeseed window for the Banat closed before the case date — 'Câmpia Română și Câmpia Banatului' and 'estul, vestul și nordul țării' both end 09-10, the national hybrid window ends 08-31 — so any sowing here is already late, and the single semitardiv hybrid, Umberto KWS, is the worst fit for a late sowing; DK Exception is semitimpuriu and additionally recommended for all zones and all soil types. No topAny is asserted: LG Architect and LG Ambassador are semitimpuriu too, so three hybrids share the earliness argument and the dictionary does not choose between them.",
+  "expect": {
+    "varietyOrder": [["DK Exception", "Umberto KWS"]]
+  }
+}

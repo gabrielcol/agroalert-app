@@ -1,0 +1,23 @@
+{
+  "id": "crops-dabuleni-argilos-dryland-drought",
+  "kind": "crops",
+  "category": "stress",
+  "title": "Argilos, no irrigation, driest brief in the set, mid-September",
+  "brief": "dabuleni",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Dăbuleni",
+    "lat": 43.8,
+    "lng": 24.083,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "argilos"
+  },
+  "rationale": "Two levers stack here. Soil: argilos is in unsuitable_classes for grau_toamna, orz_toamna and rapita_toamna. Water: Dăbuleni is the driest brief — 10.8 mm of forecast rain over 16 days, 0 mm on day 0, day-0 water balance -4.1 mm, +3.8 °C last-month temperature anomaly, -8.3 mm precipitation anomaly, 2 drought-flagged years in 10 — and the parcel is dryland, so secara (drought_tolerance ridicata) is asserted above triticale (medie). secara is in the top by elimination as well: only it and triticale survive the soil exclusion.",
+  "expect": {
+    "mustInclude": ["secara"],
+    "mustExclude": ["grau_toamna", "orz_toamna", "rapita_toamna"],
+    "fitOrder": [["secara", "triticale"]]
+  }
+}

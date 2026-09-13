@@ -1,0 +1,26 @@
+{
+  "id": "crops-lovrin-lutos-dryland-drought",
+  "kind": "crops",
+  "category": "stress",
+  "title": "Lutos, no irrigation, most drought-flagged years, mid-September",
+  "brief": "lovrin",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Lovrin",
+    "lat": 45.967,
+    "lng": 20.767,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "lutos"
+  },
+  "rationale": "Lovrin carries the worst drought record in the dataset: 3 drought-flagged years in 10, a -7.9 mm last-month precipitation anomaly and a +3.7 °C temperature anomaly, with soil moisture at 0.105 m³/m³ on day 0 and no irrigation. That is the strongest support in the set for ranking the one drought_tolerance ridicata cereal, secara, above the two medie ones, grau_toamna and orz_toamna, and for asserting secara into the top — lutos is in its suitable_classes. rapita_toamna is excluded on the calendar as in the irrigated Lovrin case: all Banat, west/north and national windows closed before 2026-09-13.",
+  "expect": {
+    "mustInclude": ["secara"],
+    "mustExclude": ["rapita_toamna"],
+    "fitOrder": [
+      ["secara", "grau_toamna"],
+      ["secara", "orz_toamna"]
+    ]
+  }
+}

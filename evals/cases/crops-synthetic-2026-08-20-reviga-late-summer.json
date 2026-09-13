@@ -1,0 +1,22 @@
+{
+  "id": "crops-synthetic-2026-08-20-reviga-late-summer",
+  "kind": "crops",
+  "category": "date",
+  "title": "Cernoziom, no irrigation, Bărăgan plain, late August (synthetic brief)",
+  "brief": "synthetic-2026-08-20",
+  "today": "2026-08-20",
+  "lowData": false,
+  "profile": {
+    "villageName": "Reviga",
+    "lat": 44.7,
+    "lng": 27.1,
+    "landBucket": "medium",
+    "irrigation": false,
+    "soilClass": "cernoziom"
+  },
+  "rationale": "Seven crops are candidates on 2026-08-20, including the two forages. Both forages are excluded on the zone label of the only window that qualifies for this date. lucerna's summer windows are 'sud, irigat, sfârșit de vară' (08-25 → 09-05) and 'zone colinare, sfârșit de vară' (08-15 → 08-25); this parcel is southern plain but not irrigated, so neither zone matches, and lucerna's spring windows are far outside the horizon. trifoi's only qualifying window is 'zone colinare umede sau irigat (sfârșit de vară)' (08-20 → 09-05) — again wet hill zones or irrigation, and trifoi additionally needs 600 mm against Reviga's 564 mm normal with drought_tolerance scazuta. grau_toamna is asserted into the top on cernoziom suitability and its 10-01 → 10-20 windows. No assertion is made about rapita_toamna even though its national window (08-20 → 08-31) opens on the case date: day-0 tMax is 29 °C against its heat_critical_c of 30, but the synthetic forecast trend cannot be used to say whether the heat holds.",
+  "expect": {
+    "mustInclude": ["grau_toamna"],
+    "mustExclude": ["lucerna", "trifoi"]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "crops-reviga-argilos-dryland",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Argilos, no irrigation, Bărăgan plain, mid-September",
+  "brief": "reviga",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Reviga",
+    "lat": 44.7,
+    "lng": 27.1,
+    "landBucket": "large",
+    "irrigation": false,
+    "soilClass": "argilos"
+  },
+  "rationale": "Same soil exclusion as the irrigated argilos case: argilos is in unsuitable_classes for grau_toamna, orz_toamna and rapita_toamna. No drought ordering is asserted between secara and triticale here even though the parcel is dryland: Reviga is the wettest brief in the set for the forecast window (48.3 mm over 16 days, 31.5 mm on day 0 alone) and has only 1 drought-flagged year in 10, so the dryland lever the Dăbuleni and Podu Iloaiei cases use is not supported by this brief.",
+  "expect": {
+    "mustExclude": ["grau_toamna", "orz_toamna", "rapita_toamna"]
+  }
+}

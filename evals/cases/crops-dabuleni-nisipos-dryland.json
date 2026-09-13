@@ -1,0 +1,23 @@
+{
+  "id": "crops-dabuleni-nisipos-dryland",
+  "kind": "crops",
+  "category": "grid",
+  "title": "Nisipos, no irrigation, Oltenia sands, mid-September",
+  "brief": "dabuleni",
+  "today": "2026-09-13",
+  "lowData": false,
+  "profile": {
+    "villageName": "Dăbuleni",
+    "lat": 43.8,
+    "lng": 24.083,
+    "landBucket": "small",
+    "irrigation": false,
+    "soilClass": "nisipos"
+  },
+  "rationale": "Soil exclusions as in the irrigated Dăbuleni case (nisipos in unsuitable_classes for wheat, barley and rapeseed). Without irrigation the drought lever applies: secara has drought_tolerance ridicata, triticale medie, and this brief is the driest of the six — 10.8 mm of forecast rain over 16 days, 0 mm on day 0, a +3.8 °C last-month temperature anomaly, -8.3 mm precipitation anomaly, soil moisture 0.114 m³/m³ (lowest in the set) and 2 drought-flagged years in 10.",
+  "expect": {
+    "mustInclude": ["secara"],
+    "mustExclude": ["grau_toamna", "orz_toamna", "rapita_toamna"],
+    "fitOrder": [["secara", "triticale"]]
+  }
+}
