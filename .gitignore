@@ -58,3 +58,6 @@ next-env.d.ts
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# AI eval runner reports
+evals/results/

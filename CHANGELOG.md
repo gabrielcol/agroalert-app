@@ -3,6 +3,36 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 12:20 (EEST)** — `feat/ai-eval-runner` — The AI eval dataset gets a **static
+  test suite and an opt-in live runner**
+  ([`docs/issues/0021-ai-eval-runner.md`](docs/issues/0021-ai-eval-runner.md)). Issue 0019
+  left `evals/` with no code: nothing checked that the 26 cases and 9 briefs were coherent
+  and nothing executed them. Now `evals/dataset.test.ts` runs in `bun run test` and applies
+  every check from `evals/README.md` § "Validating the dataset" to every case (file name =
+  id, brief exists and `today` matches, lat/lng equal the brief, profile parses, `lowData`
+  iff `unknown` soil, candidate ids only, disjoint and satisfiable include/exclude, real
+  variety names, kind-specific keys) plus brief parsing and `SUMMARY.md` / README coverage.
+  `evals/lib/` holds the pure seams: `case-schema.ts` (strict zod case + brief file
+  schemas), `dataset.ts` (loaders), `static-checks.ts` (`staticIssues`), `romanian.ts`
+  (lenient Romanian/markdown heuristics) and `assertions.ts` (the four crop invariants, the
+  variety invariants and every `expect` key as `(result, case) => string[]`), each with a
+  small Vitest file. `evals/run.ts` (`bun run eval`, flags `--filter`, `--kind`, `--model`,
+  `--concurrency`) calls `recommendCrops` / `rankVarieties` directly with the frozen brief
+  and the case date (the service is bypassed: it pulls in `@/env`, the db and
+  `server-only`), prints PASS/FAIL per case with the failed constraints and the rationale,
+  writes a JSON report to the gitignored `evals/results/`, exits 2 without a key, 1 on any
+  failure. **First live baseline on `claude-haiku-4-5`: 12/26 passed** (8/20 crop cases,
+  4/6 variety cases). Failure classes, all model behaviour rather than harness bugs:
+  `mustExclude` crops (wheat / barley / rapeseed on `argilos` or `nisipos`) ranked in the
+  top (12 hits); `confidence: high` on `lowData` cases (4); the same variety listed twice
+  in `ranked` (3, the same duplication the variety-screen issue 0023 dedupes in the UI);
+  a `mustInclude` crop missing (4); one merged sowing window spanning two dictionary
+  windows; two non-descending fits. The first smoke run also exposed two heuristic bugs,
+  fixed and pinned in `romanian.test.ts`: "are" (Romanian "has") was on the English veto
+  list, and diacritic-free sentences like "Ploaie … doar 24,5 mm vs 450 mm sezon necesar"
+  matched no stopword. Tests: 95 new (`evals/**/*.test.ts`), suite 435 green. **e2e
+  exempt** (rule 3): developer tooling, no route / procedure / component change. Gate
+  green. Merged locally (`gh` unauthenticated).
 - **2026-09-13 14:10 (EEST)** — `fix/variety-screen-dedupe-blank-state` — The variety
   screen **dedupes the ranking and never renders blank**
   ([`docs/issues/0023-variety-screen-dedupe-and-blank-state.md`](docs/issues/0023-variety-screen-dedupe-and-blank-state.md)).

@@ -19,6 +19,7 @@
     "capture:eval-briefs": "bun run scripts/capture-eval-briefs.ts",
     "set-role": "bun run scripts/set-role.ts",
     "create-user": "bun run scripts/create-user.ts",
+    "eval": "bun run evals/run.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
