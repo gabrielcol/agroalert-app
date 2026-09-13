@@ -5,7 +5,7 @@ Every task, bugfix or modification gets an entry here (newest first). Each entry
 
 - **2026-09-13 14:10 (EEST)** — `fix/variety-screen-dedupe-blank-state` — The variety
   screen **dedupes the ranking and never renders blank**
-  ([`docs/issues/0021-variety-screen-dedupe-and-blank-state.md`](docs/issues/0021-variety-screen-dedupe-and-blank-state.md)).
+  ([`docs/issues/0023-variety-screen-dedupe-and-blank-state.md`](docs/issues/0023-variety-screen-dedupe-and-blank-state.md)).
   Two defects behind "the variety screen is empty", neither a token limit. (1)
   `enforceVarietyCoverage` in `src/lib/ai/recommend.ts` now keeps only the **first
   occurrence** of each `varietyName` — `uniqueItems` does not survive `toStrictSchema` and
