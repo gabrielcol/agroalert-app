@@ -4,6 +4,21 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0021 (variety screen: dedupe the ranking, never render blank) is **Done**: merged
+  into `main` as 8059033 on 2026-09-13 (locally, `gh` unauthenticated), from
+  `fix/variety-screen-dedupe-blank-state`. The reported "empty variety screen" was **not**
+  the token settings (0020 raised `max_tokens` 8000 → 16000; live output is 163–682
+  tokens): the local `ai_call` table showed no varieties request at all, and the only
+  truly blank path was the soi screen with a missing `profile`/`rec`/`crop` URL param.
+  Now that state renders a shadcn Alert with a back link to the crop or field step. A real
+  0020 regression was fixed alongside: `toStrictSchema` drops `uniqueItems`, so Haiku
+  repeated a variety in 3 of 6 live runs; `enforceVarietyCoverage` now keeps the first
+  occurrence per name and cards use index-suffixed keys. Gate green on the branch (52
+  files / 344 tests); `e2e/soi-missing-params.spec.ts` written, **not run**. The AI leg
+  **has now run for real locally**: `ANTHROPIC_API_KEY` is set, `AI_MODEL=claude-sonnet-5`,
+  crops and varieties calls succeeded on 2026-09-13 (older lines below saying it never
+  ran are stale). Another session is mid-work on the eval runner (untracked `evals/lib/`,
+  `evals/run.ts`, modified `.gitignore`/`package.json` in the main checkout).
 - Issue 0020 (Haiku crops step: smaller output, forgiving parse, readable failures) is **Done**: merged into `main` as 9d9edb0 on 2026-09-13 (locally, `gh` unauthenticated), from
   `fix/haiku-crops-step`, cut from `main` after 0018. Cause of the 30–60 s Haiku crops
   calls and the `AI_INVALID_OUTPUT`: the prompt demanded a Romanian sentence for all 19
