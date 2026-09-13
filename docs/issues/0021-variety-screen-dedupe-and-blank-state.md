@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: fix/variety-screen-dedupe-blank-state
 created: 2026-09-13
 ---

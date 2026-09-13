@@ -464,7 +464,15 @@ export async function recommendCrops(
 
 /**
  * The ranking must cover exactly the dictionary's varieties of the crop:
- * invented names are dropped, an omitted one is an output error.
+ * invented names are dropped, a repeated one is dropped, an omitted one is an
+ * output error.
+ *
+ * The dedupe is not belt-and-braces. `toStrictSchema` drops `uniqueItems`
+ * from the tool schema and the model repeated a variety in 3 of 6 live Haiku
+ * 4.5 runs (issue 0021), which collided the React keys on the soi screen and
+ * marked two cards selected. The first occurrence wins — the list is ranked,
+ * so that is the better rank — and the coverage check runs on the deduped
+ * list.
  */
 export function enforceVarietyCoverage(
   result: VarietyRecommendation,
@@ -472,8 +480,12 @@ export function enforceVarietyCoverage(
 ): VarietyRecommendation {
   const expected = varietyNames(cropId);
   const known = new Set(expected);
-  const ranked = result.ranked.filter((v) => known.has(v.varietyName));
-  const covered = new Set(ranked.map((v) => v.varietyName));
+  const covered = new Set<string>();
+  const ranked = result.ranked.filter((v) => {
+    if (!known.has(v.varietyName) || covered.has(v.varietyName)) return false;
+    covered.add(v.varietyName);
+    return true;
+  });
   const missing = expected.filter((name) => !covered.has(name));
   if (missing.length > 0) {
     throw new AiOutputError(`Variety ranking omitted: ${missing.join(", ")}.`, {

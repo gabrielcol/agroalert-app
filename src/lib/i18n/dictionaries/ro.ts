@@ -146,6 +146,14 @@ export const ro: Dictionary = {
         reasons: "De ce",
         empty: "Nu există soi înregistrat pentru această cultură.",
       },
+      // Shown when parcela, recomandarea sau cultura lipsesc din adresă, în
+      // locul unui ecran gol (issue 0021)
+      notReady: {
+        title: "Ne lipsesc câteva date",
+        description:
+          "Nu știm pentru ce parcelă și ce cultură să alegem soiul. Reia de la pasul anterior.",
+        action: "Înapoi la pasul anterior",
+      },
     },
     rezumat: {
       header: "Planul tău",

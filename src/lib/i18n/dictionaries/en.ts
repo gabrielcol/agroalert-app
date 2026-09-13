@@ -146,6 +146,14 @@ export const en = {
         reasons: "Why",
         empty: "No registered variety is listed for this crop.",
       },
+      // Shown when the parcel, the recommendation or the crop is missing from
+      // the URL, instead of a blank screen (issue 0021)
+      notReady: {
+        title: "We're missing a few details",
+        description:
+          "We don't know which parcel and crop to pick a variety for. Start again from the previous step.",
+        action: "Back to the previous step",
+      },
     },
     rezumat: {
       header: "Your plan",
