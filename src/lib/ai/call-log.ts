@@ -21,6 +21,8 @@ export type AiCallRecord = {
   cacheReadInputTokens: number | null;
   cacheCreationInputTokens: number | null;
   durationMs: number;
+  /** 1 for the step's first call, 2 for the correction retry (issue 0018). */
+  attempt: number;
   status: "ok" | "error";
   errorName: string | null;
   errorMessage: string | null;
@@ -78,6 +80,7 @@ export function createPrismaAiCallLogger(
           cacheReadInputTokens: record.cacheReadInputTokens,
           cacheCreationInputTokens: record.cacheCreationInputTokens,
           durationMs: record.durationMs,
+          attempt: record.attempt,
           status: record.status,
           errorName: record.errorName,
           errorMessage: record.errorMessage,

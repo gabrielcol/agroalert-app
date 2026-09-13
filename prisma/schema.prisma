@@ -242,6 +242,8 @@ model AiCall {
   cacheReadInputTokens     Int?
   cacheCreationInputTokens Int?
   durationMs               Int
+  /// 1 for the first call of a step, 2 for the correction retry (issue 0018)
+  attempt                  Int                    @default(1)
   /// "ok" | "error"
   status                   String
   errorName                String?

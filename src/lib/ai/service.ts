@@ -17,6 +17,7 @@ import { WeatherUnavailableError } from "./errors";
 import {
   rankVarieties,
   recommendCrops,
+  type AttemptTrace,
   type MessagesClient,
 } from "./recommend";
 import {
@@ -58,6 +59,16 @@ export type RecommendationDeps = {
   logAiCall: AiCallLogger;
 };
 
+/**
+ * One line per recommendation step, so a failure on the box explains itself
+ * without a database round trip (issue 0018): how long the Weather Brief took,
+ * how long the whole step took, how many API calls it needed, how each one
+ * ended. `attempts: 0` means the step never reached the model.
+ */
+function logStep(payload: Record<string, unknown>): void {
+  console.log(`[recommendation] ${JSON.stringify(payload)}`);
+}
+
 /** Today's date in the product timezone, ISO `YYYY-MM-DD`. */
 export function todayInBucharest(now: Date = new Date()): string {
   return new Intl.DateTimeFormat("en-CA", {
@@ -73,50 +84,96 @@ export function createRecommendationService(
 ): RecommendationService {
   return {
     async crops(profile) {
-      const today = deps.today();
-      let brief: WeatherBrief;
+      const startedAt = performance.now();
+      const traces: AttemptTrace[] = [];
+      let weatherBriefMs: number | null = null;
+      let errorName: string | null = null;
       try {
-        brief = await deps.weatherBriefSource(profile, today);
-      } catch (cause) {
-        // The profile vanished between the router's lookup and the brief:
-        // that is NOT_FOUND, not a weather outage. The weather module's own
-        // WeatherUnavailableError is a different class with the same name
-        // as ours (hence the alias); it and anything unexpected become an
-        // unavailable brief (ADR 0003: no degraded recommendation).
-        if (cause instanceof FieldProfileNotFoundError) throw cause;
-        if (cause instanceof OpenMeteoUnavailableError) {
+        const today = deps.today();
+        let brief: WeatherBrief;
+        const briefStartedAt = performance.now();
+        try {
+          brief = await deps.weatherBriefSource(profile, today);
+        } catch (cause) {
+          // The profile vanished between the router's lookup and the brief:
+          // that is NOT_FOUND, not a weather outage. The weather module's own
+          // WeatherUnavailableError is a different class with the same name
+          // as ours (hence the alias); it and anything unexpected become an
+          // unavailable brief (ADR 0003: no degraded recommendation).
+          if (cause instanceof FieldProfileNotFoundError) throw cause;
+          if (cause instanceof OpenMeteoUnavailableError) {
+            throw new WeatherUnavailableError(cause);
+          }
           throw new WeatherUnavailableError(cause);
+        } finally {
+          weatherBriefMs = Math.round(performance.now() - briefStartedAt);
         }
-        throw new WeatherUnavailableError(cause);
+        const client = deps.createClient();
+        const { result, aiCallId } = await recommendCrops({
+          client,
+          model: deps.model,
+          profile,
+          brief,
+          // Anchor on the brief's own day so the candidate rule, the forecast
+          // and the stored snapshot agree even when the call spans midnight.
+          today: brief.today,
+          log: deps.logAiCall,
+          onAttempt: (trace) => traces.push(trace),
+        });
+        return { brief, result, modelId: deps.model, aiCallId };
+      } catch (error) {
+        errorName = error instanceof Error ? error.name : typeof error;
+        throw error;
+      } finally {
+        logStep({
+          kind: "crops",
+          fieldProfileId: profile.id,
+          model: deps.model,
+          weatherBriefMs,
+          totalMs: Math.round(performance.now() - startedAt),
+          attempts: traces.length,
+          modelMs: traces.map((t) => t.durationMs),
+          stopReasons: traces.map((t) => t.stopReason),
+          errorName,
+        });
       }
-      const client = deps.createClient();
-      const { result, aiCallId } = await recommendCrops({
-        client,
-        model: deps.model,
-        profile,
-        brief,
-        // Anchor on the brief's own day so the candidate rule, the forecast
-        // and the stored snapshot agree even when the call spans midnight.
-        today: brief.today,
-        log: deps.logAiCall,
-      });
-      return { brief, result, modelId: deps.model, aiCallId };
     },
 
     async varieties({ profile, brief, cropId }) {
-      const client = deps.createClient();
-      const { result, aiCallId } = await rankVarieties({
-        client,
-        model: deps.model,
-        profile,
-        brief,
-        // The variety call is anchored on the same day as its Crop
-        // Recommendation, so both read the same Weather Brief.
-        today: brief.today,
-        cropId,
-        log: deps.logAiCall,
-      });
-      return { result, modelId: deps.model, aiCallId };
+      const startedAt = performance.now();
+      const traces: AttemptTrace[] = [];
+      let errorName: string | null = null;
+      try {
+        const client = deps.createClient();
+        const { result, aiCallId } = await rankVarieties({
+          client,
+          model: deps.model,
+          profile,
+          brief,
+          // The variety call is anchored on the same day as its Crop
+          // Recommendation, so both read the same Weather Brief.
+          today: brief.today,
+          cropId,
+          log: deps.logAiCall,
+          onAttempt: (trace) => traces.push(trace),
+        });
+        return { result, modelId: deps.model, aiCallId };
+      } catch (error) {
+        errorName = error instanceof Error ? error.name : typeof error;
+        throw error;
+      } finally {
+        logStep({
+          kind: "varieties",
+          fieldProfileId: profile.id,
+          cropId,
+          model: deps.model,
+          totalMs: Math.round(performance.now() - startedAt),
+          attempts: traces.length,
+          modelMs: traces.map((t) => t.durationMs),
+          stopReasons: traces.map((t) => t.stopReason),
+          errorName,
+        });
+      }
     },
   };
 }

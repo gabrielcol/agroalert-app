@@ -8,12 +8,13 @@ import {
 } from "@/lib/agro/recommendation-fixture";
 import { weatherBriefFixture } from "@/lib/weather/fixture";
 import type { AiCallLogger } from "./call-log";
-import { AiOutputError } from "./errors";
+import { AiOutputError, AiOutputTruncatedError } from "./errors";
 import {
   enforceCandidateRule,
   enforceVarietyCoverage,
   rankVarieties,
   recommendCrops,
+  type AttemptTrace,
   type MessagesClient,
 } from "./recommend";
 import { CROP_TOOL_NAME, VARIETY_TOOL_NAME } from "./tools";
@@ -62,6 +63,49 @@ function fakeClient(message: Anthropic.Message) {
   const client: MessagesClient = { messages: { create } };
   return { client, create };
 }
+
+/** The same reply, ended differently (`max_tokens` for a truncated answer). */
+function endedWith(
+  message: Anthropic.Message,
+  stopReason: Anthropic.Message["stop_reason"],
+): Anthropic.Message {
+  return { ...message, stop_reason: stopReason };
+}
+
+/** A client that answers each call with the next message in the list. */
+function sequenceClient(...messages: Anthropic.Message[]) {
+  const create = vi.fn();
+  for (const message of messages) create.mockResolvedValueOnce(message);
+  const client: MessagesClient = { messages: { create } };
+  return { client, create };
+}
+
+/** The turns one recorded `messages.create` call was given. */
+function turnsOf(params: unknown): Anthropic.MessageParam[] {
+  return (params as Anthropic.MessageCreateParamsNonStreaming).messages;
+}
+
+function blocksOf(turn: Anthropic.MessageParam): Anthropic.ContentBlockParam[] {
+  return turn.content as Anthropic.ContentBlockParam[];
+}
+
+function toolResultsOf(
+  turn: Anthropic.MessageParam,
+): Anthropic.ToolResultBlockParam[] {
+  return blocksOf(turn).filter(
+    (b): b is Anthropic.ToolResultBlockParam => b.type === "tool_result",
+  );
+}
+
+/** The dictionary's five winter-wheat varieties, all ranked — a valid answer. */
+const FULL_WHEAT_RANKING = {
+  cropId: "grau_toamna",
+  ranked: WHEAT_VARIETIES.map((name, i) => ({
+    varietyName: name,
+    fit: 90 - i * 5,
+    reasons: ["Motiv."],
+  })),
+};
 
 const base = {
   model: "claude-sonnet-5",
@@ -268,7 +312,9 @@ describe("the ai_call log", () => {
     await expect(
       rankVarieties({ client, ...base, cropId: "grau_toamna", log }),
     ).rejects.toBeInstanceOf(AiOutputError);
-    expect(log).toHaveBeenCalledTimes(1);
+    // Two rows: the correction retry (issue 0018) is itself an API call, and
+    // this fake answers it with the same invalid output.
+    expect(log).toHaveBeenCalledTimes(2);
     expect(log.mock.calls[0][0]).toMatchObject({
       kind: "varieties",
       status: "error",
@@ -285,5 +331,262 @@ describe("the ai_call log", () => {
     );
     const { aiCallId } = await recommendCrops({ client, ...base });
     expect(aiCallId).toBeNull();
+  });
+});
+
+describe("the output retry", () => {
+  const logger = () =>
+    vi
+      .fn<AiCallLogger>()
+      .mockResolvedValueOnce({ id: "call_1" })
+      .mockResolvedValueOnce({ id: "call_2" });
+
+  const BAD_CROPS = { top: [{ cropId: "banane" }], excluded: [] };
+  const GOOD_CROPS = toolReply(CROP_TOOL_NAME, cropRecommendationFixture);
+  const GOOD_VARIETIES = toolReply(VARIETY_TOOL_NAME, FULL_WHEAT_RANKING);
+
+  it("feeds the validation issues back as an is_error tool_result and succeeds on the second call", async () => {
+    const { client, create } = sequenceClient(
+      toolReply(CROP_TOOL_NAME, BAD_CROPS),
+      GOOD_CROPS,
+    );
+
+    const { result } = await recommendCrops({ client, ...base });
+    expect(result.top[0].cropId).toBe("grau_toamna");
+    expect(create).toHaveBeenCalledTimes(2);
+
+    const turns = turnsOf(create.mock.calls[1][0]);
+    expect(turns).toHaveLength(3);
+    expect(turns[0].role).toBe("user");
+
+    // The failed assistant turn is replayed as request blocks.
+    expect(turns[1].role).toBe("assistant");
+    expect(blocksOf(turns[1])).toEqual([
+      { type: "tool_use", id: "t1", name: CROP_TOOL_NAME, input: BAD_CROPS },
+    ]);
+
+    // …and answered, first block first, with the validation issues.
+    expect(turns[2].role).toBe("user");
+    const [toolResult] = toolResultsOf(turns[2]);
+    expect(blocksOf(turns[2])[0]).toBe(toolResult);
+    expect(toolResult).toMatchObject({ tool_use_id: "t1", is_error: true });
+    expect(String(toolResult.content)).toContain("failed validation");
+    expect(String(toolResult.content)).toContain("invalid_value");
+    expect(String(toolResult.content)).toContain(
+      `Call ${CROP_TOOL_NAME} again, exactly once`,
+    );
+
+    // The cached prefix and the forcing are untouched, so attempt 2 reads cache.
+    const first = create.mock.calls[0][0] as Anthropic.MessageCreateParams;
+    const second = create.mock.calls[1][0] as Anthropic.MessageCreateParams;
+    expect(second.tool_choice).toEqual(first.tool_choice);
+    expect(second.system).toEqual(first.system);
+    expect(second.tools).toEqual(first.tools);
+    expect(
+      (second.system as Anthropic.TextBlockParam[])[1].cache_control,
+    ).toEqual({ type: "ephemeral" });
+  });
+
+  it("tells the model to stop answering in prose when it made no tool call", async () => {
+    const { client, create } = sequenceClient(
+      reply([{ type: "text", text: "Grâu de toamnă.", citations: null }]),
+      GOOD_CROPS,
+    );
+
+    const { result } = await recommendCrops({ client, ...base });
+    expect(result.top[0].cropId).toBe("grau_toamna");
+
+    const turns = turnsOf(create.mock.calls[1][0]);
+    expect(blocksOf(turns[1])).toEqual([
+      { type: "text", text: "Grâu de toamnă." },
+    ]);
+    expect(toolResultsOf(turns[2])).toHaveLength(0);
+    expect(blocksOf(turns[2])).toEqual([
+      { type: "text", text: expect.stringContaining("did not call") },
+    ]);
+  });
+
+  it("retries a candidate-rule failure as the invalid-arguments shape", async () => {
+    const offSeason = {
+      top: [{ ...cropRecommendationFixture.top[0], cropId: "porumb" }],
+      excluded: [],
+    };
+    const { client, create } = sequenceClient(
+      toolReply(CROP_TOOL_NAME, offSeason),
+      GOOD_CROPS,
+    );
+
+    const { result } = await recommendCrops({ client, ...base });
+    expect(result.top[0].cropId).toBe("grau_toamna");
+    expect(create).toHaveBeenCalledTimes(2);
+    const [toolResult] = toolResultsOf(turnsOf(create.mock.calls[1][0])[2]);
+    expect(String(toolResult.content)).toContain("candidate rule");
+  });
+
+  it("retries the variety ranking for invalid arguments", async () => {
+    const { client, create } = sequenceClient(
+      toolReply(VARIETY_TOOL_NAME, { cropId: "grau_toamna" }),
+      GOOD_VARIETIES,
+    );
+
+    const { result } = await rankVarieties({
+      client,
+      ...base,
+      cropId: "grau_toamna",
+    });
+    expect(result.ranked).toHaveLength(5);
+    expect(create).toHaveBeenCalledTimes(2);
+    const [toolResult] = toolResultsOf(turnsOf(create.mock.calls[1][0])[2]);
+    expect(String(toolResult.content)).toContain(
+      `The ${VARIETY_TOOL_NAME} arguments failed validation`,
+    );
+  });
+
+  it("retries the variety ranking for a prose answer", async () => {
+    const { client, create } = sequenceClient(
+      reply([{ type: "text", text: "Glosa.", citations: null }]),
+      GOOD_VARIETIES,
+    );
+
+    const { result } = await rankVarieties({
+      client,
+      ...base,
+      cropId: "grau_toamna",
+    });
+    expect(result.ranked).toHaveLength(5);
+    expect(blocksOf(turnsOf(create.mock.calls[1][0])[2])).toEqual([
+      { type: "text", text: expect.stringContaining(VARIETY_TOOL_NAME) },
+    ]);
+  });
+
+  it("answers every tool_use in the failed turn and names the wrong tool", async () => {
+    const wrongThenBad = reply([
+      {
+        type: "tool_use",
+        id: "t0",
+        name: VARIETY_TOOL_NAME,
+        input: {},
+      } as Anthropic.ToolUseBlock,
+      {
+        type: "tool_use",
+        id: "t1",
+        name: CROP_TOOL_NAME,
+        input: BAD_CROPS,
+      } as Anthropic.ToolUseBlock,
+    ]);
+    const { client, create } = sequenceClient(wrongThenBad, GOOD_CROPS);
+
+    await recommendCrops({ client, ...base });
+
+    const results = toolResultsOf(turnsOf(create.mock.calls[1][0])[2]);
+    expect(results.map((r) => r.tool_use_id)).toEqual(["t0", "t1"]);
+    expect(results.every((r) => r.is_error)).toBe(true);
+    expect(results[0].content).toBe(
+      `Wrong tool. Call ${CROP_TOOL_NAME} instead.`,
+    );
+    expect(String(results[1].content)).toContain("failed validation");
+  });
+
+  it("numbers the two ai_call rows 1 and 2 and returns the row that answered", async () => {
+    const { client } = sequenceClient(
+      toolReply(CROP_TOOL_NAME, BAD_CROPS),
+      GOOD_CROPS,
+    );
+    const log = logger();
+
+    const { aiCallId } = await recommendCrops({ client, ...base, log });
+
+    expect(aiCallId).toBe("call_2");
+    expect(log).toHaveBeenCalledTimes(2);
+    expect(log.mock.calls[0][0]).toMatchObject({
+      attempt: 1,
+      status: "error",
+      errorName: "AiOutputError",
+    });
+    expect(log.mock.calls[1][0]).toMatchObject({
+      attempt: 2,
+      status: "ok",
+      errorName: null,
+    });
+  });
+
+  it("does not retry a max_tokens truncation and names it in the row", async () => {
+    const truncated = endedWith(
+      toolReply(CROP_TOOL_NAME, BAD_CROPS),
+      "max_tokens",
+    );
+    const { client, create } = sequenceClient(truncated, GOOD_CROPS);
+    const log = logger();
+
+    const error = await recommendCrops({ client, ...base, log }).catch(
+      (e: unknown) => e,
+    );
+
+    expect(error).toBeInstanceOf(AiOutputTruncatedError);
+    expect(error).toBeInstanceOf(AiOutputError);
+    expect(create).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log.mock.calls[0][0]).toMatchObject({
+      attempt: 1,
+      status: "error",
+      errorName: "AiOutputTruncatedError",
+    });
+  });
+
+  it("rethrows a second failure, leaving two error rows", async () => {
+    const { client, create } = fakeClient(toolReply(CROP_TOOL_NAME, BAD_CROPS));
+    const log = logger();
+
+    await expect(
+      recommendCrops({ client, ...base, log }),
+    ).rejects.toBeInstanceOf(AiOutputError);
+
+    expect(create).toHaveBeenCalledTimes(2);
+    expect(log).toHaveBeenCalledTimes(2);
+    expect(log.mock.calls.map(([row]) => [row.attempt, row.status])).toEqual([
+      [1, "error"],
+      [2, "error"],
+    ]);
+  });
+
+  it("does not retry an API throw — the SDK already did", async () => {
+    const failure = new Error("overloaded");
+    failure.name = "APIError";
+    const create = vi.fn().mockRejectedValue(failure);
+    const log = logger();
+
+    await expect(
+      recommendCrops({ client: { messages: { create } }, ...base, log }),
+    ).rejects.toBe(failure);
+
+    expect(create).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports one AttemptTrace per API call", async () => {
+    const { client } = sequenceClient(
+      toolReply(CROP_TOOL_NAME, BAD_CROPS),
+      GOOD_CROPS,
+    );
+    const traces: AttemptTrace[] = [];
+
+    await recommendCrops({
+      client,
+      ...base,
+      onAttempt: (trace) => traces.push(trace),
+    });
+
+    expect(traces).toHaveLength(2);
+    expect(traces[0]).toMatchObject({
+      attempt: 1,
+      stopReason: "tool_use",
+      errorName: "AiOutputError",
+    });
+    expect(traces[1]).toMatchObject({
+      attempt: 2,
+      stopReason: "tool_use",
+      errorName: null,
+    });
+    expect(traces.every((t) => t.durationMs >= 0)).toBe(true);
   });
 });

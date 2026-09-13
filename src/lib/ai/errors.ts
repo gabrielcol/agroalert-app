@@ -22,6 +22,22 @@ export class AiOutputError extends Error {
   }
 }
 
+/**
+ * The model ran out of output tokens mid-answer (`stop_reason: "max_tokens"`),
+ * so the tool arguments are truncated JSON. A subclass of `AiOutputError`: the
+ * router still maps it to `AI_INVALID_OUTPUT`, but it is told apart in the
+ * `ai_call` row's `errorName` and is deliberately NOT retried — the identical
+ * request would truncate identically (issue 0018).
+ */
+export class AiOutputTruncatedError extends AiOutputError {
+  constructor(toolName: string) {
+    super(
+      `The model hit max_tokens before finishing the ${toolName} arguments.`,
+    );
+    this.name = "AiOutputTruncatedError";
+  }
+}
+
 /** The Weather Brief could not be produced (Open-Meteo down, rate-limited). */
 export class WeatherUnavailableError extends Error {
   constructor(cause?: unknown) {
