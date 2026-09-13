@@ -339,6 +339,34 @@ describe("enforceVarietyCoverage", () => {
       ),
     ).toThrow(/omitted/);
   });
+
+  // Issue 0021: `uniqueItems` does not survive `toStrictSchema`, and live
+  // Haiku 4.5 runs repeated a variety, which collided the soi screen's keys.
+  it("keeps only the first occurrence of a repeated variety", () => {
+    const ranked = WHEAT_VARIETIES.map((name, i) => ({
+      varietyName: name,
+      fit: 90 - i * 10,
+      reasons: ["Motiv."],
+    }));
+    const withRepeat = {
+      cropId: "grau_toamna" as const,
+      // The last name again, as the model returned it: [..., Voinic, Voinic].
+      ranked: [
+        ...ranked,
+        { varietyName: "Voinic", fit: 5, reasons: ["Duplicat."] },
+      ],
+    };
+
+    const result = enforceVarietyCoverage(withRepeat, "grau_toamna");
+
+    expect(result.ranked.map((v) => v.varietyName)).toEqual(WHEAT_VARIETIES);
+    // The kept entry is the first one, not the repeat.
+    expect(result.ranked.at(-1)).toEqual({
+      varietyName: "Voinic",
+      fit: 50,
+      reasons: ["Motiv."],
+    });
+  });
 });
 
 describe("the ai_call log", () => {

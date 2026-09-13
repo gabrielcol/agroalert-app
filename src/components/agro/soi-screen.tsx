@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { Info } from "lucide-react";
 
 import { ChoiceCard } from "@/components/agro/choice-card";
 import { PhoneHeader } from "@/components/agro/phone-header";
@@ -17,6 +18,8 @@ import {
 import { StepHeading } from "@/components/agro/step-heading";
 import { StickyBar } from "@/components/agro/sticky-bar";
 import { FactBadge, SuccessBadge } from "@/components/agro/badges";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { planStepPath } from "@/lib/agro/plan-steps";
 import {
   WIZARD_PARAMS,
@@ -44,6 +47,15 @@ export function SoiScreen() {
   const cropId = cropIdFromParam(params.get(WIZARD_PARAMS.crop));
   const ready = Boolean(profileId && recommendationId && cropId);
   const trpc = useTRPC();
+  /**
+   * Where the not-ready notice sends the farmer: back to the crop step when we
+   * at least know the parcel, to the start of the wizard otherwise. The same
+   * destination the redirect below aims for, so the notice is never a dead end
+   * if that navigation is slow or fails.
+   */
+  const backHref = profileId
+    ? wizardPath("cultura", { profile: profileId })
+    : planStepPath("teren");
 
   useEffect(() => {
     if (!profileId) router.replace(planStepPath("teren"));
@@ -93,6 +105,30 @@ export function SoiScreen() {
 
         {query.isPending && ready && <RecommendationSkeleton />}
 
+        {/*
+          Without profile, rec and crop the query is disabled and nothing is in
+          flight, so this is the only thing between the heading and the
+          disabled CTA — it must never be nothing (issue 0021). The effect above
+          is redirecting meanwhile; the notice carries the same way back.
+        */}
+        {!ready && (
+          <Alert className="mt-5" data-testid="soi-not-ready">
+            <Info />
+            <AlertTitle>{s.notReady.title}</AlertTitle>
+            <AlertDescription>
+              <p>{s.notReady.description}</p>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="mt-3 w-fit"
+              >
+                <Link href={backHref}>{s.notReady.action}</Link>
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {query.isError && (
           <RetryScreen
             title={t.agro.cultura.recommendation.retryTitle}
@@ -114,7 +150,9 @@ export function SoiScreen() {
         {query.data && ranked.length > 0 && (
           <ol className="mt-5 flex flex-col gap-3">
             {ranked.map((variety, index) => (
-              <li key={variety.varietyName}>
+              // The index keeps the key unique even if a duplicate name slips
+              // past `enforceVarietyCoverage` (issue 0021).
+              <li key={`${variety.varietyName}-${index}`}>
                 <ChoiceCard
                   selected={variety.varietyName === selected}
                   onSelect={() => setPicked(variety.varietyName)}
