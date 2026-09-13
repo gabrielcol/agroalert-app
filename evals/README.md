@@ -9,11 +9,12 @@ exists.
 
 Demo confidence, nothing more. Before the hackathon demo we want to be able to
 change a prompt or a model and check the result against something other than a
-vibe. This folder is the **dataset only: there is no runner**. Nothing in the
-app imports it, no test executes it, and no model output has ever been recorded
-here. Wiring a harness that actually calls Claude is a separate, later task; the
-value delivered now is that the expectations exist, are reviewed and are frozen
-alongside inputs that cannot drift.
+vibe. The dataset is the frozen half: expectations written down before the
+answer existed, alongside inputs that cannot drift. Since issue 0022 there are
+two ways to use it — a **static suite** that keeps the dataset honest on every
+`bun run test`, and an **opt-in live runner** that spends tokens and measures a
+model against it. No model output is recorded in this folder: a run writes its
+report to `evals/results/`, which is gitignored.
 
 ## Layout
 
@@ -23,6 +24,10 @@ evals/
   briefs/              frozen Weather Briefs, one JSON file per brief
     SUMMARY.md         generated table of every brief's headline numbers
   cases/               the cases, one JSON file per case
+  dataset.test.ts      the static suite: every brief and every case
+  run.ts               the live runner (`bun run eval`)
+  lib/                 case schema, loader, static checks, assertions
+  results/             JSON reports written by a run (gitignored)
 ```
 
 - `evals/briefs/*.json` are written by `bun run capture:eval-briefs`
@@ -33,6 +38,41 @@ evals/
   with a `notes` field saying exactly what was derived.
 - `evals/cases/*.json` are hand-authored. 26 of them: 20 Crop Recommendation
   cases and 6 Variety Recommendation cases.
+
+## Running
+
+Two entry points, and only the second one costs anything:
+
+```bash
+bun run test                      # the static suite, zero model tokens
+bun run eval                      # the live runner: calls Claude on all 26 cases
+bun run eval --filter reviga --kind crops --model claude-haiku-4-5 --concurrency 2
+```
+
+`bun run test` includes `evals/dataset.test.ts`, which parses every brief and
+runs every check under "Validating the dataset" over every case. It is the
+guard against dataset rot: a recapture, a dictionary rebuild or a hand edit that
+invalidates a case fails the suite instead of producing a meaningless
+measurement later.
+
+`bun run eval` (`evals/run.ts`) is opt-in. Flags:
+
+| flag                | default                              | effect                              |
+| ------------------- | ------------------------------------ | ----------------------------------- |
+| `--filter <substr>` | none                                 | only cases whose `id` contains it   |
+| `--kind crops`      | both                                 | `crops` or `varieties` cases only   |
+| `--model <id>`      | `$AI_MODEL`, else `claude-haiku-4-5` | the model asked                     |
+| `--concurrency <n>` | `2`                                  | how many cases run at the same time |
+
+It reads `ANTHROPIC_API_KEY` from the environment (bun loads `.env` itself).
+Output is one line per case as it finishes — `PASS <id> (12.3s, 1 attempt)`, or
+`FAIL` followed by the indented issues and the case's `rationale` — then a
+`passed/total` tally, then the path of a JSON report written to
+`evals/results/<timestamp>-<model>.json` (gitignored) holding every result, its
+attempts and the parsed output, so a failure can be re-read without re-running.
+
+Exit codes: `0` every selected case passed, `1` at least one failed (or no case
+matched the flags), `2` no `ANTHROPIC_API_KEY` — in which case nothing is called.
 
 ## Case schema
 
@@ -94,6 +134,12 @@ Four global invariants apply to every crop case:
    `recommendedVarietyIds` exists in that crop's dictionary varieties.
 4. Fit and confidence sanity: `fit` strictly descending in `top`; `confidence`
    is not `high` on a case flagged `lowData: true`.
+
+Since issue 0020 the model is only asked for the candidates it leaves out and
+`completeExcluded` (src/lib/ai/recommend.ts) fills the rest of the dictionary in
+server-side, so invariant 1's "exactly once" clause is asserted on the result
+`recommendCrops` returns — which still satisfies it — rather than on the raw tool
+call.
 
 Variety invariants: output parses with `varietyRecommendationSchema`; `ranked`
 contains exactly the crop's dictionary varieties, none omitted, none added; fit
@@ -207,10 +253,10 @@ change the answer.
 
 ## Validating the dataset
 
-A throwaway script was run against every case while the dataset was authored;
-it is not committed, because there is no runner to hang it off yet. A future
-runner should perform the same checks before it calls any model — they are all
-static and catch the mistakes that make a case meaningless:
+These checks live in `evals/lib/static-checks.ts` (`staticIssues`) and run in two
+places: `evals/dataset.test.ts` applies them to every case on every `bun run
+test`, and the live runner applies them to a case before it spends a call on it.
+They are all static, and they catch the mistakes that make a case meaningless:
 
 - file name equals `id`;
 - the referenced brief file exists and `brief.today` equals the case's `today`;
@@ -233,29 +279,38 @@ static and catch the mistakes that make a case meaningless:
   carry no `mustInclude`, `mustExclude` or `fitOrder`;
 - `kind`, `category`, `title` and `rationale` are present and well-formed.
 
-At the time of writing, all 26 cases pass all of the above.
+Each failure is reported as a sentence naming the offending value, so the suite
+says which case broke and why. All 26 cases pass all of the above.
 
-## Sketch of a future runner
+## The runner
 
-Five lines, once someone wants to spend model tokens:
+`evals/run.ts`, five steps per case:
 
-1. Read the case and its brief; build a `FieldProfile` from `case.profile` plus
-   a dummy `id` / `createdAt`.
-2. Build a service with `createRecommendationService` (src/lib/ai/service.ts),
-   injecting `today: () => case.today` and a `weatherBriefSource` that ignores
-   its arguments and returns `brief.brief`.
-3. Call `service.crops(profile)` — or, for a varieties case, `service.crops`
-   then `service.varieties({ profile, brief, cropId: case.cropId })`.
-4. Apply the invariants above to the parsed result.
-5. Apply the case's `expect` constraints, and report per case which constraint
-   failed, with the `rationale` as the explanation of why it should have held.
+1. `staticIssues` first. A case that fails it is reported failed and never
+   reaches the model: a broken case buys a meaningless measurement.
+2. Read the case's brief and build a `FieldProfile` from `case.profile` plus a
+   dummy `id` (`eval-<case.id>`) and `createdAt`.
+3. Call `recommendCrops` from `src/lib/ai/recommend.ts` directly, with the
+   frozen brief, `case.today` and an `Anthropic` client built here (60 s
+   timeout, one retry — the same values as `src/lib/ai/client.ts`). A varieties
+   case makes the crops call first, so the run mirrors what the product does,
+   then calls `rankVarieties` with `case.cropId`. The service in
+   `src/lib/ai/service.ts` is deliberately bypassed: it pulls in `@/env`, the
+   database and a `server-only` guard, none of which belong in a CLI.
+4. Apply the invariants above to the parsed result
+   (`evals/lib/assertions.ts`).
+5. Apply the case's `expect` constraints and report, per case, which constraint
+   failed — with the `rationale` as the explanation of why it should have held.
+
+An error from a call (`AiOutputError`, a timeout) is that case's failure, named
+and reported, not the end of the run.
 
 ## Known gaps
 
-- **No runner.** Nothing executes these cases. Every claim in this folder is a
-  claim about what a correct answer would look like, not a measurement.
-- **No real model output has ever been recorded here.** The cases were written
-  from the briefs and the dictionary, before any answer existed, on purpose.
+- **No real model output is recorded here.** The cases were written from the
+  briefs and the dictionary before any answer existed, on purpose, and a run's
+  report goes to the gitignored `evals/results/`. There is no committed
+  measurement to compare a new model against — only the constraints.
 - **ADR 0002's source-quoting rule is not evaluated.** The compact dictionary
   the model is shown has the `source` field stripped, so a recommendation
   cannot quote one and the dataset cannot assert that it did. Encoding the rule
@@ -295,11 +350,14 @@ so after a recapture:
 
 Run the checks under "Validating the dataset" after any recapture.
 
-## Test exemption
+## Tests
 
-Per AGENTS.md rule 3, this dataset is exempt from unit and e2e tests: it is data
-and documentation with no runtime surface. Nothing imports `evals/`, and no
-route, procedure or component changes. There is no runner, so there is nothing
-to unit-test that would not be testing `JSON.parse`. The validation described
-above was run by hand while authoring; when the runner lands, it should ship
-with tests of its own.
+The dataset has a static suite (`evals/dataset.test.ts`: every brief, every case,
+every check above) and the runner's pure seams have unit tests of their own —
+`evals/lib/romanian.test.ts`, `static-checks.test.ts`, `assertions.test.ts` and
+`run.test.ts`, the last driving `runCase` with a fake `MessagesClient` so no test
+touches the network. All of it runs in `bun run test`.
+
+**e2e exemption** (AGENTS.md rule 3): `evals/` is developer tooling with no
+runtime surface — no route, procedure or component changes, and nothing in
+`src/` imports it — so there is no Playwright spec to write.

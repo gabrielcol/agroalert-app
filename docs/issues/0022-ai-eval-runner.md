@@ -1,5 +1,5 @@
 ---
-status: In Progress
+status: Done
 branch: feat/ai-eval-runner
 created: 2026-09-13
 ---
@@ -41,21 +41,29 @@ The dataset predates issue 0020 (the `excluded` list is now completed server-sid
 `completeExcluded`), so invariant 1 — every non-top dictionary crop under `excluded`
 exactly once — is asserted on the parsed result, which still satisfies it.
 
+**Numbering.** Filed as 0021 and renumbered to 0022: a parallel session filed the
+variety-screen dedupe issue under 0021 at the same time.
+
+**First baseline.** `bun run eval --model claude-haiku-4-5` on 2026-09-13: 12/26 passed
+(8/20 crop, 4/6 variety). The failures are model behaviour, not harness bugs: soil-excluded
+crops in the top (12), `high` confidence on low-data cases (4), duplicate variety names in
+`ranked` (3), a `mustInclude` crop missing (4), one merged sowing window, two fit orderings.
+
 **Test note.** Vitest covers the static suite and the pure assertion/static-check
 functions. **e2e exemption** (AGENTS.md rule 3): no route, procedure or component changes;
 this is developer tooling with no runtime surface.
 
 ## Acceptance criteria
 
-- [ ] `bun run test` runs `evals/dataset.test.ts`: 9 briefs and 26 cases pass the static
+- [x] `bun run test` runs `evals/dataset.test.ts`: 9 briefs and 26 cases pass the static
       checks; a deliberately broken case (wrong `today`, non-candidate id, invented
       variety) fails with a readable message.
-- [ ] `evals/lib/assertions.ts` implements the README invariants and every `expect` key;
+- [x] `evals/lib/assertions.ts` implements the README invariants and every `expect` key;
       unit tests cover each function with mutated fixtures.
-- [ ] `bun run eval` with no API key exits 2 with a hint and makes no call; with a key it
+- [x] `bun run eval` with no API key exits 2 with a hint and makes no call; with a key it
       runs the selected cases, prints per-case results and a tally, writes
       `evals/results/<timestamp>-<model>.json` and exits 1 on any failure.
-- [ ] `evals/README.md` no longer says "there is no runner" and documents the test file
+- [x] `evals/README.md` no longer says "there is no runner" and documents the test file
       and `bun run eval`.
-- [ ] Gate green: `bun run typecheck`, `bun run lint`, `bunx prettier --check .`,
+- [x] Gate green: `bun run typecheck`, `bun run lint`, `bunx prettier --check .`,
       `bun run test`.
