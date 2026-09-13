@@ -4,6 +4,22 @@ _Updated: 2026-09-13_
 
 ## Now
 
+- Issue 0020 (Haiku crops step: smaller output, forgiving parse, readable failures) is on
+  `fix/haiku-crops-step`, cut from `main` after 0018. Cause of the 30–60 s Haiku crops
+  calls and the `AI_INVALID_OUTPUT`: the prompt demanded a Romanian sentence for all 19
+  non-top crops under `excluded`, and the Zod issues were not logged. Now the model writes
+  exclusions only for the candidates it leaves out and `completeExcluded` fills the rest
+  server-side (reason names the next sowing window); `normalizeCropInput` rounds `fit`,
+  trims lists and defaults missing keys before Zod; both tools are `strict: true` with a
+  strict-subset schema and field descriptions; `max_tokens` is 16000; the
+  `[recommendation]` line and `ai_call.errorMessage` carry the Zod issues. **Verified
+  live on Haiku 4.5** (Reviga brief): crops 18–22 s warm, varieties 17 s, validated first
+  try. Gate green; `e2e/ai-excluded-list.spec.ts` written, **not run**. Deploy follow-up:
+  keep `AI_MODEL=claude-haiku-4-5`; the first call after deploy pays the cache write
+  (~35 s), later ones read it.
+- Issue 0019 (AI eval dataset) is **parked In Progress** on `feat/ai-eval-dataset` (nine
+  frozen briefs and the capture script committed; `evals/cases/` and `evals/README.md`
+  still to do). Its branch predates 0018 and 0020: rebase or merge `main` before resuming.
 - Issue 0018 (AI call timeout, one output retry, self-explaining logs) is **Done**: merged
   into `main` as 75341bc on 2026-09-13 and pushed, without a PR (merged locally by the
   user; `gh` is not logged in on this machine). The Anthropic client is built with
@@ -115,8 +131,9 @@ undefined (reading 'top')` in the browser after the redirect. The spec still pas
   `forecast_days=16`, the 16th local day is all-null between local midnight and ~03:00.
   `buildForecast` drops trailing null days (min 7, max 16); `forecastSchema.days` is a
   range, not `.length(16)`. Asking for 17 days does not help.
-- `AI_MODEL` must be a Sonnet- or Opus-class id: the recommendation forces `tool_choice`,
-  which Fable/Mythos ids reject with 400. Default is `claude-sonnet-5`.
+- `AI_MODEL` may be `claude-haiku-4-5` (fastest, verified live in issue 0020) or a
+  Sonnet-/Opus-class id; not Fable/Mythos, which reject the forced `tool_choice` and the
+  strict tool schema with 400. Default is `claude-sonnet-5`.
 - `ANTHROPIC_API_KEY` is optional at boot (so `bun dev` and Playwright start without it)
   and required at recommendation time; the error surfaces as the retry screen.
 - Archive calls use Open-Meteo's default model blend (`ERA5-Land/ERA5`):

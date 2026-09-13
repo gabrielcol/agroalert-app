@@ -147,6 +147,7 @@ describe("the per-step log line", () => {
       attempts: 1,
       stopReasons: ["tool_use"],
       errorName: null,
+      issues: null,
     });
     expect(payload().weatherBriefMs).toBeGreaterThanOrEqual(0);
     expect(payload().totalMs).toBeGreaterThanOrEqual(0);
@@ -166,6 +167,11 @@ describe("the per-step log line", () => {
       stopReasons: ["tool_use", "tool_use"],
       errorName: "AiOutputError",
     });
+    // One truncated Zod issues string per attempt (issue 0020): "top" missing.
+    const issues = payload().issues as (string | null)[];
+    expect(issues).toHaveLength(2);
+    expect(issues[0]).toMatch(/"path":\["top"\]/);
+    expect(issues[1]).toMatch(/"path":\["top"\]/);
   });
 
   it("logs zero attempts when the Weather Brief fails before the model", async () => {

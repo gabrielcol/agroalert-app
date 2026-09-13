@@ -3,6 +3,41 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 11:32 (EEST)** — `fix/haiku-crops-step` — The crops step on Haiku is
+  **half the output, forgiving to parse, and readable when it fails**
+  ([`docs/issues/0020-haiku-crops-step-speed-and-validation.md`](docs/issues/0020-haiku-crops-step-speed-and-validation.md)).
+  With `AI_MODEL=claude-haiku-4-5` the box logged 30–60 s crops calls and one
+  `AI_INVALID_OUTPUT` after two `tool_use` attempts. Diagnosis: the prompt demanded a
+  Romanian sentence for **every** non-top dictionary crop under `excluded` (19 entries in
+  September), i.e. 2–3k output tokens, and the Zod issues were logged nowhere readable;
+  `max_tokens` was never hit. Changes: (1) `src/lib/ai/prompts.ts` and the tool description
+  ask for `excluded` entries **only for candidate crops the model leaves out**, and
+  `completeExcluded` in `src/lib/ai/recommend.ts` fills every other dictionary crop in,
+  once, in dictionary order, with a Romanian reason naming its next sowing window (new
+  `nextSowingWindow` / `formatDayRo` in `src/lib/ai/candidates.ts`); the stored
+  `CropRecommendation` and the cultura screen are unchanged. Reasons/risks are now asked
+  as 2–3 / 1–2 sentences of ≤ 15 words. (2) `normalizeCropInput` /
+  `normalizeVarietyInput` in `src/lib/ai/tools.ts` run before Zod: `fit` rounded and
+  clamped to 0..100, `reasons` / `risks` / `recommendedVarietyIds` cut to 5, `top` to 3,
+  missing `risks` / `recommendedVarietyIds` / `excluded` defaulted; a wrong crop id still
+  fails and takes the 0018 correction retry. (3) The recommendation schema carries
+  `.describe()` texts that reach the tool JSON schema, and both tools are declared
+  `strict: true` — the schema is rewritten to the strict subset (no numeric / length /
+  item bounds, ISO `pattern` → `format: "date"`, `additionalProperties: false`), Zod still
+  enforces the bounds. **Verified live** against Haiku 4.5 on the frozen Reviga brief:
+  crops 18–22 s warm (was 30–60 s), 1.1k output tokens, validated first try; varieties
+  17 s. (4) `max_tokens` 8000 → 16000 on both calls (insurance; the 60 s timeout stays).
+  (5) `AttemptTrace.issues` carries the Zod issues as JSON truncated to 1500 chars; the
+  `[recommendation]` line gains `issues` (per-attempt array, `null` when clean) and an
+  `AiOutputError` row's `ai_call.errorMessage` ends with `Issues: [...]`. README,
+  `.env.example` and STATUS now say `AI_MODEL` may be `claude-haiku-4-5` or a Sonnet/Opus
+  id. Tests: `src/lib/ai/tools.test.ts` (strict schema shape, normalisation),
+  `src/lib/ai/recommend.test.ts` (server-filled `excluded`, forgiving parse, unknown id
+  still rejected, 16000 / strict, issues in the row and the trace),
+  `src/lib/ai/candidates.test.ts` (`nextSowingWindow`, `formatDayRo`),
+  `src/lib/ai/service.test.ts` (`issues` on the log line). New
+  `e2e/ai-excluded-list.spec.ts` — **written but not run** (AGENTS.md rule 3: e2e runs
+  pre-deploy). Issue 0019 (eval dataset) is parked on its branch meanwhile.
 - **2026-09-13 10:38 (EEST)** — `fix/ai-call-timeout-and-retry` — AI calls are **bounded,
   retried once on a bad output, and self-explaining**
   ([`docs/issues/0018-ai-call-timeout-and-retry.md`](docs/issues/0018-ai-call-timeout-and-retry.md)).

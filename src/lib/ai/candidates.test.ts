@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { candidateCropIds, qualifyingWindows } from "./candidates";
+import {
+  candidateCropIds,
+  formatDayRo,
+  nextSowingWindow,
+  qualifyingWindows,
+} from "./candidates";
 
 function crop(id: string, windows: { from: string; to: string }[]) {
   return {
@@ -67,5 +72,32 @@ describe("46-day candidate rule", () => {
     expect(ids).toContain("orz_toamna");
     expect(ids).not.toContain("porumb");
     expect(ids).not.toContain("floarea_soarelui");
+  });
+});
+
+describe("nextSowingWindow (issue 0020)", () => {
+  it("answers the earliest window opening strictly after today, across zones", () => {
+    const crop = {
+      id: "x",
+      calendar: {
+        sowing_windows: [
+          { zone: "north", from: "04-20", to: "04-30" },
+          { zone: "south", from: "04-01", to: "04-20" },
+          { zone: "open-now", from: "09-01", to: "09-30" },
+        ],
+      },
+    };
+    // The September window is open today, so it does not count as "next".
+    expect(nextSowingWindow(crop, TODAY)).toEqual({
+      zone: "south",
+      from: "2027-04-01",
+      to: "2027-04-20",
+    });
+    expect(nextSowingWindow({ id: "none" }, TODAY)).toBeNull();
+  });
+
+  it("formats a day in Romanian", () => {
+    expect(formatDayRo("2027-04-01")).toBe("1 aprilie");
+    expect(formatDayRo("2026-12-25")).toBe("25 decembrie");
   });
 });

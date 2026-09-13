@@ -9,9 +9,11 @@ import {
 import { weatherBriefFixture } from "@/lib/weather/fixture";
 import type { AiCallLogger } from "./call-log";
 import { AiOutputError, AiOutputTruncatedError } from "./errors";
+import { CROP_IDS } from "@/lib/agro/crop-dictionary";
 import {
   enforceCandidateRule,
   enforceVarietyCoverage,
+  excludedReasonFor,
   rankVarieties,
   recommendCrops,
   type AttemptTrace,
@@ -167,9 +169,100 @@ describe("recommendCrops", () => {
     const { client } = fakeClient(toolReply(CROP_TOOL_NAME, withMaize));
     const { result } = await recommendCrops({ client, ...base });
     expect(result.top.map((c) => c.cropId)).toEqual(["grau_toamna"]);
-    expect(result.excluded).toEqual([
-      { cropId: "porumb", reason: expect.stringContaining("46") },
-    ]);
+    // The demotion comes first; the server then fills in the rest (0020).
+    expect(result.excluded[0]).toEqual({
+      cropId: "porumb",
+      reason: expect.stringContaining("46"),
+    });
+    expect(result.excluded).toHaveLength(CROP_IDS.length - 1);
+  });
+
+  it("fills every crop the model did not mention into excluded, once, in dictionary order (issue 0020)", async () => {
+    // The model now writes exclusions only for the candidates it leaves out.
+    const lean = {
+      top: cropRecommendationFixture.top,
+      excluded: [{ cropId: "secara", reason: "Prea puțin căutată aici." }],
+    };
+    const { client } = fakeClient(toolReply(CROP_TOOL_NAME, lean));
+    const { result } = await recommendCrops({ client, ...base });
+
+    const ids = result.excluded.map((e) => e.cropId);
+    expect(ids[0]).toBe("secara"); // the model's own entry stays first
+    expect(new Set(ids).size).toBe(ids.length);
+    expect([...ids, ...result.top.map((c) => c.cropId)].sort()).toEqual(
+      [...CROP_IDS].sort(),
+    );
+    // A candidate the model skipped without a word gets a plain reason...
+    expect(
+      result.excluded.find((e) => e.cropId === "triticale")?.reason,
+    ).toMatch(/primele recomandări/);
+    // ...and a non-candidate names its next sowing window in Romanian.
+    expect(result.excluded.find((e) => e.cropId === "porumb")?.reason).toMatch(
+      /următoarea începe pe \d+ (aprilie|martie)/,
+    );
+    expect(result.excluded.filter((e) => e.cropId === "grau_toamna")).toEqual(
+      [],
+    );
+  });
+
+  it("forgives a non-integer fit, over-long lists, a fourth top crop and a missing risks key (issue 0020)", async () => {
+    const [wheat, barley, rape] = cropRecommendationFixture.top;
+    const sloppy = {
+      top: [
+        {
+          ...wheat,
+          fit: 86.4,
+          reasons: ["a", "b", "c", "d", "e", "f", "g"],
+          risks: undefined,
+          recommendedVarietyIds: undefined,
+        },
+        { ...barley, fit: "78" },
+        { ...rape, fit: 140 },
+        { ...wheat, cropId: "secara" },
+      ],
+      // `excluded` omitted entirely
+    };
+    const { client } = fakeClient(toolReply(CROP_TOOL_NAME, sloppy));
+    const { result } = await recommendCrops({ client, ...base });
+    expect(result.top).toHaveLength(3);
+    expect(result.top[0]).toMatchObject({
+      fit: 86,
+      reasons: ["a", "b", "c", "d", "e"],
+      risks: [],
+      recommendedVarietyIds: [],
+    });
+    expect(result.top[1].fit).toBe(78);
+    expect(result.top[2].fit).toBe(100);
+  });
+
+  it("still rejects an unknown crop id after normalisation", async () => {
+    const { client } = fakeClient(
+      toolReply(CROP_TOOL_NAME, {
+        top: [{ ...cropRecommendationFixture.top[0], cropId: "grau" }],
+        excluded: [],
+      }),
+    );
+    await expect(recommendCrops({ client, ...base })).rejects.toBeInstanceOf(
+      AiOutputError,
+    );
+  });
+
+  it("asks for 16000 output tokens with strict tools", async () => {
+    const { client, create } = fakeClient(
+      toolReply(CROP_TOOL_NAME, cropRecommendationFixture),
+    );
+    await recommendCrops({ client, ...base });
+    const params = create.mock.calls[0][0] as Anthropic.MessageCreateParams;
+    expect(params.max_tokens).toBe(16000);
+    expect((params.tools?.[0] as Anthropic.Tool).strict).toBe(true);
+  });
+});
+
+describe("excludedReasonFor", () => {
+  it("names the next sowing window of a non-candidate", () => {
+    expect(excludedReasonFor("porumb", TODAY)).toMatch(
+      /46 de zile; următoarea începe pe 1 aprilie\.$/,
+    );
   });
 });
 
@@ -323,6 +416,10 @@ describe("the ai_call log", () => {
       outputTokens: 340,
       rawResponse: message,
     });
+    // The Zod issues ride along in the row (issue 0020): "ranked" is missing.
+    expect(log.mock.calls[0][0].errorMessage).toMatch(
+      /failed validation\. Issues: \[.*"ranked".*\]/,
+    );
   });
 
   it("writes nothing and answers a null id when no logger is injected", async () => {
@@ -582,10 +679,13 @@ describe("the output retry", () => {
       stopReason: "tool_use",
       errorName: "AiOutputError",
     });
+    // The failed attempt carries its Zod issues as JSON text (issue 0020).
+    expect(traces[0].issues).toMatch(/^\[.*"path".*\]/);
     expect(traces[1]).toMatchObject({
       attempt: 2,
       stopReason: "tool_use",
       errorName: null,
+      issues: null,
     });
     expect(traces.every((t) => t.durationMs >= 0)).toBe(true);
   });

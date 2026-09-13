@@ -69,6 +69,16 @@ function logStep(payload: Record<string, unknown>): void {
   console.log(`[recommendation] ${JSON.stringify(payload)}`);
 }
 
+/**
+ * The validation issues per attempt (issue 0020), or `null` when no attempt
+ * had any, so a healthy line stays short.
+ */
+function issuesOf(traces: AttemptTrace[]): (string | null)[] | null {
+  return traces.some((t) => t.issues !== null)
+    ? traces.map((t) => t.issues)
+    : null;
+}
+
 /** Today's date in the product timezone, ISO `YYYY-MM-DD`. */
 export function todayInBucharest(now: Date = new Date()): string {
   return new Intl.DateTimeFormat("en-CA", {
@@ -135,6 +145,7 @@ export function createRecommendationService(
           modelMs: traces.map((t) => t.durationMs),
           stopReasons: traces.map((t) => t.stopReason),
           errorName,
+          issues: issuesOf(traces),
         });
       }
     },
@@ -172,6 +183,7 @@ export function createRecommendationService(
           modelMs: traces.map((t) => t.durationMs),
           stopReasons: traces.map((t) => t.stopReason),
           errorName,
+          issues: issuesOf(traces),
         });
       }
     },
