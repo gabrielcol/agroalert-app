@@ -3,6 +3,26 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 03:50 (EEST)** — `fix/start-screen-once-per-session` — The AgroPlan splash
+  now plays **once per browser session**
+  ([`docs/issues/0017-start-screen-once-per-session.md`](docs/issues/0017-start-screen-once-per-session.md)).
+  `HomeScreen` kept the handover in `useState`, so every mount of `/` — a reload, a client
+  navigation back, returning from `/plan/*` — replayed the ~2.25s welcome beat. A new
+  module `src/lib/agro/start-screen-storage.ts` remembers it in `sessionStorage` under
+  `agro.startScreenSeen`: `readStartScreenSeen()` / `markStartScreenSeen()` are both
+  `try`/`catch`-safe and no-op when `window` or storage is unavailable (SSR, private mode —
+  the splash then simply plays every time rather than breaking the page), and
+  `useStartScreenSeen()` exposes the flag through `useSyncExternalStore` with a `false`
+  server snapshot, the same shape as `sowing-plan-storage.ts`. That keeps SSR and the first
+  client render identical (no hydration mismatch) while React swaps in the real value
+  synchronously during hydration; `HomeScreen` still tracks a local `handedOver` so the
+  current mount finishes cleanly even when storage is disabled. The flag is written when
+  the splash calls `onDone`. Behaviour is the same signed in or out — it is a per-session
+  flag, not a per-account one; a new tab or a restarted browser welcomes the farmer again.
+  Tests: `src/components/agro/home-screen.test.tsx` (first visit shows the splash; the flag
+  set upfront renders the dashboard and never the splash; the flag is written after the
+  handover timers fire). `e2e/start-screen.spec.ts` gained a same-session second visit plus
+  a fresh-context check — **written but not run** (AGENTS.md rule 3: e2e runs pre-deploy).
 - **2026-09-13 00:32 (EEST)** — `feat/agroplan-branding` — AgroPlan name, logo, app icon
   and green/amber theme
   ([`docs/issues/0010-agroplan-branding.md`](docs/issues/0010-agroplan-branding.md)).

@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: fix/start-screen-once-per-session
 created: 2026-09-13
 ---
