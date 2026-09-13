@@ -3,6 +3,27 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 14:10 (EEST)** — `fix/variety-screen-dedupe-blank-state` — The variety
+  screen **dedupes the ranking and never renders blank**
+  ([`docs/issues/0021-variety-screen-dedupe-and-blank-state.md`](docs/issues/0021-variety-screen-dedupe-and-blank-state.md)).
+  Two defects behind "the variety screen is empty", neither a token limit. (1)
+  `enforceVarietyCoverage` in `src/lib/ai/recommend.ts` now keeps only the **first
+  occurrence** of each `varietyName` — `uniqueItems` does not survive `toStrictSchema` and
+  3 of 6 live Haiku 4.5 runs repeated a variety, which collided the React keys and marked
+  two cards selected; the coverage check runs on the deduped list, so a repeat no longer
+  masks an omission either. (2) The variety cards in `src/components/agro/soi-screen.tsx`
+  key on `` `${varietyName}-${index}` ``, so a duplicate that slips through cannot collide.
+  (3) With `profile`, `rec` or `crop` missing from the soi URL the query is disabled and
+  nothing rendered between the heading and the disabled CTA — the only truly empty screen.
+  The screen now shows a shadcn `Alert` notice (`data-testid="soi-not-ready"`) with a
+  `Button` back to the crop step, or to `/plan/teren` when the parcel is unknown too,
+  while the existing redirect runs. New `agro.soi.notReady` keys in both locale
+  dictionaries (`en`, `ro`). Tests: `src/lib/ai/recommend.test.ts` (repeated variety kept
+  once, first occurrence wins) and new `src/components/agro/soi-screen.test.tsx` (the
+  not-ready notice renders, its href per missing param, no query fired). New
+  `e2e/soi-missing-params.spec.ts` — **written but not run** (AGENTS.md rule 3: e2e runs
+  pre-deploy).
+
 - **2026-09-13 11:32 (EEST)** — `fix/haiku-crops-step` — The crops step on Haiku is
   **half the output, forgiving to parse, and readable when it fails**
   ([`docs/issues/0020-haiku-crops-step-speed-and-validation.md`](docs/issues/0020-haiku-crops-step-speed-and-validation.md)).
