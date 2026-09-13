@@ -68,7 +68,7 @@ Decisions (agreed with the user, 2026-09-13):
       failure rethrows, leaving two error rows.
 - [ ] Each recommendation step emits exactly one `console.log("[recommendation] " + JSON)`
       line: crops carries `kind, fieldProfileId, model, weatherBriefMs, totalMs, attempts,
-    modelMs[], stopReasons[], errorName`; varieties carries the same minus
+modelMs[], stopReasons[], errorName`; varieties carries the same minus
       `weatherBriefMs`, plus `cropId`. A Weather Brief failure logs `attempts: 0`.
 - [ ] Unit tests (Vitest) cover: the client options and the missing key; the retry for both
       shapes and both steps; the tool_result content; the row numbering and the returned
