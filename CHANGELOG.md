@@ -3,6 +3,40 @@
 Every task, bugfix or modification gets an entry here (newest first). Each entry names the
 **datetime** and the **branch** it was made on.
 
+- **2026-09-13 10:38 (EEST)** — `fix/ai-call-timeout-and-retry` — AI calls are **bounded,
+  retried once on a bad output, and self-explaining**
+  ([`docs/issues/0018-ai-call-timeout-and-retry.md`](docs/issues/0018-ai-call-timeout-and-retry.md)).
+  The deployed wizard showed the retry screen on the first attempt while the user's own
+  retry succeeded; the cause is unproven (no shell on the box), so this both bounds the
+  call and makes the next failure readable. `src/lib/ai/client.ts` now builds the client
+  with `timeout: 60_000` and `maxRetries: 1` (`AI_REQUEST_TIMEOUT_MS` / `AI_MAX_RETRIES`)
+  instead of the SDK's 10-minute, 2-retry default, which is longer than anything in front
+  of the app will wait. `src/lib/ai/recommend.ts` gained `loggedCreateWithRetry`: when the
+  model answers but the output fails validation, the failed assistant turn is replayed as
+  request blocks and answered with one `is_error` `tool_result` per `tool_use` carrying the
+  Zod issues (capped at 4000 chars) — a wrong tool gets "Wrong tool. Call <tool> instead.",
+  a prose answer gets an extra text block — and the tool is asked for once more. `system`
+  (with its `cache_control` breakpoint), `tools` and `tool_choice` are untouched, so
+  attempt 2 reads the same cached prefix. `enforceCandidateRule` / `enforceVarietyCoverage`
+  failures raise `AiOutputError` too and are therefore retried as the "invalid arguments"
+  shape. Not retried: an API throw (the SDK's own retry covers transport) and a new
+  `AiOutputTruncatedError` (`stop_reason: "max_tokens"`, a subclass of `AiOutputError`, so
+  the router still answers `AI_INVALID_OUTPUT`). The "one API call = one `ai_call` row"
+  invariant holds: a retried step writes two rows, numbered by a new `attempt` column
+  (migration `20260913073205_ai_call_attempt`), and the returned `aiCallId` is the row that
+  answered. `src/lib/ai/service.ts` collects an `AttemptTrace` per call and emits one
+  `console.log("[recommendation] " + JSON)` line per step (`kind`, `fieldProfileId`,
+  `model`, `weatherBriefMs` for crops / `cropId` for varieties, `totalMs`, `attempts`,
+  `modelMs[]`, `stopReasons[]`, `errorName`); a Weather Brief failure logs `attempts: 0`.
+  No UI copy changed. Tests: new `src/lib/ai/client.test.ts`; `describe("the output
+retry")` in `src/lib/ai/recommend.test.ts` (both shapes, both steps, the tool_result
+  content, row numbering, truncation and API throws not retried, the second failure
+  rethrowing, the traces); `describe("the per-step log line")` in
+  `src/lib/ai/service.test.ts`; the `attempt` column in `src/lib/ai/call-log.test.ts`; the
+  truncated error mapping in `src/server/trpc/routers/recommendation.test.ts`. New
+  `e2e/ai-retry.spec.ts` — **written but not run** (AGENTS.md rule 3: e2e runs pre-deploy).
+  Note for the deploy: `dev.db` was locked, so the migration was applied with `sqlite3` and
+  its `_prisma_migrations` row written by hand; `bunx prisma migrate status` is clean.
 - **2026-09-13 03:50 (EEST)** — `fix/start-screen-once-per-session` — The AgroPlan splash
   now plays **once per browser session**
   ([`docs/issues/0017-start-screen-once-per-session.md`](docs/issues/0017-start-screen-once-per-session.md)).

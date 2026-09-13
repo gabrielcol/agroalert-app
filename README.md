@@ -176,6 +176,14 @@ the wizard shows its retry screen. `AI_MODEL` (default `claude-sonnet-5`) must
 be a Sonnet- or Opus-class id: the call forces tool use, which Fable/Mythos ids
 reject. Weather data comes from Open-Meteo without a key.
 
+Each Anthropic request is bounded at **60 s** with **one SDK retry** for
+transport failures, and each recommendation step retries **once more** on its
+own when the model answers but the output fails validation — the bad turn and
+the validation issues are fed back and the tool is asked for again — so a step
+can cost up to ~4 minutes in the worst case and writes one `ai_call` row per
+call (`attempt` 1 or 2). Every step logs one `[recommendation] {...}` line with
+its timings, attempts and stop reasons.
+
 ## Renaming
 
 The visible name is one string per dictionary (`app.name` in

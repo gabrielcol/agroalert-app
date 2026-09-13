@@ -1,5 +1,5 @@
 ---
-status: Todo
+status: In Review
 branch: fix/ai-call-timeout-and-retry
 created: 2026-09-13
 ---
@@ -45,38 +45,38 @@ Decisions (agreed with the user, 2026-09-13):
 
 ## Acceptance criteria
 
-- [ ] `createAnthropicClient()` builds the client with `timeout: 60_000` and
+- [x] `createAnthropicClient()` builds the client with `timeout: 60_000` and
       `maxRetries: 1`; it still throws `MissingApiKeyError` when the key is unset.
-- [ ] `AiOutputTruncatedError extends AiOutputError` exists with its own `name`, is raised
+- [x] `AiOutputTruncatedError extends AiOutputError` exists with its own `name`, is raised
       when the response `stop_reason` is `max_tokens`, and still maps to
       `AI_INVALID_OUTPUT` through the router's `toTRPCError` (no router change needed).
-- [ ] `AiCall` has an `attempt Int @default(1)` column with a committed migration, and
+- [x] `AiCall` has an `attempt Int @default(1)` column with a committed migration, and
       `AiCallRecord.attempt` is persisted by the Prisma recorder.
-- [ ] The invariant holds: **exactly one `ai_call` row per Anthropic API call** — a retried
+- [x] The invariant holds: **exactly one `ai_call` row per Anthropic API call** — a retried
       step writes two rows, numbered `attempt: 1` and `attempt: 2`, and the returned
       `aiCallId` is the row of the call that produced the answer.
-- [ ] `recommendCrops` / `rankVarieties` retry **once** on `AiOutputError` (including the
+- [x] `recommendCrops` / `rankVarieties` retry **once** on `AiOutputError` (including the
       `enforceCandidateRule` / `enforceVarietyCoverage` failures) when a message was
       received, by replaying the failed assistant turn and answering every `tool_use` in it
       with a `tool_result` carrying `is_error: true` and the validation issues (capped at
       ~4000 characters); a prose answer with no tool call gets an extra text block telling
       the model to call the tool. The wrong tool is answered with "Wrong tool.".
-- [ ] The retry keeps `system` (with its `cache_control` breakpoint), `tools` and
+- [x] The retry keeps `system` (with its `cache_control` breakpoint), `tools` and
       `tool_choice` unchanged, so attempt 2 reads the same cached prefix.
-- [ ] A truncated (`max_tokens`) answer is **not** retried and is logged with
+- [x] A truncated (`max_tokens`) answer is **not** retried and is logged with
       `errorName: "AiOutputTruncatedError"`. An API throw is **not** retried. A second
       failure rethrows, leaving two error rows.
-- [ ] Each recommendation step emits exactly one `console.log("[recommendation] " + JSON)`
+- [x] Each recommendation step emits exactly one `console.log("[recommendation] " + JSON)`
       line: crops carries `kind, fieldProfileId, model, weatherBriefMs, totalMs, attempts,
-    modelMs[], stopReasons[], errorName`; varieties carries the same minus
+modelMs[], stopReasons[], errorName`; varieties carries the same minus
       `weatherBriefMs`, plus `cropId`. A Weather Brief failure logs `attempts: 0`.
-- [ ] Unit tests (Vitest) cover: the client options and the missing key; the retry for both
+- [x] Unit tests (Vitest) cover: the client options and the missing key; the retry for both
       shapes and both steps; the tool_result content; the row numbering and the returned
       id; truncation not retried; an API throw not retried; the second failure rethrowing;
       the `attempt` column persisted; the log line for crops, varieties, an error and a
       weather failure; the truncated error mapping to `AI_INVALID_OUTPUT`.
-- [ ] An e2e spec (`e2e/ai-retry.spec.ts`) is written — **not run**; the Playwright suite
+- [x] An e2e spec (`e2e/ai-retry.spec.ts`) is written — **not run**; the Playwright suite
       runs before a deploy (AGENTS.md rule 3).
-- [ ] Gate green: typecheck, lint, prettier, Vitest.
-- [ ] `CHANGELOG.md`, `README.md`, `.env.example` and `STATUS.md` record the new timeout,
+- [x] Gate green: typecheck, lint, prettier, Vitest.
+- [x] `CHANGELOG.md`, `README.md`, `.env.example` and `STATUS.md` record the new timeout,
       the SDK retry and the correction retry.
