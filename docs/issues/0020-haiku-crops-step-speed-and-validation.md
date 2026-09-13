@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: fix/haiku-crops-step
 created: 2026-09-13
 ---

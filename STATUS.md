@@ -4,7 +4,7 @@ _Updated: 2026-09-13_
 
 ## Now
 
-- Issue 0020 (Haiku crops step: smaller output, forgiving parse, readable failures) is on
+- Issue 0020 (Haiku crops step: smaller output, forgiving parse, readable failures) is **Done**: merged into `main` as 9d9edb0 on 2026-09-13 (locally, `gh` unauthenticated), from
   `fix/haiku-crops-step`, cut from `main` after 0018. Cause of the 30–60 s Haiku crops
   calls and the `AI_INVALID_OUTPUT`: the prompt demanded a Romanian sentence for all 19
   non-top crops under `excluded`, and the Zod issues were not logged. Now the model writes
