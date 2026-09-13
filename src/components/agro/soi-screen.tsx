@@ -103,8 +103,6 @@ export function SoiScreen() {
           compact
         />
 
-        {query.isPending && ready && <RecommendationSkeleton />}
-
         {/*
           Without profile, rec and crop the query is disabled and nothing is in
           flight, so this is the only thing between the heading and the
@@ -127,6 +125,16 @@ export function SoiScreen() {
               </Button>
             </AlertDescription>
           </Alert>
+        )}
+
+        {/*
+          The varieties model call is the only thing happening on this screen
+          and takes tens of seconds, so the skeleton carries the spinner and
+          the status line too (issue 0022). `isPending` is false the moment the
+          query errors, so the retry screen below renders alone.
+        */}
+        {query.isPending && ready && (
+          <RecommendationSkeleton message={s.ranking.loading} />
         )}
 
         {query.isError && (

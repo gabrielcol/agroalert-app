@@ -238,14 +238,18 @@ export const SOWING_PLAN_LIST_META = {
 
 const DATE_META = { values: { createdAt: ["Date"] } };
 
-export type ProcedureMock =
+export type ProcedureMock = {
+  /** Hold the response back this long, to make a loading state observable. */
+  delayMs?: number;
+} & (
   | {
       ok: true;
       data: unknown;
       /** superjson meta; defaults to a top-level `createdAt` Date, `null` for none. */
       meta?: Json | null;
     }
-  | { ok: false; message: string; code?: string; httpStatus?: number };
+  | { ok: false; message: string; code?: string; httpStatus?: number }
+);
 
 /**
  * Answer tRPC batch calls for the given procedures. Unmatched procedures fall
@@ -277,6 +281,9 @@ export async function mockRecommendation(
       );
     });
     const status = handled.every((m) => m?.ok) ? 200 : 500;
+    // A batch answers as one response, so the slowest mock in it sets the pace.
+    const delay = Math.max(0, ...handled.map((m) => m?.delayMs ?? 0));
+    if (delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
     await route.fulfill({
       status,
       contentType: "application/json",

@@ -1,21 +1,53 @@
 "use client";
 
-import { RefreshCw, TriangleAlert } from "lucide-react";
+import { LoaderCircle, RefreshCw, TriangleAlert } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
-/** Placeholder cards while a recommendation query is in flight. */
-export function RecommendationSkeleton({ count = 3 }: { count?: number }) {
+/**
+ * Placeholder cards while a recommendation query is in flight.
+ *
+ * `message` adds the spinner + status line the loading screen uses (issue
+ * 0022), for a step whose model call is the only thing on screen — without it
+ * a ~20 s wait reads as a broken screen. Opt-in: the crops step already
+ * explains itself on the previous screen, so it keeps the bare cards.
+ */
+export function RecommendationSkeleton({
+  count = 3,
+  message,
+}: {
+  count?: number;
+  message?: string;
+}) {
   return (
-    <ul className="mt-5 flex flex-col gap-3" aria-busy="true">
-      {Array.from({ length: count }, (_, i) => (
-        <li key={i}>
-          <Skeleton className="h-[132px] w-full rounded-[var(--radius-lg)]" />
-        </li>
-      ))}
-    </ul>
+    <>
+      {message && (
+        <p
+          role="status"
+          aria-live="polite"
+          className="text-subtle mt-5 flex items-center gap-2.5 text-[15.5px]"
+        >
+          <LoaderCircle
+            className="text-brand size-[18px] shrink-0 animate-spin [animation-duration:2.2s]"
+            aria-hidden="true"
+          />
+          {message}
+        </p>
+      )}
+      <ul
+        className={cn("flex flex-col gap-3", message ? "mt-3" : "mt-5")}
+        aria-busy="true"
+      >
+        {Array.from({ length: count }, (_, i) => (
+          <li key={i}>
+            <Skeleton className="h-[132px] w-full rounded-[var(--radius-lg)]" />
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 
