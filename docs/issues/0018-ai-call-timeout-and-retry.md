@@ -1,5 +1,5 @@
 ---
-status: In Review
+status: Done
 branch: fix/ai-call-timeout-and-retry
 created: 2026-09-13
 ---
